@@ -1,0 +1,1 @@
+import"./chunk-2VMXMS7J.js";var o=[{path:"",redirectTo:"login",pathMatch:"full"},{path:"login",loadComponent:()=>import("./chunk-UHMGDJCS.js").then(t=>t.Login),title:"Iniciar Sesi\xF3n"},{path:"register",loadComponent:()=>import("./chunk-S3W52H34.js").then(t=>t.Register),title:"Iniciar Sesi\xF3n"}];export{o as AUTH_ROUTES};
