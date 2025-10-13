@@ -7,7 +7,7 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Redirigir todas las rutas no encontradas al index.html (Angular routing)
-app.use((req, res) => {
+app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
