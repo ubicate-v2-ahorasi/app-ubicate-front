@@ -6,18 +6,23 @@ import {
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { provideDatabase, getDatabase } from '@angular/fire/database';
+
 import { routes } from './app.routes';
 import { httpInterceptor } from './core/interceptor/auth.interceptor';
+import { firebaseConfig } from './core/config/firebase_environment';
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-   provideHttpClient(
-      withInterceptors([
-        httpInterceptor
-      ])
-    )
-  ]
+    provideHttpClient(withInterceptors([httpInterceptor])),
+    provideFirebaseApp(() => initializeApp(firebaseConfig)),
+    provideFirestore(() => getFirestore()),
+    provideDatabase(() => getDatabase()),
+  ],
 };

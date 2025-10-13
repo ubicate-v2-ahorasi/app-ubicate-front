@@ -63,6 +63,10 @@ export class SessionService {
     return this.currentUserSubject.value;
   }
 
+  getEmpresaNombre(): string | null {
+    const user = this.getCurrentUser();
+    return user ? user.nombre : null;
+  }
   private setToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
   }
@@ -74,5 +78,9 @@ export class SessionService {
   private getStoredUser(): User | null {
     const userData = localStorage.getItem(this.USER_KEY);
     return userData ? JSON.parse(userData) : null;
+  }
+  getEmpresaId(): number | undefined | null {
+    const user = this.getCurrentUser();
+    return user ? user.empresa_id : null;
   }
 }

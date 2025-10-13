@@ -154,27 +154,44 @@ export class ConductorTable implements OnInit {
 
   applyLocalFilters(conductores: ConductorVM[]): ConductorVM[] {
     let filtered = [...conductores];
+
+    // Filtro por Categoría
     if (this.currentCategoria !== 'Todas') {
       filtered = filtered.filter(
         (c) => c.categoriaLicencia === this.currentCategoria
       );
     }
+
+    // Filtro por Estado
+    if (this.currentEstado !== 'Todos') {
+      filtered = filtered.filter((c) => c.estado === this.currentEstado);
+    }
+
+    // Filtro por Turno
+    if (this.currentTurno !== 'Todos') {
+      filtered = filtered.filter((c) => c.turno === this.currentTurno);
+    }
+
+    // Filtro por término de búsqueda
+    if (this.currentSearchTerm) {
+      const searchTerm = this.currentSearchTerm.toLowerCase();
+      filtered = filtered.filter(
+        (c) =>
+          c.nombreCompleto.toLowerCase().includes(searchTerm) ||
+          c.dni.includes(searchTerm) ||
+          c.numeroLicencia.includes(searchTerm)
+      );
+    }
+
     return filtered;
   }
-
   onSearch(searchTerm: string) {
     this.currentSearchTerm = searchTerm;
-    this.currentEstado = 'Todos';
-    this.currentTurno = 'Todos';
-    this.currentPage = 0;
     this.loadConductores();
   }
 
   onEstadoChange(estado: Estado | 'Todos') {
     this.currentEstado = estado;
-    this.currentSearchTerm = '';
-    this.currentTurno = 'Todos';
-    this.currentPage = 0;
     this.loadConductores();
   }
 
@@ -185,9 +202,6 @@ export class ConductorTable implements OnInit {
 
   onTurnoChange(turno: Turno | 'Todos') {
     this.currentTurno = turno;
-    this.currentSearchTerm = '';
-    this.currentEstado = 'Todos';
-    this.currentPage = 0;
     this.loadConductores();
   }
 
@@ -196,7 +210,6 @@ export class ConductorTable implements OnInit {
     this.currentEstado = 'Todos';
     this.currentCategoria = 'Todas';
     this.currentTurno = 'Todos';
-    this.currentPage = 0;
     this.loadConductores();
   }
 

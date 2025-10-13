@@ -56,10 +56,8 @@
     (cancel)="onCancelRouteCreation()" class="z-40"></app-route-creator>
 
   <google-map [center]="center" [zoom]="zoom" [options]="mapOptions" [width]="mapWidth" [height]="mapHeight"
-    class="z-10"></google-map>
-
-  <app-route-instructions [isCreatingRoute]="isCreatingRoute" [hasOrigin]="false" [hasDestination]="false"
-    class="z-15"></app-route-instructions>
+    class="z-10">
+  </google-map>
 
   <div *ngIf="isLocating" class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg p-4 flex items-center gap-3 shadow-lg">

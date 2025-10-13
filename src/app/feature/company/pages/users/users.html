@@ -1,4 +1,3 @@
-<!-- users.html -->
 <app-conductor-header (onCreateNew)="openCreateModal()"></app-conductor-header>
 
 <app-conductor-table></app-conductor-table>
@@ -7,7 +6,6 @@
 
 <app-conductor-form-modal
   [isVisible]="isModalVisible"
-  [buses]="buses"
   (onCancel)="closeModal()"
   (onSave)="onConductorSaved()">
 </app-conductor-form-modal>

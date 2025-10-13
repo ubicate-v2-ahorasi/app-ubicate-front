@@ -57,7 +57,7 @@ export class BusLayerComponent implements OnChanges, OnDestroy {
       const pos = mk.position as google.maps.LatLngLiteral;
       if (pos) {
         this.map.setCenter(pos);
-        this.map.setZoom(17);
+        this.map.setZoom(15);
       }
     }
   }
