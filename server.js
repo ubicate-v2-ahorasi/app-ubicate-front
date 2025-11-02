@@ -1,18 +1,15 @@
+// Servidor Express para SPA Angular en /dist
 const express = require('express');
 const path = require('path');
-
 const app = express();
+const port = process.env.PORT || 8080;
 
-// Servir archivos estáticos desde la carpeta "public"
-app.use(express.static(path.join(__dirname, 'public')));
+const distPath = path.join(__dirname, 'dist'); // veremos en el Dockerfile que copiamos aquí
+app.use(express.static(distPath, { maxAge: '1y', etag: true }));
 
-// Redirigir todas las rutas no encontradas al index.html (Angular routing)
-app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Fallback SPA: cualquier ruta -> index.html
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'));
 });
 
-// Escuchar en el puerto proporcionado por Heroku o en el local 8080
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`Servidor iniciado en el puerto ${PORT}`);
-});
+app.listen(port, () => console.log(`Listening on ${port}`));

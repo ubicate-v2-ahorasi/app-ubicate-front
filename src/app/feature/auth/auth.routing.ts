@@ -16,6 +16,6 @@ export const AUTH_ROUTES: Routes = [
     path: 'register',
     loadComponent: () =>
       import('./../auth/pages/register/register').then((m) => m.Register),
-    title: 'Iniciar Sesión',
+    title: 'Registro de Empresa',
   },
 ];

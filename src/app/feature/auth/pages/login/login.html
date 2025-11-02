@@ -1,36 +1,38 @@
 <div class="min-h-screen flex flex-col lg:flex-row" style="background-color: #132137;">
-  <section class="relative w-full lg:w-1/2 h-64 sm:h-80 md:h-96 lg:h-screen flex-shrink-0 order-2 lg:order-1 overflow-hidden">
-    <div class="absolute inset-0 bg-center" style="background-image:url('/banner/banner.png'); background-size: 95%;"></div>
+  <section class="relative w-full lg:w-1/2 h-48 sm:h-64 lg:h-screen flex-shrink-0 order-2 lg:order-1 overflow-hidden">
+    <div class="absolute inset-0 bg-center" style="background-image:url('/banner/banner.png'); background-size: 95%;">
+    </div>
   </section>
 
-  <section class="w-full lg:w-1/2 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 lg:p-12 xl:p-16 order-1 lg:order-2 min-h-screen lg:min-h-0 bg-white">
-    <div class="mb-8 text-center">
-      <h2 class="text-2xl md:text-3xl font-bold text-[#040E1C] mb-2">Iniciar Sesión</h2>
-      <p class="text-gray-600 text-sm md:text-base">Ingresa tus credenciales para continuar</p>
+  <section
+    class="w-full lg:w-1/2 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 order-1 lg:order-2 min-h-screen lg:min-h-0 bg-white">
+    <div class="mb-6 text-center">
+      <h2 class="text-xl md:text-2xl font-bold text-[#040E1C] mb-1">Iniciar Sesión</h2>
+      <p class="text-gray-600 text-sm">Ingresa tus credenciales para continuar</p>
     </div>
 
-    <div class="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
-      <div class="bg-white border border-gray-200 rounded-2xl p-6 md:p-8 shadow-xl">
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
-          <div *ngIf="errorMessage" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+    <div class="w-full max-w-sm">
+      <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-lg">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
+          <div *ngIf="errorMessage" class="mb-3 p-2 bg-red-50 border border-red-200 rounded text-red-700 text-xs">
             {{ errorMessage }}
           </div>
 
           <div>
-            <label for="email" class="block text-sm md:text-base font-medium text-[#040E1C] mb-2">Correo electrónico</label>
+            <label for="email" class="block text-sm font-medium text-[#040E1C] mb-2">Correo electrónico</label>
             <input id="email" name="email" type="email" formControlName="email"
-              class="w-full px-4 md:px-5 py-3 md:py-4 rounded-xl bg-white text-[#040E1C] placeholder-gray-500 border border-[#040E1C] focus:outline-none focus:ring-2 focus:ring-[#132137] focus:border-[#040E1C] transition-all duration-300 text-sm md:text-base"
+              class="w-full px-3 py-3 rounded-lg bg-white text-[#040E1C] placeholder-gray-500 border border-[#040E1C] focus:outline-none focus:ring-2 focus:ring-[#132137] focus:border-[#040E1C] transition-all duration-300 text-sm"
               placeholder="email">
           </div>
 
           <div>
-            <label for="password" class="block text-sm md:text-base font-medium text-[#040E1C] mb-2">Contraseña</label>
+            <label for="password" class="block text-sm font-medium text-[#040E1C] mb-2">Contraseña</label>
             <input id="password" name="password" type="password" formControlName="password"
-              class="w-full px-4 md:px-5 py-3 md:py-4 rounded-xl bg-white text-[#040E1C] placeholder-gray-500 border border-[#040E1C] focus:outline-none focus:ring-2 focus:ring-[#132137] focus:border-[#040E1C] transition-all duration-300 text-sm md:text-base"
+              class="w-full px-3 py-3 rounded-lg bg-white text-[#040E1C] placeholder-gray-500 border border-[#040E1C] focus:outline-none focus:ring-2 focus:ring-[#132137] focus:border-[#040E1C] transition-all duration-300 text-sm"
               placeholder="••••••••">
           </div>
 
-          <div class="flex items-center justify-between text-sm">
+          <div class="flex items-center justify-between text-xs">
             <div class="flex items-center">
               <input id="remember" name="remember" type="checkbox"
                 class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-[#040E1C] rounded bg-white">
@@ -42,7 +44,7 @@
           </div>
 
           <button type="submit" [disabled]="isLoading"
-            [class]="'w-full py-3 md:py-4 rounded-xl font-semibold focus:outline-none focus:ring-2 focus:ring-[#132137] focus:ring-offset-2 focus:ring-offset-white transition-all duration-300 text-sm md:text-base shadow-lg ' +
+            [class]="'w-full py-3 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-[#132137] focus:ring-offset-2 transition-all duration-300 text-sm shadow-lg ' +
             (isLoading
               ? 'bg-gray-400 border-gray-400 text-gray-200 cursor-not-allowed'
               : 'bg-[#132137] border border-[#040E1C] text-white hover:bg-[#040E1C] hover:border-[#132137] transform hover:scale-[1.02] active:scale-95')">
@@ -51,7 +53,7 @@
           </button>
         </form>
 
-        <div class="relative my-6">
+        <div class="relative my-4">
           <div class="absolute inset-0 flex items-center">
             <div class="w-full border-t border-gray-200"></div>
           </div>
@@ -60,11 +62,19 @@
           </div>
         </div>
 
-        <div class="text-center">
-          <p class="text-sm md:text-base text-gray-600">
+        <!-- ✅ SECCIÓN CORREGIDA -->
+        <div class="text-center space-y-2">
+          <p class="text-sm text-gray-600">
             ¿No tienes cuenta?
+            <a routerLink="../register"
+              class="ml-1 text-[#132137] hover:text-[#040E1C] font-medium transition-colors duration-200 hover:underline cursor-pointer">
+              Registrar empresa
+            </a>
+          </p>
+          <p class="text-xs text-gray-600">
+            ¿Necesitas ayuda?
             <a href="#"
-              class="ml-1 text-[#132137] hover:text-[#040E1C] font-medium transition-colors duration-200 hover:underline focus:outline-none focus:ring-1 focus:ring-[#132137] rounded px-1">
+              class="ml-1 text-[#132137] hover:text-[#040E1C] font-medium transition-colors duration-200 hover:underline">
               Contáctanos
             </a>
           </p>
@@ -72,10 +82,9 @@
       </div>
     </div>
 
-    <footer class="mt-8 sm:mt-10 md:mt-12 lg:mt-16">
+    <footer class="mt-6">
       <p class="text-xs text-gray-500 text-center">
-        © 2024
-        <span class="text-[#132137] font-medium">Ubicate - Marketing y Software S.A.C.</span>
+        © 2024 <span class="text-[#132137] font-medium">Ubicate - Marketing y Software S.A.C.</span>
       </p>
     </footer>
   </section>

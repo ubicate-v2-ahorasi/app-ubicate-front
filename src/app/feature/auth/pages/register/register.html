@@ -1,1 +1,163 @@
-<p>register works!</p>
+<div class="min-h-screen flex flex-col lg:flex-row" style="background-color: #132137;">
+  <section class="relative w-full lg:w-1/2 h-48 sm:h-64 lg:h-screen flex-shrink-0 order-2 lg:order-1 overflow-hidden">
+    <div class="absolute inset-0 bg-center" style="background-image:url('/banner/banner.png'); background-size: 95%;">
+    </div>
+  </section>
+
+  <section
+    class="w-full lg:w-1/2 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 order-1 lg:order-2 min-h-screen lg:min-h-0 bg-white overflow-y-auto">
+
+    <div class="mb-4 text-center">
+      <h2 class="text-xl md:text-2xl font-bold text-[#040E1C] mb-1">Registro de Empresa</h2>
+      <p class="text-gray-600 text-sm">Registra tu empresa de transporte</p>
+    </div>
+
+    <div class="w-full max-w-lg">
+      <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-lg">
+
+        <div *ngIf="errorMessage" class="mb-3 p-2 bg-red-50 border border-red-200 rounded text-red-700 text-xs">
+          {{ errorMessage }}
+        </div>
+        <div *ngIf="successMessage" class="mb-3 p-2 bg-green-50 border border-green-200 rounded text-green-700 text-xs">
+          {{ successMessage }}
+        </div>
+
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
+
+          <!-- Company Info -->
+          <div>
+            <h3 class="text-sm font-semibold text-[#040E1C] mb-3">Información de la Empresa</h3>
+
+            <div class="space-y-3">
+              <div>
+                <label class="block text-xs font-medium text-[#040E1C] mb-1">Nombre de la Empresa *</label>
+                <input formControlName="nombreEmpresa"
+                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
+                  placeholder="Transportes Lima S.A.">
+                <div *ngIf="registerForm.get('nombreEmpresa')?.errors && registerForm.get('nombreEmpresa')?.touched"
+                  class="text-red-500 text-xs mt-1">Nombre obligatorio (mín. 3 caracteres)</div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-[#040E1C] mb-1">RUC *</label>
+                  <input formControlName="ruc"
+                    class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
+                    placeholder="20123456789">
+                  <div *ngIf="registerForm.get('ruc')?.errors && registerForm.get('ruc')?.touched"
+                    class="text-red-500 text-xs mt-1">11 dígitos</div>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-[#040E1C] mb-1">Dirección</label>
+                  <input formControlName="direccion"
+                    class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
+                    placeholder="Av. Principal 123">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Representative -->
+          <div>
+            <h3 class="text-sm font-semibold text-[#040E1C] mb-3">Representante Legal</h3>
+
+            <div class="space-y-3">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-[#040E1C] mb-1">Nombre *</label>
+                  <input formControlName="nombre"
+                    class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
+                    placeholder="Juan">
+                  <div *ngIf="registerForm.get('nombre')?.errors && registerForm.get('nombre')?.touched"
+                    class="text-red-500 text-xs mt-1">Obligatorio</div>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-[#040E1C] mb-1">Apellido *</label>
+                  <input formControlName="apellido"
+                    class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
+                    placeholder="Pérez">
+                  <div *ngIf="registerForm.get('apellido')?.errors && registerForm.get('apellido')?.touched"
+                    class="text-red-500 text-xs mt-1">Obligatorio</div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-[#040E1C] mb-1">DNI *</label>
+                  <input formControlName="dni"
+                    class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
+                    placeholder="12345678">
+                  <div *ngIf="registerForm.get('dni')?.errors && registerForm.get('dni')?.touched"
+                    class="text-red-500 text-xs mt-1">8 dígitos</div>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-[#040E1C] mb-1">Teléfono *</label>
+                  <input formControlName="telefono"
+                    class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
+                    placeholder="+51987654321">
+                  <div *ngIf="registerForm.get('telefono')?.errors && registerForm.get('telefono')?.touched"
+                    class="text-red-500 text-xs mt-1">Inválido</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Credentials -->
+          <div>
+            <h3 class="text-sm font-semibold text-[#040E1C] mb-3">Credenciales</h3>
+
+            <div class="space-y-3">
+              <div>
+                <label class="block text-xs font-medium text-[#040E1C] mb-1">Email *</label>
+                <input type="email" formControlName="email"
+                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
+                  placeholder="empresa@transporte.com">
+                <div *ngIf="registerForm.get('email')?.errors && registerForm.get('email')?.touched"
+                  class="text-red-500 text-xs mt-1">Email inválido</div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-[#040E1C] mb-1">Contraseña *</label>
+                <input type="password" formControlName="password"
+                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
+                  placeholder="••••••••">
+                <div *ngIf="registerForm.get('password')?.errors && registerForm.get('password')?.touched"
+                  class="text-red-500 text-xs mt-1">Mín. 8 caracteres, mayús, minús, número, especial</div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" [disabled]="isLoading || registerForm.invalid" [class]="'w-full py-3 rounded-lg font-semibold text-sm transition-all duration-300 ' +
+            (isLoading || registerForm.invalid
+              ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+              : 'bg-[#132137] text-white hover:bg-[#040E1C] transform hover:scale-[1.02] active:scale-95')">
+            <span *ngIf="!isLoading">Registrar Empresa</span>
+            <span *ngIf="isLoading">Registrando...</span>
+          </button>
+        </form>
+
+        <div class="relative my-4">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-200"></div>
+          </div>
+          <div class="relative flex justify-center text-xs">
+            <span class="px-3 text-gray-500 bg-white">O</span>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <p class="text-xs text-gray-600">
+            ¿Ya tienes cuenta?
+            <a routerLink="/login" class="text-[#132137] font-medium hover:underline">Iniciar sesión</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <footer class="mt-6">
+      <p class="text-xs text-gray-500 text-center">
+        © 2024 <span class="text-[#132137] font-medium">Ubicate - Marketing y Software S.A.C.</span>
+      </p>
+    </footer>
+  </section>
+</div>
