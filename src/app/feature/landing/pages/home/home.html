@@ -1,0 +1,283 @@
+<section
+  class="min-h-screen bg-gradient-to-br from-[#040E1C] via-[#021133] to-[#040E1C] flex items-center relative overflow-hidden">
+  <div class="absolute inset-0 opacity-10">
+    <div class="absolute top-20 left-20 w-32 h-32 bg-white rounded-full blur-3xl"></div>
+    <div class="absolute bottom-20 right-20 w-24 h-24 bg-blue-400 rounded-full blur-2xl"></div>
+    <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-cyan-400 rounded-full blur-xl"></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 py-20 relative z-10">
+    <div class="text-center">
+      <div class="absolute top-8 right-8 flex gap-4">
+        <button (click)="goToLogin()"
+          class="px-6 py-2 text-slate-300 bg-white/10 rounded-lg border border-white/20 hover:bg-white/15 hover:text-white transition font-medium backdrop-blur-sm">
+          Iniciar Sesión
+        </button>
+
+      </div>
+
+      <div class="mb-8">
+        <div
+          class="mx-auto w-36 h-36 rounded-3xl shadow-2xl bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-md flex items-center justify-center transform hover:scale-105 transition-transform duration-300 ring-1 ring-white/20">
+          <svg class="w-20 h-20 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+          </svg>
+        </div>
+      </div>
+
+      <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight">
+        <span class="bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">{{ appName }}</span>
+      </h1>
+
+      <p class="text-xl md:text-3xl text-slate-300 mb-4 max-w-4xl mx-auto font-medium">
+        {{ appDescription }}
+      </p>
+
+      <p class="text-lg text-slate-400 mb-12 max-w-3xl mx-auto">
+        La plataforma completa para el transporte público. App móvil para usuarios y panel web para empresas.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+        <a [href]="apkUrl" download="Ubicate-v2.0.0.apk" target="_blank" rel="noopener" (click)="onApkDownload()"
+          class="group inline-flex items-center px-12 py-6 bg-gradient-to-r from-white/20 to-white/10 text-white rounded-2xl font-bold text-xl hover:from-white/25 hover:to-white/15 transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:-translate-y-2 hover:scale-105 backdrop-blur-md ring-1 ring-white/20">
+          <svg class="w-8 h-8 mr-4 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+          </svg>
+          <div class="text-left">
+            <div>Descargar App Móvil</div>
+            <div class="text-sm opacity-90">{{ apkSize }} • {{ appVersion }} • Gratis</div>
+          </div>
+        </a>
+
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div *ngFor="let stat of stats" class="text-center">
+          <div class="text-4xl font-bold text-white mb-2">{{ stat.number }}</div>
+          <div class="text-slate-400 font-medium">{{ stat.label }}</div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-3 mb-8">
+        <span *ngFor="let feature of features"
+          class="px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full text-slate-200 font-semibold border border-white/20 shadow-sm hover:shadow-md hover:bg-white/15 transition-all duration-200">
+          {{ feature }}
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-24 bg-gradient-to-b from-[#021133] to-[#040E1C]">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">¿Eres una empresa de transporte?</h2>
+      <p class="text-xl text-slate-300 max-w-3xl mx-auto">Administra tu flota, rutas y proporciona información en tiempo
+        real</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+      <div class="text-center group">
+        <div
+          class="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl mx-auto mb-6 flex items-center justify-center ring-1 ring-white/20 group-hover:bg-white/15 transition-all duration-300">
+          <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold mb-3 text-white">Dashboard Completo</h3>
+        <p class="text-slate-400">Monitorea tu flota en tiempo real con estadísticas detalladas</p>
+      </div>
+
+      <div class="text-center group">
+        <div
+          class="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl mx-auto mb-6 flex items-center justify-center ring-1 ring-white/20 group-hover:bg-white/15 transition-all duration-300">
+          <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold mb-3 text-white">Gestión de Rutas</h3>
+        <p class="text-slate-400">Administra rutas, paradas y horarios de forma eficiente</p>
+      </div>
+
+      <div class="text-center group">
+        <div
+          class="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl mx-auto mb-6 flex items-center justify-center ring-1 ring-white/20 group-hover:bg-white/15 transition-all duration-300">
+          <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-1 16H9V7h9v14z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold mb-3 text-white">Reportes Avanzados</h3>
+        <p class="text-slate-400">Genera reportes detallados de operación y rendimiento</p>
+      </div>
+    </div>
+
+    <div class="text-center">
+      <button (click)="goToCompany()"
+        class="inline-flex items-center px-12 py-4 bg-white/20 text-white rounded-xl font-bold text-xl hover:bg-white/25 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 backdrop-blur-md ring-1 ring-white/20">
+        <svg class="w-8 h-8 mr-4" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+        </svg>
+        Acceder Panel de Empresas
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="py-24 bg-gradient-to-b from-[#040E1C] to-slate-900">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">¿Por qué elegir {{ appName }}?</h2>
+      <p class="text-xl text-slate-300 max-w-3xl mx-auto">Tecnología de punta para el transporte público</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div *ngFor="let benefit of benefits" class="text-center group">
+        <div class="text-6xl mb-6 group-hover:scale-110 transition-transform duration-300">{{ benefit.icon }}</div>
+        <h3 class="text-2xl font-bold text-white mb-4">{{ benefit.title }}</h3>
+        <p class="text-slate-400 text-lg">{{ benefit.description }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-24 bg-gradient-to-br from-slate-900 to-[#021133]">
+  <div class="max-w-7xl mx-auto px-6 text-center">
+    <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">Ve {{ appName }} en acción</h2>
+    <p class="text-xl text-slate-300 mb-16">Una interfaz diseñada para que encuentres tu bus de forma rápida y fácil</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div class="bg-white/5 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-white/10">
+        <div
+          class="aspect-[9/16] bg-gradient-to-b from-white/10 to-white/5 rounded-2xl mb-6 flex flex-col items-center justify-center border border-white/20 relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-b from-blue-500/20 to-cyan-500/20"></div>
+          <div class="absolute top-4 left-4 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center z-10">
+            <div class="w-3 h-3 bg-white rounded-full"></div>
+          </div>
+          <div class="text-center z-10">
+            <div class="w-16 h-16 bg-green-500 rounded-full mb-4 flex items-center justify-center">
+              <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+              </svg>
+            </div>
+            <div class="text-sm font-semibold text-white">Tu ubicación</div>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-3">Mapa en tiempo real</h3>
+        <p class="text-slate-400">Ve todos los buses cerca de ti y sus rutas en un mapa interactivo</p>
+      </div>
+
+      <div class="bg-white/5 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-white/10">
+        <div
+          class="aspect-[9/16] bg-gradient-to-b from-white/10 to-white/5 rounded-2xl mb-6 flex flex-col justify-start p-6 border border-white/20">
+          <div class="flex items-center justify-between mb-6">
+            <h4 class="font-bold text-white">Buses cercanos</h4>
+            <div class="w-6 h-6 bg-green-500 rounded-full"></div>
+          </div>
+
+          <div class="space-y-4">
+            <div
+              class="bg-white/10 backdrop-blur-sm rounded-lg p-3 shadow-sm flex items-center justify-between ring-1 ring-white/20">
+              <div class="flex items-center">
+                <div
+                  class="w-8 h-8 bg-blue-600 rounded text-white text-xs font-bold flex items-center justify-center mr-3">
+                  A1</div>
+                <div>
+                  <div class="font-semibold text-sm text-white">Centro - Norte</div>
+                  <div class="text-xs text-slate-400">Próximo en 3 min</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-bold text-green-400">3 min</div>
+              </div>
+            </div>
+
+            <div
+              class="bg-white/10 backdrop-blur-sm rounded-lg p-3 shadow-sm flex items-center justify-between ring-1 ring-white/20">
+              <div class="flex items-center">
+                <div
+                  class="w-8 h-8 bg-red-600 rounded text-white text-xs font-bold flex items-center justify-center mr-3">
+                  B2</div>
+                <div>
+                  <div class="font-semibold text-sm text-white">Sur - Centro</div>
+                  <div class="text-xs text-slate-400">Próximo en 7 min</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-bold text-yellow-400">7 min</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-3">Tiempos exactos</h3>
+        <p class="text-slate-400">Lista ordenada por proximidad con tiempos de llegada precisos</p>
+      </div>
+
+      <div class="bg-white/5 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-white/10">
+        <div
+          class="aspect-[9/16] bg-gradient-to-b from-white/10 to-white/5 rounded-2xl mb-6 flex flex-col items-center justify-center border border-white/20 p-6">
+          <div class="w-20 h-20 bg-purple-600 rounded-full mb-6 flex items-center justify-center">
+            <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+            </svg>
+          </div>
+          <div class="text-center">
+            <h4 class="font-bold text-white mb-2">¡Tu bus llega en 2 minutos!</h4>
+            <p class="text-sm text-slate-400 mb-4">Línea A1 - Parada Central</p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3 shadow-sm ring-1 ring-white/20">
+              <div class="text-2xl font-bold text-purple-400">2 min</div>
+              <div class="text-xs text-slate-500">Tiempo estimado</div>
+            </div>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-3">Notificaciones inteligentes</h3>
+        <p class="text-slate-400">Te avisamos cuando tu bus está cerca para que no tengas que estar pendiente</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-24 bg-gradient-to-r from-[#021133] to-[#040E1C]">
+  <div class="max-w-4xl mx-auto px-6 text-center">
+    <h2 class="text-4xl md:text-6xl font-bold mb-6 text-white">¿Listo para transformar el transporte?</h2>
+    <p class="text-xl md:text-2xl mb-12 text-slate-300">Únete a la revolución del transporte inteligente</p>
+
+    <div class="flex flex-col sm:flex-row gap-6 justify-center">
+      <a [href]="apkUrl" download="Ubicate-v2.0.0.apk" target="_blank" rel="noopener" (click)="onApkDownload()"
+        class="inline-flex items-center px-10 py-4 bg-white/20 text-white rounded-xl font-bold text-lg hover:bg-white/25 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 backdrop-blur-md ring-1 ring-white/20">
+        <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+        </svg>
+        Descargar App
+      </a>
+
+      <button (click)="goToCompany()"
+        class="inline-flex items-center px-10 py-4 bg-white/10 text-white border border-white/20 rounded-xl font-bold text-lg hover:bg-white/15 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 backdrop-blur-sm">
+        <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+        </svg>
+        Panel Empresas
+      </button>
+    </div>
+  </div>
+</section>
+
+<footer class="bg-gradient-to-b from-[#040E1C] to-black py-16">
+  <div class="max-w-7xl mx-auto px-6 text-center">
+    <div
+      class="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl mx-auto mb-6 flex items-center justify-center ring-1 ring-white/20">
+      <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <path
+          d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+      </svg>
+    </div>
+    <h3 class="text-3xl font-bold mb-4 text-white">{{ appName }}</h3>
+    <p class="text-slate-400 mb-8">{{ appDescription }}</p>
+    <p class="text-slate-600 text-sm">© 2024 {{ appName }}. Todos los derechos reservados.</p>
+  </div>
+</footer>

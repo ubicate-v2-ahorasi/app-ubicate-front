@@ -3,8 +3,13 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/auth/login',
+    redirectTo: '/landing',
     pathMatch: 'full',
+  },
+  {
+    path: 'landing',
+    loadChildren: () =>
+      import('./feature/landing/landing-routing.routes').then((m) => m.LANDING_ROUTES),
   },
   {
     path: 'auth',
@@ -18,6 +23,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '/auth/login',
+    redirectTo: '/landing',
   },
 ];
