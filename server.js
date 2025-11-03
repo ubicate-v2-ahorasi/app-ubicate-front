@@ -5,29 +5,22 @@ const fs = require('fs');
 
 const app = express();
 
-// Verificar estructura de directorios
-console.log('🔍 Verificando estructura de directorios...');
-console.log('📁 Directorio actual:', __dirname);
+// Nueva estructura de Angular 17+: dist/app-name/browser/
+const distPath = path.join(__dirname, 'dist', 'ubicate-taller-2', 'browser');
 
-const distPath = path.join(__dirname, 'dist', 'ubicate-taller-2');
+console.log('🔍 Verificando estructura de directorios...');
 console.log('📁 Ruta dist:', distPath);
 
-// Verificar si existe el directorio
+// Verificar si existe el directorio browser
 if (fs.existsSync(distPath)) {
-  console.log('✅ Directorio dist existe');
+  console.log('✅ Directorio browser existe');
   const files = fs.readdirSync(distPath);
-  console.log('📄 Archivos en dist:', files);
+  console.log('📄 Archivos en browser:', files);
 } else {
-  console.log('❌ Directorio dist NO existe');
-
-  // Verificar directorios alternativos
-  const distRoot = path.join(__dirname, 'dist');
-  if (fs.existsSync(distRoot)) {
-    console.log('📁 Contenido de dist/:', fs.readdirSync(distRoot));
-  }
+  console.log('❌ Directorio browser NO existe');
 }
 
-// Servir archivos estáticos
+// Servir archivos estáticos desde browser/
 app.use(express.static(distPath));
 
 // Para Angular Router
@@ -49,4 +42,5 @@ app.get('/*', (req, res) => {
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
   console.log(`🚀 Ubicate Taller 2 corriendo en puerto ${port}`);
+  console.log(`📁 Sirviendo desde: ${distPath}`);
 });
