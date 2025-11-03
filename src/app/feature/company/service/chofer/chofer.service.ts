@@ -9,7 +9,6 @@ export interface ApiResponse {
 }
 
 export type Estado = 'ACTIVO' | 'INACTIVO' | 'VACACIONES' | 'SUSPENDIDO';
-export type Turno = 'MANANA' | 'TARDE' | 'NOCHE';
 
 export interface ConductorResponse {
   id: number;
@@ -20,7 +19,6 @@ export interface ConductorResponse {
   numeroLicencia: string;
   categoriaLicencia: string;
   fechaVencimientoLicencia: string;
-  turno: Turno;
   estado: Estado;
   busAsignadoId: number | null;
   empresaId: number;
@@ -31,7 +29,7 @@ export interface ConductorResponse {
 export interface ConductorCreatedResponse {
   conductor: ConductorResponse;
   username: string;
-  tempPassword: string;
+  temp_password: string;
 }
 
 export interface Page<T> {
@@ -135,11 +133,6 @@ export class ConductorService {
     );
   }
 
-  getConductoresByTurno(turno: Turno): Observable<ConductorResponse[]> {
-    return this.httpClient.get<ConductorResponse[]>(
-      `${this.base}/turno/${turno}`
-    );
-  }
   deleteConductor(conductorId: number): Observable<ApiResponse> {
     return this.httpClient.delete<ApiResponse>(`${this.base}/${conductorId}`);
   }

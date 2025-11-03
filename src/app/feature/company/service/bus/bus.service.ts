@@ -46,4 +46,15 @@ export class BusService {
   deleteBus(id: number): Observable<void> {
     return this.httpClient.delete<void>(`buses/${id}`);
   }
+
+  asignarRuta(busId: number, rutaId: number): Observable<Bus> {
+    return this.httpClient.patch<Bus>(
+      `buses/${busId}/asignar-ruta?rutaId=${rutaId}`,
+      null
+    );
+  }
+
+  removerRuta(busId: number): Observable<Bus> {
+    return this.httpClient.delete<Bus>(`buses/${busId}/ruta`);
+  }
 }

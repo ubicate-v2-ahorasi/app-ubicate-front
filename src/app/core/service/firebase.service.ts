@@ -1,4 +1,3 @@
-// src/app/core/service/firebase.service.ts
 import { Injectable } from '@angular/core';
 import {
   Database,
@@ -60,18 +59,25 @@ export class FirebaseService {
         }
 
         const raw = snapshot.val();
+        if (!raw) {
+          sub.next([]);
+          return;
+        }
+
         let arr: BusWithPosition[] = Object.entries(raw).map(
           ([key, val]: [string, any]) => ({
             id: String(key),
             ...val,
             rutaId: val?.rutaId,
-            position: { lat: Number(val?.latitud), lng: Number(val?.longitud) },
+            position: {
+              lat: Number(val?.latitud),
+              lng: Number(val?.longitud),
+            },
           })
         );
 
         if (rutaId != null) {
-          const r = Number(rutaId);
-          arr = arr.filter((b) => Number(b.rutaId) === r);
+          arr = arr.filter((b) => Number(b.rutaId) === Number(rutaId));
         }
 
         if (soloActivos) {
@@ -89,8 +95,37 @@ export class FirebaseService {
         sub.next(arr);
       };
 
-      onValue(busesRef, handler, { onlyOnce: false });
+      onValue(busesRef, handler);
       return () => off(busesRef, 'value', handler);
+    });
+  }
+
+  findFirstEmpresaWithBuses(): Observable<number | null> {
+    return new Observable((observer) => {
+      const empresasRef = ref(this.db, 'empresas');
+
+      const callback = (snapshot: any) => {
+        if (!snapshot.exists()) {
+          observer.next(null);
+          return;
+        }
+
+        const empresas = snapshot.val();
+        const empresaIds = Object.keys(empresas);
+
+        for (const empresaId of empresaIds) {
+          const empresa = empresas[empresaId];
+          if (empresa?.buses && Object.keys(empresa.buses).length > 0) {
+            observer.next(Number(empresaId));
+            return;
+          }
+        }
+
+        observer.next(null);
+      };
+
+      onValue(empresasRef, callback, { onlyOnce: true });
+      return () => off(empresasRef, 'value', callback);
     });
   }
 }

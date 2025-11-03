@@ -10,15 +10,34 @@ export interface BusesStats {
 export interface Bus {
   id: number;
   placa: string;
+  marca: string;
   modelo: string;
   capacidad: number;
-  anio: string;
-  color: string;
+  anio: number;
   estado: string;
   activo: boolean;
   empresa_id: number;
   fecha_creacion: string;
   fecha_actualizacion: string;
+  ruta?: {
+    id: number;
+    nombre: string;
+    codigo: string;
+    color_hex: string;
+    origen: string;
+    destino: string;
+  };
+}
 
-  
+export interface Ruta {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  codigo: string;
+  origen: string;
+  destino: string;
+  estado: 'ACTIVA' | 'INACTIVA';
+  activo: boolean;
+  empresa_id: number;
+  total_buses: number;
 }

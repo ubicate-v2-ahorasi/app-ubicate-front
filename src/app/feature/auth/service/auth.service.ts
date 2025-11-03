@@ -30,14 +30,10 @@ export class AuthService {
       .post<any>('auth/register/empresa', registerData)
       .pipe(
         tap((backendResponse) => {
-          const mappedUser = {
-            id: backendResponse.user.id,
-            email: backendResponse.user.email,
-            nombre: backendResponse.user.nombre,
-            role: backendResponse.user.role,
-          };
-
-          this.sessionService.setSession(backendResponse.token, mappedUser);
+          this.sessionService.setSession(
+            backendResponse.token,
+            backendResponse.user
+          );
         })
       );
   }

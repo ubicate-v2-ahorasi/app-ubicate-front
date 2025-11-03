@@ -1,8 +1,7 @@
-<!-- Header Component -->
 <app-bus-header (onCreateBus)="onBusCreated()"></app-bus-header>
 
-<!-- Filters Component -->
-<app-bus-filter></app-bus-filter>
 
-<!-- List Component -->
-<app-bus-list ></app-bus-list>
+<app-bus-filter (filterChange)="onFilterChange($event)"></app-bus-filter>
+
+
+<app-bus-list></app-bus-list>

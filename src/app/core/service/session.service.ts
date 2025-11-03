@@ -32,10 +32,15 @@ export class SessionService {
     }
   }
 
-  setSession(token: string, user: User): void {
+  setSession(token: string, user: any): void {
+    const userToStore = {
+      ...user,
+      empresa_id: user.empresa_id || user.id,
+    };
+
     this.setToken(token);
-    this.setUser(user);
-    this.currentUserSubject.next(user);
+    this.setUser(userToStore);
+    this.currentUserSubject.next(userToStore);
     this.isAuthenticatedSubject.next(true);
   }
 
@@ -67,6 +72,7 @@ export class SessionService {
     const user = this.getCurrentUser();
     return user ? user.nombre : null;
   }
+
   private setToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
   }
@@ -79,8 +85,10 @@ export class SessionService {
     const userData = localStorage.getItem(this.USER_KEY);
     return userData ? JSON.parse(userData) : null;
   }
-  getEmpresaId(): number | undefined | null {
+
+  getEmpresaId(): number | null {
     const user = this.getCurrentUser();
-    return user ? user.empresa_id : null;
+    if (!user) return null;
+    return user.empresa_id || null;
   }
 }

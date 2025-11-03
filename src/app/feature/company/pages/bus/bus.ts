@@ -1,6 +1,10 @@
+// bus.component.ts
 import { Component, ViewChild } from '@angular/core';
 import { BusHeader } from '../../components/bus/bus-header/bus-header';
-import { BusFilter } from '../../components/bus/bus-filter/bus-filter';
+import {
+  BusFilter,
+  BusFilterCriteria,
+} from '../../components/bus/bus-filter/bus-filter';
 import { BusList } from '../../components/bus/bus-list/bus-list';
 
 @Component({
@@ -12,9 +16,16 @@ export class Bus {
   @ViewChild(BusList) busList!: BusList;
 
   onBusCreated() {
-
     if (this.busList) {
       this.busList.loadBuses();
+    }
+  }
+
+  // Manejar cambio de filtros
+  onFilterChange(criteria: BusFilterCriteria) {
+    console.log('🔍 Filtros recibidos en componente padre:', criteria);
+    if (this.busList) {
+      this.busList.onFilterChange(criteria);
     }
   }
 }

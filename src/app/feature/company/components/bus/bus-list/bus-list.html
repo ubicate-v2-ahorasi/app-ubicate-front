@@ -1,34 +1,87 @@
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-  <div class="overflow-x-auto">
+  <div *ngIf="loading()" class="flex items-center justify-center py-12">
+    <div class="flex items-center space-x-2 text-gray-600">
+      <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor"
+          d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 0 1 4 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+        </path>
+      </svg>
+      <span class="text-sm">Cargando buses...</span>
+    </div>
+  </div>
+
+  <div *ngIf="!loading()" class="overflow-x-auto">
     <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
+      <thead class="bg-gradient-to-r from-[#040E1C] to-[#021133]">
         <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Modelo</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Año</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Color</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Bus</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Marca</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Modelo</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Capacidad</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Año</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+            <div class="flex items-center gap-2">
+              Ruta Asignada
+              <button (click)="recargarRutas()" [disabled]="rutasLoading()"
+                class="p-1 hover:bg-white hover:bg-opacity-20 rounded transition-colors text-white"
+                title="Recargar rutas">
+                <svg class="w-3 h-3" [class.animate-spin]="rutasLoading()" fill="none" stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 0 0 4.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 0 1-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
+            </div>
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Estado</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Acciones</th>
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-gray-200">
-        <tr *ngFor="let bus of buses" class="hover:bg-gray-50">
+        <tr *ngIf="paginatedBuses().length === 0 && !loading()">
+          <td colspan="8" class="px-6 py-12 text-center">
+            <div class="flex flex-col items-center">
+              <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM19 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 16V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1m8-1a1 1 0 0 1-1 1H9m4-1V8a1 1 0 0 1 1-1h2.586a1 1 0 0 1 .707.293l2.414 2.414A1 1 0 0 1 20 10.414V16a1 1 0 0 1-1 1h-1m-6 0a1 1 0 0 0 1 1h2M9 7h1" />
+              </svg>
+              <h3 class="text-lg font-medium text-gray-900 mb-1">
+                {{ filteredCount() === 0 && totalBuses() > 0 ? 'No se encontraron buses' : 'No hay buses registrados' }}
+              </h3>
+              <p class="text-gray-500">
+                {{ filteredCount() === 0 && totalBuses() > 0 ? 'Intenta ajustar los filtros de búsqueda' : 'Comienza
+                agregando tu primer bus a la flota' }}
+              </p>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngFor="let bus of paginatedBuses(); trackBy: trackByBusId" class="hover:bg-gray-50 transition-colors">
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="flex items-center">
               <div class="flex-shrink-0 h-10 w-10">
-                <div class="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                  <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <rect x="3" y="6" width="18" height="10" rx="2" />
-                    <circle cx="8" cy="19" r="2" />
-                    <circle cx="16" cy="19" r="2" />
-                    <path d="M3 12h18M8 6v6M16 6v6" />
+                <div
+                  class="h-10 w-10 rounded-lg bg-gradient-to-r from-[#040E1C] to-[#021133] flex items-center justify-center">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM19 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 16V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1m8-1a1 1 0 0 1-1 1H9m4-1V8a1 1 0 0 1 1-1h2.586a1 1 0 0 1 .707.293l2.414 2.414A1 1 0 0 1 20 10.414V16a1 1 0 0 1-1 1h-1m-6 0a1 1 0 0 0 1 1h2M9 7h1" />
                   </svg>
                 </div>
               </div>
               <div class="ml-4">
-                <div class="text-sm font-medium text-gray-900">{{ bus.placa }}</div>
+                <div class="text-sm font-semibold text-[#040E1C]">{{ bus.placa }}</div>
+                <div class="text-xs text-gray-500">ID: {{ bus.id }}</div>
               </div>
             </div>
+          </td>
+
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900 font-medium">{{ bus.marca || 'Sin especificar' }}</div>
           </td>
 
           <td class="px-6 py-4 whitespace-nowrap">
@@ -36,31 +89,81 @@
           </td>
 
           <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900 flex items-center">
+              <svg class="w-4 h-4 text-gray-400 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17 20h5v-2a3 3 0 0 0-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 0 1 5.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 0 1 9.288 0M15 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm6 3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM7 10a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
+              </svg>
+              {{ bus.capacidad }} pasajeros
+            </div>
+          </td>
+
+          <td class="px-6 py-4 whitespace-nowrap">
             <div class="text-sm text-gray-900">{{ bus.anio }}</div>
           </td>
 
           <td class="px-6 py-4 whitespace-nowrap">
-            <div class="text-sm text-gray-900">{{ bus.color }}</div>
+            <div *ngIf="rutasLoading()" class="text-xs text-blue-600 mb-1 flex items-center">
+              <svg class="animate-spin w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 0 1 4 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+              </svg>
+              Cargando rutas...
+            </div>
+
+            <select [value]="bus.ruta?.id?.toString() || ''" (change)="onRutaChange(bus, getSelectValue($event))"
+              class="text-xs font-medium px-2 py-1 rounded border border-gray-300 focus:ring-2 focus:ring-[#040E1C] bg-white transition-all w-full"
+              [disabled]="updatingRutaId() === bus.id || rutasLoading()">
+
+              <option value="" *ngIf="!bus.ruta">
+                {{ rutas().length === 0 ? 'No hay rutas disponibles' : 'Sin ruta asignada' }}
+              </option>
+
+              <option *ngFor="let ruta of rutas()" [value]="ruta.id.toString()">
+                {{ ruta.codigo }} - {{ ruta.nombre }}
+              </option>
+            </select>
+
+            <div *ngIf="updatingRutaId() === bus.id" class="text-xs text-blue-600 mt-1 flex items-center">
+              <svg class="animate-spin w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 0 1 4 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+              </svg>
+              Actualizando...
+            </div>
           </td>
 
           <td class="px-6 py-4 whitespace-nowrap">
-            <div class="flex items-center gap-3">
+            <div class="flex items-center">
               <select [ngModel]="bus.estado" (ngModelChange)="onEstadoChange(bus, $event)"
-                class="px-2 py-1 rounded-md text-xs font-semibold border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-200"
-                [disabled]="updatingId === bus.id" [class.cursor-wait]="updatingId === bus.id"
-                [class.opacity-60]="updatingId === bus.id">
-                <option *ngFor="let e of ESTADOS" [value]="e">{{ e }}</option>
+                class="text-xs font-medium px-2 py-1 rounded-full border-0 focus:ring-2 focus:ring-[#040E1C] transition-all"
+                [class]="getEstadoBadge(bus.estado)" [disabled]="updatingId() === bus.id">
+                <option *ngFor="let estado of ESTADOS" [value]="estado">
+                  {{ getEstadoLabel(estado) }}
+                </option>
               </select>
+              <svg *ngIf="updatingId() === bus.id" class="animate-spin ml-2 h-4 w-4 text-gray-400" fill="none"
+                viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 0 1 4 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+              </svg>
             </div>
           </td>
 
           <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-            <div class="flex space-x-2">
+            <div class="flex justify-center">
               <button (click)="openDeleteModal(bus)"
-                class="text-red-600 hover:text-red-900 p-1 hover:bg-red-50 rounded">
+                class="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded transition-colors flex items-center justify-center"
+                title="Eliminar bus">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                    d="M19 7l-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v3M4 7h16" />
                 </svg>
               </button>
             </div>
@@ -69,4 +172,37 @@
       </tbody>
     </table>
   </div>
+
+  <div *ngIf="!loading() && paginatedBuses().length > 0" class="bg-gray-50 px-6 py-3 border-t border-gray-200">
+    <div class="flex items-center justify-between">
+      <div class="text-sm text-gray-700">
+        Mostrando {{ (currentPage() * pageSize()) + 1 }} a {{ Math.min((currentPage() + 1) * pageSize(),
+        filteredCount()) }} de {{ filteredCount() }} buses
+        <span *ngIf="filteredCount() !== totalBuses()" class="text-gray-500">
+          ({{ totalBuses() }} total)
+        </span>
+      </div>
+      <div class="flex space-x-1">
+        <button (click)="onPageChange(currentPage() - 1)" [disabled]="currentPage() === 0"
+          class="px-3 py-1 text-sm rounded border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors">
+          Anterior
+        </button>
+        <button
+          *ngFor="let page of getPages().slice(Math.max(0, currentPage() - 2), Math.min(totalPages(), currentPage() + 3))"
+          (click)="onPageChange(page)"
+          [class]="page === currentPage() ? 'bg-[#040E1C] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'"
+          class="px-3 py-1 text-sm rounded border transition-colors">
+          {{ page + 1 }}
+        </button>
+        <button (click)="onPageChange(currentPage() + 1)" [disabled]="currentPage() >= totalPages() - 1"
+          class="px-3 py-1 text-sm rounded border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors">
+          Siguiente
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
+
+<app-bus-delete-modal [isOpen]="showDeleteModal()" [bus]="selectedBus()" (onClose)="closeDeleteModal()"
+  (onConfirm)="onBusDeleted()">
+</app-bus-delete-modal>

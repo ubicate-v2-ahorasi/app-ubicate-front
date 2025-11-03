@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { GoogleMapsModule, GoogleMap } from '@angular/google-maps';
 import { CommonModule } from '@angular/common';
-import { Subject, Subscription, finalize, of, catchError } from 'rxjs';
+import { Subject, Subscription, finalize } from 'rxjs';
 import { MapControlsComponent } from '../map-controls/map-controls';
 import { BusListComponent } from '../../bus-mapa/bus-list/bus-list';
 import { RouteListComponent } from '../route-list/route-list';
@@ -21,14 +21,12 @@ import {
   BusMarkerService,
   BusWithPosition,
 } from '../../../service/bus/bus-marker.service';
-import { BusService } from '../../../service/bus/bus.service';
 import { Bus } from '../../../models/buses.model';
 import { RouteCreator } from '../route-creator/route-creator';
 import { RouteResponse } from '../../../models/route.model';
 import { IconsModule } from '../../../icons.module';
 import { FirebaseService } from '../../../../../core/service/firebase.service';
 import { SessionService } from '../../../../../core/service/session.service';
-import { BusLayerComponent } from '../bus-layer/bus-layer';
 
 @Component({
   selector: 'app-map-container',
@@ -56,12 +54,9 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
   private busesSub?: Subscription;
 
   private busMarkerService = inject(BusMarkerService);
-  private busService = inject(BusService);
   private locationService = inject(LocationService);
   private routeMapService = inject(RouteMapService);
   private cdr = inject(ChangeDetectorRef);
-
-  private selectedBusMarker: google.maps.Marker | null = null;
 
   googleMapReady = false;
   mapInitialized = false;
@@ -77,12 +72,10 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
   showRouteList = false;
   isLoadingBuses = false;
   isLoadingRoutes = false;
-
-  showBuses = true;
+  showBuses = false; // ✅ CAMBIAR A FALSE - No mostrar buses por defecto
 
   buses: BusWithPosition[] = [];
   routes: RouteResponse[] = [];
-  currentLocation: google.maps.LatLngLiteral | null = null;
   selectedRouteId: number | null = null;
 
   constructor(
@@ -91,10 +84,21 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
   ) {}
 
   ngOnInit() {
-    const empresaId = this.sessionService.getEmpresaId();
-    if (!empresaId) return;
-    this.empresaId = empresaId;
-    this.subscribeBusesStream(this.empresaId, this.rutaId);
+    const sessionEmpresaId = this.sessionService.getEmpresaId();
+
+    if (sessionEmpresaId) {
+      this.empresaId = sessionEmpresaId;
+      // ✅ NO subscribir buses automáticamente
+    } else {
+      this.firebaseService
+        .findFirstEmpresaWithBuses()
+        .subscribe((empresaId) => {
+          if (empresaId) {
+            this.empresaId = empresaId;
+            // ✅ NO subscribir buses automáticamente
+          }
+        });
+    }
   }
 
   get safeGoogleMap(): google.maps.Map | null {
@@ -130,11 +134,6 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
     this.setupBasicListeners();
     this.subscribeToServices();
     this.loadInitialData();
-
-    if (this.buses.length > 0 && this.showBuses) {
-      this.busMarkerService.upsertBusMarkers(this.buses, this.safeGoogleMap!);
-      this.fitBoundsToBuses(this.buses);
-    }
 
     this.cdr.detectChanges();
   }
@@ -206,47 +205,6 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
     this.routeMapService.loadRoutes().subscribe();
   }
 
-  private loadBusesByRoute(rutaId: number) {
-    this.busService
-      .getBuses(0, 100, rutaId)
-      .pipe(
-        catchError(() => of({ content: [] })),
-        finalize(() => {
-          this.isLoadingBuses = false;
-          this.cdr.markForCheck();
-        })
-      )
-      .subscribe((response) => {
-        const buses = response.content || [];
-        const busesWithPosition = buses
-          .filter((b: any) => {
-            const hasCoords =
-              b.latitud !== null &&
-              b.longitud !== null &&
-              !isNaN(b.latitud) &&
-              !isNaN(b.longitud);
-            const isActive = b.activo === true && b.estado !== 'INACTIVO';
-            return hasCoords && isActive;
-          })
-          .map((b: any) => ({
-            ...b,
-            position: { lat: b.latitud, lng: b.longitud },
-          }));
-
-        this.buses = busesWithPosition;
-
-        if (this.isMapReady && this.showBuses && busesWithPosition.length > 0) {
-          this.busMarkerService.upsertBusMarkers(
-            busesWithPosition,
-            this.safeGoogleMap!
-          );
-          this.fitBoundsToBuses(busesWithPosition);
-        } else {
-          this.busMarkerService.clearMarkers();
-        }
-      });
-  }
-
   private fitBoundsToBuses(buses: BusWithPosition[]) {
     if (!this.safeGoogleMap || buses.length === 0) return;
 
@@ -265,7 +223,6 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
 
   getCurrentLocation() {
     if (this.isLocating) return;
-
     this.locationService.getCurrentLocation().then((location) => {
       if (this.safeGoogleMap) {
         this.locationService.createLocationMarker(this.safeGoogleMap, location);
@@ -298,11 +255,11 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     this.isLoadingRoutes = true;
-    this.isLoadingBuses = true;
     this.selectedRouteId = routeId;
-    this.rutaId = routeId; // guarda filtro actual
-    this.showBuses = true; // 4) enciende la capa
+    this.rutaId = routeId;
+    this.showBuses = true; // ✅ ACTIVAR buses solo cuando selecciones una ruta
 
+    // Mostrar la ruta en el mapa
     this.routeMapService
       .getById(routeId)
       .pipe(
@@ -312,18 +269,21 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
         })
       )
       .subscribe((route) => {
-        if (route)
+        if (route) {
           this.routeMapService.showRouteOnMap(route, this.safeGoogleMap!);
+        }
         this.showRouteList = false;
       });
 
-    this.subscribeBusesStream(this.empresaId, routeId); // 5) re-suscribe con filtro
+    // ✅ MOSTRAR BUSES DE ESA RUTA ESPECÍFICA
+    this.subscribeBusesStream(this.empresaId, routeId);
     this.cdr.markForCheck();
   }
+
   showAllBuses() {
     this.selectedRouteId = null;
     this.rutaId = undefined;
-    this.showBuses = true;
+    this.showBuses = true; // ✅ Mostrar todos los buses
     this.subscribeBusesStream(this.empresaId, undefined);
     this.cdr.markForCheck();
   }
@@ -366,21 +326,20 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
   refreshData() {
     this.routeMapService.loadRoutes().subscribe();
     if (this.selectedRouteId) {
-      this.loadBusesByRoute(this.selectedRouteId);
+      this.subscribeBusesStream(this.empresaId, this.selectedRouteId);
     }
   }
 
   clearRouteAndBuses() {
     this.selectedRouteId = null;
-    this.rutaId = undefined; // opcional: resetea filtro de ruta
-    this.showBuses = false; // 1) apaga la capa
-    this.busesSub?.unsubscribe(); // 2) corta el stream
+    this.rutaId = undefined;
+    this.showBuses = false; // ✅ OCULTAR buses al limpiar
+    this.busesSub?.unsubscribe();
     this.busesSub = undefined;
-    this.busMarkerService.clearMarkers(); // 3) limpia marcadores
-    this.routeMapService.clearAllRoutesFromMap(); // limpia rutas dibujadas
-    this.buses = []; // limpia estado local
+    this.busMarkerService.clearMarkers();
+    this.routeMapService.clearAllRoutesFromMap();
+    this.buses = [];
 
-    // opcional: re-centra el mapa a tu posición por defecto
     if (this.safeGoogleMap) {
       this.safeGoogleMap.setCenter(this.center);
       this.safeGoogleMap.setZoom(this.zoom);

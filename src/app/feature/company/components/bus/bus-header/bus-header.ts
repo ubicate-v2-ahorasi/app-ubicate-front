@@ -2,7 +2,6 @@ import { Component, Output, EventEmitter } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { BusCreate } from '../bus-create/bus-create';
-// import { Bus } from "../../../pages/bus/bus"; ← QUITA ESTA LÍNEA
 
 @Component({
   selector: 'app-bus-header',

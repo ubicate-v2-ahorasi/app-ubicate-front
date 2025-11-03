@@ -34,12 +34,10 @@ export class ConductorFormModal implements OnInit {
   isSubmitting = false;
   isEditMode = false;
 
+  showCredentials = false;
+  createdCredentials: any = null;
+
   categorias = ['A1', 'A2a', 'A2b', 'A3a', 'A3b', 'A3c'];
-  turnos = [
-    { value: 'MAÑANA', label: 'Mañana (06:00 - 14:00)' },
-    { value: 'TARDE', label: 'Tarde (14:00 - 22:00)' },
-    { value: 'NOCHE', label: 'Noche (22:00 - 06:00)' },
-  ];
 
   ngOnInit() {
     this.initForm();
@@ -67,7 +65,6 @@ export class ConductorFormModal implements OnInit {
       numeroLicencia: ['', [Validators.required]],
       categoriaLicencia: ['', [Validators.required]],
       fechaVencimientoLicencia: ['', [Validators.required]],
-      turno: ['MAÑANA', [Validators.required]],
     });
   }
 
@@ -88,7 +85,6 @@ export class ConductorFormModal implements OnInit {
         categoriaLicencia: this.conductor.categoria_licencia || '',
         fechaVencimientoLicencia:
           this.conductor.fecha_vencimiento_licencia || '',
-        turno: this.conductor.turno || 'MAÑANA',
       });
     }
   }
@@ -97,14 +93,43 @@ export class ConductorFormModal implements OnInit {
     this.conductorForm.reset({
       nombre: '',
       apellido: '',
-      turno: 'MAÑANA',
       categoriaLicencia: '',
     });
+    this.showCredentials = false;
+    this.createdCredentials = null;
   }
 
   cancel() {
     this.resetForm();
     this.onCancel.emit();
+  }
+
+  closeCredentials() {
+    this.showCredentials = false;
+    this.createdCredentials = null;
+    this.resetForm();
+    this.onSave.emit();
+  }
+
+  sendToWhatsApp() {
+    const phoneNumber = this.createdCredentials?.telefono || '';
+    const email = this.createdCredentials?.email || '';
+    const password = this.createdCredentials?.password || '';
+
+    const cleanPhone = phoneNumber.replace(/\D/g, '');
+
+    const message = `🚗 *Credenciales de Acceso*
+
+📧 *Email:* ${email}
+🔐 *Contraseña:* ${password}
+
+Cambia tu contraseña en el primer acceso.`;
+
+    const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
+      message
+    )}`;
+
+    window.open(whatsappUrl, '_blank');
   }
 
   onSubmit() {
@@ -128,10 +153,14 @@ export class ConductorFormModal implements OnInit {
           });
       } else {
         this.conductorService.createConductor(formData).subscribe({
-          next: () => {
+          next: (response) => {
             this.isSubmitting = false;
-            this.resetForm();
-            this.onSave.emit();
+            this.createdCredentials = {
+              email: formData.email,
+              telefono: formData.telefono,
+              password: response.temp_password,
+            };
+            this.showCredentials = true;
           },
           error: (error) => {
             console.error('Error al crear conductor:', error);

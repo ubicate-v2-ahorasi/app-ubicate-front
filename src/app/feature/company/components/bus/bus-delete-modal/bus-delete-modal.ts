@@ -42,4 +42,23 @@ export class BusDeleteModal {
       });
     }
   }
+  getEstadoBadge(estado: string): string {
+    const badges = {
+      ACTIVO: 'text-green-700',
+      INACTIVO: 'text-red-700',
+      EN_RUTA: 'text-blue-700',
+      MANTENIMIENTO: 'text-yellow-700',
+    };
+    return badges[estado as keyof typeof badges] || 'text-gray-700';
+  }
+
+  getEstadoLabel(estado: string): string {
+    const labels = {
+      ACTIVO: '🟢 Activo',
+      INACTIVO: '🔴 Inactivo',
+      EN_RUTA: '🚌 En Ruta',
+      MANTENIMIENTO: '🔧 Mantenimiento',
+    };
+    return labels[estado as keyof typeof labels] || estado;
+  }
 }

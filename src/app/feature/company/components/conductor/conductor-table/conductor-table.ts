@@ -7,7 +7,6 @@ import { ConductorFilters } from '../conductor-filters/conductor-filters';
 import { ConductorService } from '../../../service/chofer/chofer.service';
 import { BusService } from '../../../service/bus/bus.service';
 
-type Turno = 'MANANA' | 'TARDE' | 'NOCHE';
 type Estado = 'ACTIVO' | 'INACTIVO' | 'VACACIONES' | 'SUSPENDIDO';
 
 interface ConductorVM {
@@ -17,7 +16,6 @@ interface ConductorVM {
   telefono: string | null;
   numeroLicencia: string;
   categoriaLicencia: string;
-  turno: Turno;
   estado: Estado;
   busAsignadoId: number | null;
   placaBusAsignado: string | null;
@@ -58,7 +56,6 @@ export class ConductorTable implements OnInit {
   currentSearchTerm = '';
   currentEstado: 'Todos' | Estado = 'Todos';
   currentCategoria = 'Todas';
-  currentTurno: 'Todos' | Turno = 'Todos';
   showDeleteModal = false;
   showEditModal = false;
   selectedConductor: ConductorVM | null = null;
@@ -68,14 +65,6 @@ export class ConductorTable implements OnInit {
     this.loadBusesDisponibles();
   }
 
-  private normTurno(v: any): Turno {
-    const s = String(v ?? '').toUpperCase();
-    if (s === 'MAÑANA' || s === 'MANANA') return 'MANANA';
-    if (s === 'TARDE') return 'TARDE';
-    if (s === 'NOCHE') return 'NOCHE';
-    return 'MANANA';
-  }
-
   private toConductorVM = (c: any): ConductorVM => ({
     id: c.id,
     nombreCompleto: c.nombreCompleto ?? c.nombre_completo ?? '',
@@ -83,7 +72,6 @@ export class ConductorTable implements OnInit {
     telefono: c.telefono ?? null,
     numeroLicencia: c.numeroLicencia ?? c.numero_licencia,
     categoriaLicencia: c.categoriaLicencia ?? c.categoria_licencia,
-    turno: this.normTurno(c.turno),
     estado: c.estado as Estado,
     busAsignadoId: c.busAsignadoId ?? c.bus_asignado_id ?? null,
     placaBusAsignado: (() => {
@@ -155,24 +143,16 @@ export class ConductorTable implements OnInit {
   applyLocalFilters(conductores: ConductorVM[]): ConductorVM[] {
     let filtered = [...conductores];
 
-    // Filtro por Categoría
     if (this.currentCategoria !== 'Todas') {
       filtered = filtered.filter(
         (c) => c.categoriaLicencia === this.currentCategoria
       );
     }
 
-    // Filtro por Estado
     if (this.currentEstado !== 'Todos') {
       filtered = filtered.filter((c) => c.estado === this.currentEstado);
     }
 
-    // Filtro por Turno
-    if (this.currentTurno !== 'Todos') {
-      filtered = filtered.filter((c) => c.turno === this.currentTurno);
-    }
-
-    // Filtro por término de búsqueda
     if (this.currentSearchTerm) {
       const searchTerm = this.currentSearchTerm.toLowerCase();
       filtered = filtered.filter(
@@ -185,6 +165,7 @@ export class ConductorTable implements OnInit {
 
     return filtered;
   }
+
   onSearch(searchTerm: string) {
     this.currentSearchTerm = searchTerm;
     this.loadConductores();
@@ -200,16 +181,10 @@ export class ConductorTable implements OnInit {
     this.loadConductores();
   }
 
-  onTurnoChange(turno: Turno | 'Todos') {
-    this.currentTurno = turno;
-    this.loadConductores();
-  }
-
   onClearFilters() {
     this.currentSearchTerm = '';
     this.currentEstado = 'Todos';
     this.currentCategoria = 'Todas';
-    this.currentTurno = 'Todos';
     this.loadConductores();
   }
 
@@ -289,19 +264,6 @@ export class ConductorTable implements OnInit {
       case 'INACTIVO':
         return 'bg-red-100 text-red-800';
       case 'SUSPENDIDO':
-        return 'bg-gray-100 text-gray-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  }
-
-  getTurnoClass(turno: Turno): string {
-    switch (turno) {
-      case 'MANANA':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'TARDE':
-        return 'bg-blue-100 text-blue-800';
-      case 'NOCHE':
         return 'bg-gray-100 text-gray-800';
       default:
         return 'bg-gray-100 text-gray-800';

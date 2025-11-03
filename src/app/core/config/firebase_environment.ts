@@ -5,5 +5,5 @@ export const firebaseConfig = {
   projectId: 'flutter-firebase-e2cf0',
   storageBucket: 'flutter-firebase-e2cf0.firebasestorage.app',
   messagingSenderId: '858346889549',
-  appId: '1:858346889549:web:0b1721cbda2581357e1704',
+  appId: '1:858346889549:web:336720d9a4fffb3a7e1704',
 };

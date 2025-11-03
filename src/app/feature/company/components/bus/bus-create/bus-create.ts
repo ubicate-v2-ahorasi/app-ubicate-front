@@ -46,10 +46,14 @@ export class BusCreate implements OnInit {
   initForm() {
     this.busForm = this.fb.group({
       placa: ['', [Validators.required]],
+      marca: ['', [Validators.required]],
       modelo: ['', [Validators.required]],
-      capacidad: ['', [Validators.required, Validators.min(1)]],
+      capacidad: [
+        '',
+        [Validators.required, Validators.min(1), Validators.max(100)],
+      ],
       anio: ['', [Validators.required]],
-      color: ['', [Validators.required]],
+      estado: ['ACTIVO', [Validators.required]],
     });
   }
 
@@ -57,10 +61,11 @@ export class BusCreate implements OnInit {
     if (this.bus) {
       this.busForm.patchValue({
         placa: this.bus.placa,
+        marca: this.bus.modelo,
         modelo: this.bus.modelo,
         capacidad: this.bus.capacidad,
         anio: this.bus.anio,
-        color: this.bus.color,
+        estado: this.bus.estado,
       });
     }
   }

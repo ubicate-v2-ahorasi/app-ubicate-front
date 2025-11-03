@@ -20,18 +20,29 @@ export interface LoginResponse {
   token: string;
   user: {
     id: number;
+    empresa_id: number;
     email: string;
     nombre: string;
+    apellido: string;
+    dni: string;
+    telefono: string;
+    correo: string;
+    username: string;
     role: string;
   };
+  empresa_id: number;
+  message: string;
 }
 
 export interface RegisterResponse {
   token: string;
   user: {
     id: number;
+    empresa_id: number;
     email: string;
     nombre: string;
     role: string;
   };
+  empresa_id: number;
+  message: string;
 }
