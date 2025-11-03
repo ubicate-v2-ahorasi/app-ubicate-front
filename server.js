@@ -1,15 +1,16 @@
-// Servidor Express para SPA Angular en /dist
 const express = require('express');
 const path = require('path');
+
 const app = express();
-const port = process.env.PORT || 8080;
 
-const distPath = path.join(__dirname, 'dist'); // veremos en el Dockerfile que copiamos aquí
-app.use(express.static(distPath, { maxAge: '1y', etag: true }));
+app.use(express.static(__dirname + '/dist/ubicate-taller-2'));
 
-// Fallback SPA: cualquier ruta -> index.html
-app.get('*', (_req, res) => {
-  res.sendFile(path.join(distPath, 'index.html'));
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/dist/ubicate-taller-2/index.html'));
 });
 
-app.listen(port, () => console.log(`Listening on ${port}`));
+// Puerto dinámico de Heroku
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+  console.log(`🚀 Ubicate Taller 2 corriendo en puerto ${port}`);
+});

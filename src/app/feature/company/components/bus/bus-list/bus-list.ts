@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-bus-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, BusDeleteModal, BusFilter],
+  imports: [CommonModule, FormsModule, BusDeleteModal],
   templateUrl: './bus-list.html',
 })
 export class BusList implements OnInit {
