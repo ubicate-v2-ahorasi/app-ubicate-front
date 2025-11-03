@@ -18,10 +18,7 @@ export class Home {
 
   features = [
     '🚌 Ubicación en tiempo real',
-    '⏱️ Tiempo de espera exacto',
-    '📍 Paradas cercanas',
-    '🔔 Notificaciones inteligentes',
-    '📱 Funciona offline',
+    '⏱️ Tiempo de espera estimado',
     '🆓 Completamente gratis',
   ];
 
@@ -43,11 +40,7 @@ export class Home {
     },
   ];
 
-  stats = [
-    { number: '50K+', label: 'Usuarios activos' },
-    { number: '200+', label: 'Rutas cubiertas' },
-    { number: '15 seg', label: 'Tiempo promedio de búsqueda' },
-  ];
+
 
   constructor(private router: Router) {}
 
