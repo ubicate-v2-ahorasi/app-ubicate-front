@@ -1,0 +1,44 @@
+<!-- Compact KPIs -->
+<div *ngIf="!loading && stats as s" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+  <!-- Total -->
+  <div class="p-3 bg-white border rounded-lg text-center shadow-sm">
+    <div class="text-2xl font-semibold leading-none">{{ s.total_conductores }}</div>
+    <div class="text-xs text-gray-600">Total conductores</div>
+  </div>
+
+  <!-- Activos -->
+  <div class="p-3 bg-white border rounded-lg text-center shadow-sm">
+    <div class="text-2xl font-semibold leading-none">{{ s.conductores_activos }}</div>
+    <div class="text-xs text-gray-600">Activos</div>
+  </div>
+
+  <!-- Con bus -->
+  <div class="p-3 bg-white border rounded-lg text-center shadow-sm">
+    <div class="text-2xl font-semibold leading-none">{{ s.conductores_con_bus }}</div>
+    <div class="text-xs text-gray-600">Con bus</div>
+  </div>
+
+  <!-- Licencias por vencer (resalta si > 0) -->
+  <div class="p-3 border rounded-lg text-center shadow-sm"
+    [ngClass]="s.licencias_por_vencer > 0 ? 'bg-amber-50 border-amber-300' : 'bg-white'">
+    <div class="text-2xl font-semibold leading-none">{{ s.licencias_por_vencer }}</div>
+    <div class="text-xs text-gray-600">Licencias por vencer</div>
+  </div>
+
+  <!-- Extras solo si aplican -->
+  <div *ngIf="s.licencias_vencidas > 0" class="p-3 bg-red-50 border border-red-300 rounded-lg text-center shadow-sm">
+    <div class="text-2xl font-semibold leading-none">{{ s.licencias_vencidas }}</div>
+    <div class="text-xs text-red-700">Licencias vencidas</div>
+  </div>
+
+  <div *ngIf="s.conductores_inactivos > 0" class="p-3 bg-white border rounded-lg text-center shadow-sm">
+    <div class="text-2xl font-semibold leading-none">{{ s.conductores_inactivos }}</div>
+    <div class="text-xs text-gray-600">Inactivos</div>
+  </div>
+
+  <div *ngIf="s.conductores_suspendidos > 0" class="p-3 bg-white border rounded-lg text-center shadow-sm">
+    <div class="text-2xl font-semibold leading-none">{{ s.conductores_suspendidos }}</div>
+    <div class="text-xs text-gray-600">Suspendidos</div>
+  </div>
+</div>

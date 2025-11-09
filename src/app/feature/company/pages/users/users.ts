@@ -4,12 +4,14 @@ import { ConductorTable } from '../../components/conductor/conductor-table/condu
 import { ConductorPagination } from '../../components/conductor/conductor-pagination/conductor-pagination';
 import { ConductorFormModal } from '../../components/conductor/conductor-form-modal/conductor-form-modal';
 import { ConductorDeleteModal } from '../../components/conductor/conductor-delete-modal/conductor-delete-modal';
+import { ConductorStatsComponent } from '../../components/conductor/conductor-stats/conductor-stats';
 
 @Component({
   selector: 'app-users',
   standalone: true,
   imports: [
     ConductorHeader,
+    ConductorStatsComponent,
     ConductorTable,
     ConductorPagination,
     ConductorFormModal,
