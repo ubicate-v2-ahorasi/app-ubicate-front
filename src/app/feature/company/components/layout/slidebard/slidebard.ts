@@ -9,17 +9,24 @@ import {
 import { CommonModule } from '@angular/common';
 import { SessionService } from '../../../../../core/service/session.service';
 import { Router } from '@angular/router';
+import {
+  GreenEducationService,
+  GreenTip,
+} from '../../../service/green-education.service';
+import { GreenNotificationComponent } from '../../green-notification/green-notification';
 
 @Component({
   selector: 'app-slidebard',
-  imports: [CommonModule],
+  imports: [CommonModule, GreenNotificationComponent],
   templateUrl: './slidebard.html',
 })
 export class Slidebard implements OnInit {
   @Input() isOpen = true;
   @Output() logout = new EventEmitter<void>();
+  @Output() toggleChange = new EventEmitter<boolean>();
   private router = inject(Router);
   private sessionService = inject(SessionService);
+  private greenEducationService = inject(GreenEducationService);
 
   menuItems = [
     {
@@ -34,10 +41,27 @@ export class Slidebard implements OnInit {
 
   activeItem = 'dashboard';
   empresaNombre: string | null = null;
+  showGreenNotification = false;
+  currentGreenTip?: GreenTip;
 
   ngOnInit(): void {
     // Obtener el nombre de la empresa desde el SessionService
     this.empresaNombre = this.sessionService.getEmpresaNombre();
+
+    // Mostrar tip verde después de 10 segundos
+    setTimeout(() => {
+      this.showGreenTip();
+    }, 10000);
+
+    // Mostrar tip verde cada 5 minutos
+    setInterval(() => {
+      this.showGreenTip();
+    }, 300000);
+  }
+
+  toggleSidebar(): void {
+    this.isOpen = !this.isOpen;
+    this.toggleChange.emit(this.isOpen);
   }
 
   onItemClick(itemId: string): void {
@@ -51,6 +75,22 @@ export class Slidebard implements OnInit {
   onLogout(): void {
     this.sessionService.logout();
     this.logout.emit();
+  }
+
+  showGreenTip(): void {
+    if (!this.showGreenNotification) {
+      this.currentGreenTip = this.greenEducationService.showRandomTip();
+      this.showGreenNotification = true;
+    }
+  }
+
+  onGreenNotificationClosed(): void {
+    this.showGreenNotification = false;
+  }
+
+  onLearnMoreClicked(tip: GreenTip): void {
+    console.log('Abrir información detallada:', tip);
+    this.showGreenNotification = false;
   }
 
   trackByFn(index: number, item: any): any {
