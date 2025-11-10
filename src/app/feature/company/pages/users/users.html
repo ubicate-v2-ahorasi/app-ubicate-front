@@ -1,16 +1,12 @@
-<div class="flex flex-col gap-6">
+<app-conductor-header></app-conductor-header>
 
-  <app-conductor-header></app-conductor-header>
+<app-conductor-stats></app-conductor-stats>
 
-  <app-conductor-stats></app-conductor-stats>
+<app-conductor-table (onCreateNew)="openCreateModal()"></app-conductor-table>
 
-  <app-conductor-table (onCreateNew)="openCreateModal()"></app-conductor-table>
+<app-conductor-pagination></app-conductor-pagination>
 
-  <app-conductor-pagination></app-conductor-pagination>
+<app-conductor-form-modal [isVisible]="isModalVisible" (onCancel)="closeModal()" (onSave)="onConductorSaved()">
+</app-conductor-form-modal>
 
-  <app-conductor-form-modal [isVisible]="isModalVisible" (onCancel)="closeModal()" (onSave)="onConductorSaved()">
-  </app-conductor-form-modal>
-
-  <app-conductor-delete-modal></app-conductor-delete-modal>
-
-</div>
+<app-conductor-delete-modal></app-conductor-delete-modal>
