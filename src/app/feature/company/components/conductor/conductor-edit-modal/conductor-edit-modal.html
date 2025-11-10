@@ -1,13 +1,16 @@
-<div *ngIf="isVisible" class="fixed inset-0 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-  <div class="bg-white w-full max-w-2xl shadow-2xl rounded-xl border border-gray-200">
+@if (isVisible) {
+<div class="fixed inset-0 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-gray-800 w-full max-w-2xl shadow-2xl rounded-xl border border-gray-200 dark:border-gray-700">
 
     <!-- Header del Modal -->
-    <div class="flex justify-between items-center px-8 py-6 border-b border-gray-200">
+    <div class="flex justify-between items-center px-8 py-6 border-b border-gray-200 dark:border-gray-700">
       <div class="flex items-center">
-        <h3 class="text-xl font-semibold text-gray-900">Editar Conductor</h3>
-        <span *ngIf="conductor" class="ml-4 text-sm text-gray-600">{{ conductor.nombre_completo }}</span>
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Editar Conductor</h3>
+        @if (conductor) {
+        <span class="ml-4 text-sm text-gray-600 dark:text-gray-400">{{ conductor.nombre_completo }}</span>
+        }
       </div>
-      <button (click)="cancel()" class="text-gray-400 hover:text-gray-600 transition-colors">
+      <button (click)="cancel()" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
@@ -20,53 +23,60 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Turno -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Turno</label>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Turno</label>
           <select formControlName="turno"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-            <option *ngFor="let turno of turnos" [value]="turno.value">{{ turno.label }}</option>
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+            @for (turno of turnos; track turno.value) {
+            <option [value]="turno.value">{{ turno.label }}</option>
+            }
           </select>
         </div>
 
         <!-- Estado -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Estado</label>
           <select formControlName="estado"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-            <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+            @for (estado of estados; track estado) {
+            <option [value]="estado">{{ estado }}</option>
+            }
           </select>
         </div>
 
         <!-- Teléfono -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Teléfono</label>
           <input type="tel" formControlName="telefono" placeholder="Teléfono del conductor"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
         </div>
 
         <!-- Bus Asignado -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Bus Asignado</label>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bus Asignado</label>
           <select formControlName="busAsignadoId"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-            <option *ngFor="let bus of buses" [value]="bus.id"
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+            @for (bus of buses; track bus.id) {
+            <option [value]="bus.id"
               [disabled]="bus.conductorAsignadoId && bus.conductorAsignadoId !== conductor.id">
               {{ bus.placa }} - {{ bus.modelo || '—' }}
             </option>
+            }
           </select>
         </div>
       </div>
 
       <!-- Botones -->
-      <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200 mt-8">
+      <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700 mt-8">
         <button type="button" (click)="cancel()" [disabled]="isSubmitting"
-          class="px-6 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          class="px-6 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
           Cancelar
         </button>
         <button type="submit" [disabled]="isSubmitting"
-          class="px-6 py-3 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          class="px-6 py-3 text-sm font-medium text-white bg-blue-600 dark:bg-blue-700 border border-transparent rounded-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
           {{ submitButtonText }}
         </button>
       </div>
     </form>
   </div>
 </div>
+}

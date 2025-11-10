@@ -1,15 +1,16 @@
 <!-- green-notification.html -->
-<div *ngIf="show" class="fixed top-20 right-4 z-50 max-w-sm animate-slide-in">
-  <div [class]="getNotificationClass()" class="notification-container rounded-lg shadow-lg p-4 cursor-default">
+@if (show) {
+<div class="fixed top-20 right-4 z-50 max-w-sm animate-slide-in">
+  <div [class]="getNotificationClass()" class="notification-container rounded-lg shadow-lg dark:shadow-2xl p-4 cursor-default">
     <div class="flex items-start">
       <div class="flex-shrink-0">
         <span class="text-2xl">{{tip.icon}}</span>
       </div>
       <div class="ml-3 flex-1">
-        <h4 class="text-sm font-semibold text-gray-800">{{tip.title}}</h4>
-        <p class="text-sm text-gray-600 mt-1">{{tip.message}}</p>
+        <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{tip.title}}</h4>
+        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">{{tip.message}}</p>
       </div>
-      <button (click)="close()" class="flex-shrink-0 ml-2 text-gray-400 hover:text-gray-600 transition-colors">
+      <button (click)="close()" class="flex-shrink-0 ml-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
         <span class="sr-only">Cerrar</span>
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -19,21 +20,30 @@
 
     <div class="mt-3 flex gap-2">
       <button (click)="learnMore()"
-        class="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full hover:bg-green-200 transition-colors">
+        class="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-3 py-1 rounded-full hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors">
         📚 Saber más
       </button>
       <button (click)="dismiss()"
-        class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 transition-colors">
+        class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
         ✓ Entendido
       </button>
     </div>
 
     <!-- Indicador de tipo de notificación -->
-    <div class="mt-2 text-xs text-gray-500">
-      <span *ngIf="tip.type === 'tip'">💡 Consejo de sostenibilidad</span>
-      <span *ngIf="tip.type === 'achievement'">🏆 Logro alcanzado</span>
-      <span *ngIf="tip.type === 'challenge'">🎯 Desafío verde</span>
-      <span *ngIf="tip.type === 'info'">ℹ️ Información</span>
+    <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+      @if (tip.type === 'tip') {
+      <span>💡 Consejo de sostenibilidad</span>
+      }
+      @if (tip.type === 'achievement') {
+      <span>🏆 Logro alcanzado</span>
+      }
+      @if (tip.type === 'challenge') {
+      <span>🎯 Desafío verde</span>
+      }
+      @if (tip.type === 'info') {
+      <span>ℹ️ Información</span>
+      }
     </div>
   </div>
 </div>
+}

@@ -1,6 +1,6 @@
 <div *ngIf="isOpen" class="fixed inset-0 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
 
-  <div class="bg-white w-full max-w-lg shadow-2xl rounded-2xl overflow-hidden">
+  <div class="bg-white dark:bg-gray-800 w-full max-w-lg shadow-2xl rounded-2xl overflow-hidden">
     <!-- Header -->
     <div class="flex items-center justify-between px-6 py-4 bg-[#040E1C] text-white">
       <h3 class="text-lg font-semibold">
@@ -18,7 +18,7 @@
 
       <!-- Información del Bus -->
       <div class="space-y-4 mb-6">
-        <h4 class="text-sm font-medium text-[#040E1C] border-b border-gray-200 pb-2 flex items-center">
+        <h4 class="text-sm font-medium text-[#040E1C] dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 flex items-center">
           <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -31,21 +31,21 @@
         <div class="grid grid-cols-2 gap-4">
           <!-- Placa -->
           <div>
-            <label class="block text-xs font-medium text-[#040E1C] mb-1">Placa *</label>
+            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Placa *</label>
             <input type="text" formControlName="placa"
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all"
+              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
               placeholder="ABC-123">
             <div *ngIf="busForm.get('placa')?.invalid && busForm.get('placa')?.touched"
-              class="text-red-500 text-xs mt-1">
+              class="text-red-500 dark:text-red-400 text-xs mt-1">
               La placa es requerida
             </div>
           </div>
 
           <!-- Año -->
           <div>
-            <label class="block text-xs font-medium text-[#040E1C] mb-1">Año *</label>
+            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Año *</label>
             <select formControlName="anio"
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all">
+              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
               <option value="">Año</option>
               <option value="2024">2024</option>
               <option value="2023">2023</option>
@@ -58,7 +58,7 @@
               <option value="2016">2016</option>
               <option value="2015">2015</option>
             </select>
-            <div *ngIf="busForm.get('anio')?.invalid && busForm.get('anio')?.touched" class="text-red-500 text-xs mt-1">
+            <div *ngIf="busForm.get('anio')?.invalid && busForm.get('anio')?.touched" class="text-red-500 dark:text-red-400 text-xs mt-1">
               El año es requerido
             </div>
           </div>
@@ -67,9 +67,9 @@
         <div class="grid grid-cols-2 gap-4">
           <!-- Marca -->
           <div>
-            <label class="block text-xs font-medium text-[#040E1C] mb-1">Marca *</label>
+            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Marca *</label>
             <select formControlName="marca"
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all">
+              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
               <option value="">Marca</option>
               <option value="Mercedes Benz">Mercedes Benz</option>
               <option value="Volvo">Volvo</option>
@@ -82,19 +82,19 @@
               <option value="Otra">Otra</option>
             </select>
             <div *ngIf="busForm.get('marca')?.invalid && busForm.get('marca')?.touched"
-              class="text-red-500 text-xs mt-1">
+              class="text-red-500 dark:text-red-400 text-xs mt-1">
               La marca es requerida
             </div>
           </div>
 
           <!-- Capacidad Pasajeros -->
           <div>
-            <label class="block text-xs font-medium text-[#040E1C] mb-1">Capacidad *</label>
+            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Capacidad *</label>
             <input type="number" formControlName="capacidad" min="15" max="80"
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all"
+              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
               placeholder="40 pasajeros">
             <div *ngIf="busForm.get('capacidad')?.invalid && busForm.get('capacidad')?.touched"
-              class="text-red-500 text-xs mt-1">
+              class="text-red-500 dark:text-red-400 text-xs mt-1">
               Capacidad requerida (15-80 pasajeros)
             </div>
           </div>
@@ -102,12 +102,12 @@
 
         <!-- Modelo Bus -->
         <div>
-          <label class="block text-xs font-medium text-[#040E1C] mb-1">Modelo del Bus *</label>
+          <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Modelo del Bus *</label>
           <input type="text" formControlName="modelo"
-            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all"
+            class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
             placeholder="O500U BlueTec 5, B270F, Torino, etc.">
           <div *ngIf="busForm.get('modelo')?.invalid && busForm.get('modelo')?.touched"
-            class="text-red-500 text-xs mt-1">
+            class="text-red-500 dark:text-red-400 text-xs mt-1">
             El modelo del bus es requerido
           </div>
         </div>
@@ -115,7 +115,7 @@
 
       <!-- Estado Operativo -->
       <div class="space-y-4">
-        <h4 class="text-sm font-medium text-[#040E1C] border-b border-gray-200 pb-2 flex items-center">
+        <h4 class="text-sm font-medium text-[#040E1C] dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 flex items-center">
           <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -124,9 +124,9 @@
         </h4>
 
         <div>
-          <label class="block text-xs font-medium text-[#040E1C] mb-1">Estado Operativo *</label>
+          <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Estado Operativo *</label>
           <select formControlName="estado"
-            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all">
+            class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
             <option value="ACTIVO">🟢 Activo - Disponible para servicio</option>
             <option value="INACTIVO">🔴 Inactivo - Fuera de servicio</option>
             <option value="MANTENIMIENTO">🔧 En Mantenimiento</option>
@@ -136,13 +136,13 @@
       </div>
 
       <!-- Buttons -->
-      <div class="flex space-x-3 mt-8 pt-4 border-t border-gray-200">
+      <div class="flex space-x-3 mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
         <button type="button" (click)="closeModal()"
-          class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+          class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
           Cancelar
         </button>
         <button type="submit" [disabled]="busForm.invalid || loading"
-          class="flex-1 px-4 py-2.5 text-sm font-medium bg-[#040E1C] text-white rounded-lg hover:bg-[#021133] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all">
+          class="flex-1 px-4 py-2.5 text-sm font-medium bg-[#040E1C] dark:bg-[#021133] text-white rounded-lg hover:bg-[#021133] dark:hover:bg-[#040E1C] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all">
           <svg *ngIf="loading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor"

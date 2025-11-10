@@ -18,6 +18,7 @@ import { Bus } from '../../../models/buses.model';
 
 @Component({
   selector: 'app-bus-create',
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './bus-create.html',
 })

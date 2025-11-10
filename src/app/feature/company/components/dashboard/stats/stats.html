@@ -1,4 +1,5 @@
-<div class="flex gap-4 w-full" *ngIf="stats">
+@if (stats) {
+<div class="flex gap-4 w-full">
   <!-- Total Buses -->
   <div
     class="flex-1 min-w-36 p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer">
@@ -68,3 +69,4 @@
   </div>
 
 </div>
+}
