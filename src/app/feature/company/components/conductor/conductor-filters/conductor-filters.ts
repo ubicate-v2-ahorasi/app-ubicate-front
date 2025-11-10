@@ -38,6 +38,7 @@ export class ConductorFilters {
   @Output() onCategoriaChange = new EventEmitter<string>();
   @Output() onTurnoChange = new EventEmitter<TurnoTodos>();
   @Output() onClearFilters = new EventEmitter<void>();
+  @Output() onCreateNew = new EventEmitter<void>();
 
   onSearchInput() {
     this.onSearch.emit(this.searchTerm);
@@ -57,5 +58,9 @@ export class ConductorFilters {
     this.selectedCategoria = 'Todas';
     this.selectedTurno = 'Todos';
     this.onClearFilters.emit();
+  }
+  
+  createNewConductor() {
+    this.onCreateNew.emit();
   }
 }

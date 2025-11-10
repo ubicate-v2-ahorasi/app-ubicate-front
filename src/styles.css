@@ -1,1 +1,39 @@
 @import "tailwindcss";
+
+/* Estilos personalizados para scrollbar */
+/* Ocultar scrollbar del html/body para evitar doble scrollbar */
+html, body {
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Asegurar que el scrollbar del main sea estable */
+main {
+  scrollbar-gutter: stable;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #040E1C 0%, #021133 100%);
+  border-radius: 10px;
+  border: 2px solid #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #021133 0%, #040E1C 100%);
+}
+
+/* Para Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #040E1C #f1f5f9;
+}

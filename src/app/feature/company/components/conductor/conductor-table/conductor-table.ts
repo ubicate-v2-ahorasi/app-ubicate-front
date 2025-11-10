@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConductorDeleteModal } from '../conductor-delete-modal/conductor-delete-modal';
@@ -45,6 +45,8 @@ interface BusVM {
 export class ConductorTable implements OnInit {
   private conductorService = inject(ConductorService);
   private busService = inject(BusService);
+
+  @Output() onCreateNew = new EventEmitter<void>();
 
   conductores: ConductorVM[] = [];
   busesDisponibles: BusVM[] = [];
@@ -186,6 +188,10 @@ export class ConductorTable implements OnInit {
     this.currentEstado = 'Todos';
     this.currentCategoria = 'Todas';
     this.loadConductores();
+  }
+
+  handleCreateNew() {
+    this.onCreateNew.emit();
   }
 
   onBusAssignment(conductor: ConductorVM, newBusId: number | null) {

@@ -16,6 +16,7 @@ export interface BusFilterCriteria {
 })
 export class BusFilter {
   @Output() filterChange = new EventEmitter<BusFilterCriteria>();
+  @Output() onCreateNew = new EventEmitter<void>();
 
   searchTerm = signal('');
   selectedEstado = signal('');
@@ -41,6 +42,10 @@ export class BusFilter {
     this.selectedEstado.set('');
     this.selectedRuta.set(null);
     this.emitFilterChange();
+  }
+
+  createNewBus() {
+    this.onCreateNew.emit();
   }
 
   private emitFilterChange() {

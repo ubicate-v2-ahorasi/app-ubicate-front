@@ -1,7 +1,8 @@
-<app-bus-header (onCreateBus)="onBusCreated()"></app-bus-header>
+<app-bus-header></app-bus-header>
 
-
-<app-bus-filter (filterChange)="onFilterChange($event)"></app-bus-filter>
-
+<app-bus-filter (filterChange)="onFilterChange($event)" (onCreateNew)="openCreateModal()"></app-bus-filter>
 
 <app-bus-list></app-bus-list>
+
+<app-bus-create [isOpen]="showCreateModal" [bus]="null" (onClose)="closeCreateModal()" (onSave)="onBusCreated()">
+</app-bus-create>
