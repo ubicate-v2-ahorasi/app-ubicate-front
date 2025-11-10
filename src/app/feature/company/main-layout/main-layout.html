@@ -1,11 +1,11 @@
 <app-slidebard [isOpen]="sidebarOpen" (logout)="onLogout()" (toggleChange)="onSidebarToggle($event)">
 </app-slidebard>
 
-<div class="transition-all duration-300" [ngClass]="sidebarOpen ? 'ml-64' : 'ml-16'">
+<div class="transition-all duration-300 h-screen overflow-hidden" [ngClass]="sidebarOpen ? 'ml-64' : 'ml-16'">
 
   <!-- <app-navbard (menuToggle)="toggleSidebar()"></app-navbard> -->
 
-  <main class="p-6 bg-gray-50 min-h-screen">
+  <main class="p-6 bg-gray-50 h-full overflow-y-auto">
     <router-outlet></router-outlet>
   </main>
 </div>

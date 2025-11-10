@@ -56,16 +56,16 @@
     </div>
 
     <!-- Navigation Menu -->
-    <div class="flex-1 overflow-y-auto p-2">
-      <nav class="space-y-1">
+    <div class="flex-1 overflow-y-auto py-2" [ngClass]="isOpen ? 'px-2' : 'px-0'">
+      <nav class="space-y-1" [ngClass]="isOpen ? '' : 'px-2'">
         <div *ngFor="let item of menuItems; trackBy: trackByFn">
           <button (click)="onItemClick(item.id)"
-            class="w-full flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200"
+            class="w-full flex items-center py-3 text-sm font-medium rounded-lg transition-all duration-200"
             [ngClass]="{
               'bg-white/10 text-slate-100 shadow-inner ring-1 ring-white/10': activeItem === item.id,
               'text-slate-300 hover:bg-white/5 hover:text-slate-100': activeItem !== item.id,
               'justify-center': !isOpen,
-              'justify-start space-x-3': isOpen
+              'justify-start space-x-3 px-3': isOpen
             }">
 
             <!-- Icons -->

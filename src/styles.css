@@ -1,9 +1,15 @@
 @import "tailwindcss";
 
 /* Estilos personalizados para scrollbar */
-/* Reservar espacio para el scrollbar para evitar desplazamiento del contenido */
-html {
-  overflow-y: scroll;
+/* Ocultar scrollbar del html/body para evitar doble scrollbar */
+html, body {
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Asegurar que el scrollbar del main sea estable */
+main {
+  scrollbar-gutter: stable;
 }
 
 ::-webkit-scrollbar {
@@ -30,5 +36,4 @@ html {
 * {
   scrollbar-width: thin;
   scrollbar-color: #040E1C #f1f5f9;
-  scrollbar-gutter: stable;
 }
