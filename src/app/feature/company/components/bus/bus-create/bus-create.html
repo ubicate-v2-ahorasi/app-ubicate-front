@@ -1,6 +1,10 @@
-<div *ngIf="isOpen" class="fixed inset-0 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+<div *ngIf="isOpen">
+  <!-- Fondo difuminado -->
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" (click)="closeModal()"></div>
 
-  <div class="bg-white dark:bg-gray-800 w-full max-w-lg shadow-2xl rounded-2xl overflow-hidden">
+  <!-- Modal -->
+  <div class="fixed inset-0 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4 pointer-events-none">
+    <div class="bg-white dark:bg-gray-800 w-full max-w-lg shadow-2xl rounded-2xl overflow-hidden pointer-events-auto">
     <!-- Header -->
     <div class="flex items-center justify-between px-6 py-4 bg-[#040E1C] text-white">
       <h3 class="text-lg font-semibold">

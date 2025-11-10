@@ -26,17 +26,13 @@ export class ConductorEditModal implements OnInit, OnChanges {
   @Input() buses: any[] = [];
   @Output() onCancel = new EventEmitter<void>();
   @Output() onSave = new EventEmitter<void>();
+  @Output() onDelete = new EventEmitter<void>();
 
   conductorForm!: FormGroup;
   isSubmitting = false;
 
   // Opciones para selects
   estados = ['ACTIVO', 'INACTIVO', 'VACACIONES', 'SUSPENDIDO'];
-  turnos = [
-    { value: 'MAÑANA', label: 'Mañana (06:00 - 14:00)' },
-    { value: 'TARDE', label: 'Tarde (14:00 - 22:00)' },
-    { value: 'NOCHE', label: 'Noche (22:00 - 06:00)' },
-  ];
 
   ngOnInit() {
     this.initForm();
@@ -51,7 +47,6 @@ export class ConductorEditModal implements OnInit, OnChanges {
   initForm() {
     this.conductorForm = this.fb.group({
       telefono: [''],
-      turno: ['MAÑANA'],
       estado: ['ACTIVO'],
       busAsignadoId: [null],
     });
@@ -61,7 +56,6 @@ export class ConductorEditModal implements OnInit, OnChanges {
     if (this.conductor) {
       this.conductorForm.patchValue({
         telefono: this.conductor.telefono || '',
-        turno: this.conductor.turno || 'MAÑANA',
         estado: this.conductor.estado || 'ACTIVO',
         busAsignadoId: this.conductor.busAsignadoId || null,
       });
@@ -71,7 +65,6 @@ export class ConductorEditModal implements OnInit, OnChanges {
   resetForm() {
     this.conductorForm.reset({
       telefono: '',
-      turno: 'MAÑANA',
       estado: 'ACTIVO',
       busAsignadoId: null,
     });
@@ -105,5 +98,9 @@ export class ConductorEditModal implements OnInit, OnChanges {
 
   get submitButtonText(): string {
     return this.isSubmitting ? 'Actualizando...' : 'Actualizar Conductor';
+  }
+
+  deleteClick() {
+    this.onDelete.emit();
   }
 }

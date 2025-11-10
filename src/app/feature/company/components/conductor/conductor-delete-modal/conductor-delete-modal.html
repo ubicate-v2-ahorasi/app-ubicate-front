@@ -1,6 +1,11 @@
 <!-- Modal de Confirmación para Eliminar -->
-<div *ngIf="isVisible" class="fixed inset-0 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-  <div class="bg-white dark:bg-gray-800 w-96 shadow-2xl rounded-xl border border-gray-200 dark:border-gray-700">
+<div *ngIf="isVisible">
+  <!-- Fondo difuminado -->
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" (click)="cancelDelete()"></div>
+  
+  <!-- Modal -->
+  <div class="fixed inset-0 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4 pointer-events-none">
+    <div class="bg-white dark:bg-gray-800 w-96 shadow-2xl rounded-xl border border-gray-200 dark:border-gray-700 pointer-events-auto">
     <div class="p-6 text-center">
       <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 mb-4">
         <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

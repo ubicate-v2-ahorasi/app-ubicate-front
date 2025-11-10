@@ -13,13 +13,12 @@
           <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Estado</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Contacto</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Vigencia</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Acciones</th>
         </tr>
       </thead>
 
       <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 transition-colors">
         <tr *ngIf="paginatedConductores.length === 0">
-          <td colspan="7" class="px-6 py-12 text-center">
+          <td colspan="6" class="px-6 py-12 text-center">
             <div class="flex flex-col items-center">
               <svg class="w-12 h-12 text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -31,7 +30,9 @@
           </td>
         </tr>
 
-        <tr *ngFor="let conductor of paginatedConductores" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+        <tr *ngFor="let conductor of paginatedConductores" 
+            (click)="onRowClick(conductor, $event)"
+            class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer select-text">
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="flex items-center">
               <div class="flex-shrink-0 h-10 w-10">
@@ -59,6 +60,7 @@
             <div class="space-y-1">
               <select [(ngModel)]="selectedBusByConductor[conductor.id]"
                 (ngModelChange)="onBusAssignment(conductor, $event)"
+                (click)="$event.stopPropagation()"
                 class="text-xs font-medium px-2 py-1 rounded border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-[#040E1C] bg-white dark:bg-gray-700 dark:text-white transition-all w-full min-w-[220px]">
                 <option [ngValue]="null">Sin bus asignado</option>
                 <option *ngFor="let bus of busesDisponibles" [ngValue]="bus.id"
@@ -117,39 +119,6 @@
               </span>
             </div>
           </td>
-
-          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-            <div class="flex space-x-2">
-              <button (click)="onView(conductor)"
-                class="text-blue-600 hover:text-blue-900 p-1 hover:bg-blue-50 rounded transition-colors"
-                title="Ver conductor">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-              </button>
-
-              <button (click)="onEdit(conductor)"
-                class="text-green-600 hover:text-green-900 p-1 hover:bg-green-50 rounded transition-colors"
-                title="Editar conductor">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5m-1.414-9.414a2 2 0 1 1 2.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-              </button>
-
-              <button (click)="onDelete(conductor)"
-                class="text-red-600 hover:text-red-900 p-1 hover:bg-red-50 rounded transition-colors"
-                title="Eliminar conductor">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            </div>
-          </td>
         </tr>
       </tbody>
     </table>
@@ -190,5 +159,5 @@
 </app-conductor-delete-modal>
 
 <app-conductor-edit-modal [isVisible]="showEditModal" [conductor]="selectedConductor" [buses]="busesDisponibles"
-  (onCancel)="onCancelEdit()" (onSave)="onConfirmEdit()">
+  (onCancel)="onCancelEdit()" (onSave)="onConfirmEdit()" (onDelete)="onDeleteFromEdit()">
 </app-conductor-edit-modal>

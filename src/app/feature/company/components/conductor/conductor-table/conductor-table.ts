@@ -269,6 +269,24 @@ export class ConductorTable implements OnInit {
   }
 
   onView(conductor: ConductorVM) {}
+  
+  onRowClick(conductor: ConductorVM, event: MouseEvent) {
+    // Verificar si hay texto seleccionado (el usuario está seleccionando para copiar)
+    const selection = window.getSelection();
+    if (selection && selection.toString().length > 0) {
+      return; // No abrir modal si hay texto seleccionado
+    }
+    
+    // Verificar si el clic fue en el select o sus hijos
+    const target = event.target as HTMLElement;
+    if (target.tagName === 'SELECT' || target.closest('select')) {
+      return; // No abrir modal si se hace clic en el select
+    }
+    
+    this.selectedConductor = conductor;
+    this.showEditModal = true;
+  }
+  
   onEdit(conductor: ConductorVM) {
     this.selectedConductor = conductor;
     this.showEditModal = true;
@@ -285,6 +303,11 @@ export class ConductorTable implements OnInit {
     this.showEditModal = false;
     this.selectedConductor = null;
     this.loadConductores();
+  }
+  onDeleteFromEdit() {
+    // Cerrar el modal de edición y abrir el de eliminación
+    this.showEditModal = false;
+    this.showDeleteModal = true;
   }
   onCancelDelete() {
     this.showDeleteModal = false;

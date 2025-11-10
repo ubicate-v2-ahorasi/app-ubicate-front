@@ -3,6 +3,34 @@
 /* Configuración de modo oscuro para Tailwind v4 */
 @custom-variant dark (.dark &);
 
+/* Cursor pointer para elementos interactivos */
+button,
+select,
+input[type="checkbox"],
+input[type="radio"],
+a,
+[role="button"],
+.cursor-pointer {
+  cursor: pointer;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="number"],
+input[type="date"],
+textarea {
+  cursor: text;
+}
+
+button:disabled,
+select:disabled,
+input:disabled,
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
 /* Estilos personalizados para scrollbar */
 /* Ocultar scrollbar del html/body para evitar doble scrollbar */
 html, body {
