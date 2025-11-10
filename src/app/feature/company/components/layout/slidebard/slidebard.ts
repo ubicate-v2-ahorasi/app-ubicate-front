@@ -39,6 +39,13 @@ export class Slidebard implements OnInit {
     },
     { id: 'users', name: 'Conductores', icon: 'user', path: '/company/users' },
     { id: 'buses', name: 'Buses', icon: 'bus', path: '/company/buses' },
+    { 
+      id: 'software-verde', 
+      name: 'Software Verde', 
+      icon: 'leaf', 
+      path: 'https://aws.amazon.com/es/sustainability/?utm_source=chatgpt.com',
+      isExternal: true 
+    },
   ];
 
   activeItem = 'dashboard';
@@ -75,8 +82,13 @@ export class Slidebard implements OnInit {
   onItemClick(itemId: string): void {
     const item = this.menuItems.find((menu) => menu.id === itemId);
     if (item) {
-      this.activeItem = itemId;
-      this.router.navigate([item.path]);
+      if ((item as any).isExternal) {
+        // Abrir enlace externo en nueva pestaña
+        window.open(item.path, '_blank');
+      } else {
+        this.activeItem = itemId;
+        this.router.navigate([item.path]);
+      }
     }
   }
 

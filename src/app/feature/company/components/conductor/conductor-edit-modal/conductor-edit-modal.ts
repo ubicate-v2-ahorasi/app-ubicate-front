@@ -8,7 +8,7 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConductorService } from '../../../service/chofer/chofer.service';
 
 @Component({
@@ -46,7 +46,7 @@ export class ConductorEditModal implements OnInit, OnChanges {
 
   initForm() {
     this.conductorForm = this.fb.group({
-      telefono: [''],
+      telefono: ['', [Validators.required, Validators.pattern(/^\d{9}$/), Validators.maxLength(9)]],
       estado: ['ACTIVO'],
       busAsignadoId: [null],
     });
@@ -102,5 +102,13 @@ export class ConductorEditModal implements OnInit, OnChanges {
 
   deleteClick() {
     this.onDelete.emit();
+  }
+
+  onlyNumbers(event: KeyboardEvent): void {
+    const key = event.key;
+    // Permitir teclas de control (backspace, delete, arrows, etc.)
+    if (key.length === 1 && !/^\d$/.test(key)) {
+      event.preventDefault();
+    }
   }
 }

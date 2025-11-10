@@ -39,6 +39,28 @@ export class ConductorFormModal implements OnInit {
 
   categorias = ['A1', 'A2a', 'A2b', 'A3a', 'A3b', 'A3c'];
 
+  // Validadores personalizados
+  private onlyLettersValidator(control: any) {
+    const value = control.value;
+    if (!value) return null;
+    const valid = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value);
+    return valid ? null : { onlyLetters: true };
+  }
+
+  private onlyNumbersValidator(control: any) {
+    const value = control.value;
+    if (!value) return null;
+    const valid = /^\d+$/.test(value);
+    return valid ? null : { onlyNumbers: true };
+  }
+
+  private plateValidator(control: any) {
+    const value = control.value;
+    if (!value) return null;
+    const valid = /^[a-zA-Z0-9]{0,6}$/.test(value);
+    return valid ? null : { invalidPlate: true };
+  }
+
   ngOnInit() {
     this.initForm();
   }
@@ -57,12 +79,35 @@ export class ConductorFormModal implements OnInit {
 
   initForm() {
     this.conductorForm = this.fb.group({
-      nombre: ['', [Validators.required, Validators.minLength(2)]],
-      apellido: ['', [Validators.required, Validators.minLength(2)]],
-      dni: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
-      telefono: ['', [Validators.required]],
+      nombre: ['', [
+        Validators.required, 
+        Validators.minLength(2),
+        Validators.maxLength(30),
+        this.onlyLettersValidator
+      ]],
+      apellido: ['', [
+        Validators.required, 
+        Validators.minLength(2),
+        Validators.maxLength(30),
+        this.onlyLettersValidator
+      ]],
+      dni: ['', [
+        Validators.required, 
+        Validators.pattern(/^\d{8}$/),
+        this.onlyNumbersValidator
+      ]],
+      telefono: ['', [
+        Validators.required,
+        Validators.minLength(9),
+        Validators.maxLength(9),
+        this.onlyNumbersValidator
+      ]],
       email: ['', [Validators.required, Validators.email]],
-      numeroLicencia: ['', [Validators.required]],
+      numeroLicencia: ['', [
+        Validators.required,
+        Validators.maxLength(6),
+        this.plateValidator
+      ]],
       categoriaLicencia: ['', [Validators.required]],
       fechaVencimientoLicencia: ['', [Validators.required]],
     });
@@ -172,6 +217,30 @@ Cambia tu contraseña en el primer acceso.`;
       Object.keys(this.conductorForm.controls).forEach((key) => {
         this.conductorForm.get(key)?.markAsTouched();
       });
+    }
+  }
+
+  onlyLetters(event: KeyboardEvent): void {
+    const key = event.key;
+    // Permitir teclas de control (backspace, delete, arrows, etc.)
+    if (key.length === 1 && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/.test(key)) {
+      event.preventDefault();
+    }
+  }
+
+  onlyNumbers(event: KeyboardEvent): void {
+    const key = event.key;
+    // Permitir teclas de control (backspace, delete, arrows, etc.)
+    if (key.length === 1 && !/^\d$/.test(key)) {
+      event.preventDefault();
+    }
+  }
+
+  onlyAlphanumeric(event: KeyboardEvent): void {
+    const key = event.key;
+    // Permitir teclas de control (backspace, delete, arrows, etc.)
+    if (key.length === 1 && !/^[a-zA-Z0-9]$/.test(key)) {
+      event.preventDefault();
     }
   }
 }
