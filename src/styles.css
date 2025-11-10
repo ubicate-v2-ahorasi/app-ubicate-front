@@ -32,10 +32,15 @@ input:disabled,
 }
 
 /* Estilos personalizados para scrollbar */
-/* Ocultar scrollbar del html/body para evitar doble scrollbar */
+/* Permitir scroll vertical; evitar doble scrollbar manejando el contenedor principal */
 html, body {
-  overflow: hidden;
-  height: 100%;
+  /* Permitimos desplazamiento vertical en la página principal */
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 100vh;
+  width: 100%;
+  /* Scroll suave para navegación anchor */
+  scroll-behavior: smooth;
 }
 
 /* Transiciones suaves para el cambio de tema */
