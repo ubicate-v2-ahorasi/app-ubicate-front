@@ -49,11 +49,16 @@ export class ConductorTable implements OnInit {
   @Output() onCreateNew = new EventEmitter<void>();
 
   conductores: ConductorVM[] = [];
+  allConductores: ConductorVM[] = [];
+  paginatedConductores: ConductorVM[] = [];
   busesDisponibles: BusVM[] = [];
   selectedBusByConductor: Record<number, number | null> = {};
   loading = false;
   currentPage = 0;
-  pageSize = 20;
+  pageSize = 10;
+  totalPages = 0;
+  filteredCount = 0;
+  totalConductores = 0;
   loadingBusAssignment: Record<number, boolean> = {};
   currentSearchTerm = '';
   currentEstado: 'Todos' | Estado = 'Todos';
@@ -61,6 +66,8 @@ export class ConductorTable implements OnInit {
   showDeleteModal = false;
   showEditModal = false;
   selectedConductor: ConductorVM | null = null;
+
+  Math = Math;
 
   ngOnInit() {
     this.loadConductores();
@@ -125,21 +132,34 @@ export class ConductorTable implements OnInit {
     this.loading = true;
     const handlePage = (res: any) => {
       const content = res?.content ?? res ?? [];
-      this.conductores = this.applyLocalFilters(
-        content.map(this.toConductorVM)
-      );
+      this.allConductores = content.map(this.toConductorVM);
+      this.totalConductores = this.allConductores.length;
+      this.applyFiltersAndPagination();
       this.reconcileSelectedBus();
       this.loading = false;
     };
 
     this.conductorService
-      .getConductores(this.currentPage, this.pageSize)
+      .getConductores(0, 200)
       .subscribe({
         next: handlePage,
         error: () => {
           this.loading = false;
         },
       });
+  }
+
+  applyFiltersAndPagination() {
+    this.conductores = this.applyLocalFilters(this.allConductores);
+    this.filteredCount = this.conductores.length;
+    this.totalPages = Math.ceil(this.filteredCount / this.pageSize);
+    this.updatePaginatedConductores();
+  }
+
+  updatePaginatedConductores() {
+    const start = this.currentPage * this.pageSize;
+    const end = start + this.pageSize;
+    this.paginatedConductores = this.conductores.slice(start, end);
   }
 
   applyLocalFilters(conductores: ConductorVM[]): ConductorVM[] {
@@ -170,24 +190,39 @@ export class ConductorTable implements OnInit {
 
   onSearch(searchTerm: string) {
     this.currentSearchTerm = searchTerm;
-    this.loadConductores();
+    this.currentPage = 0;
+    this.applyFiltersAndPagination();
   }
 
   onEstadoChange(estado: Estado | 'Todos') {
     this.currentEstado = estado;
-    this.loadConductores();
+    this.currentPage = 0;
+    this.applyFiltersAndPagination();
   }
 
   onCategoriaChange(categoria: string) {
     this.currentCategoria = categoria;
-    this.loadConductores();
+    this.currentPage = 0;
+    this.applyFiltersAndPagination();
   }
 
   onClearFilters() {
     this.currentSearchTerm = '';
     this.currentEstado = 'Todos';
     this.currentCategoria = 'Todas';
-    this.loadConductores();
+    this.currentPage = 0;
+    this.applyFiltersAndPagination();
+  }
+
+  onPageChange(page: number) {
+    if (page >= 0 && page < this.totalPages) {
+      this.currentPage = page;
+      this.updatePaginatedConductores();
+    }
+  }
+
+  getPages(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i);
   }
 
   handleCreateNew() {
@@ -234,6 +269,24 @@ export class ConductorTable implements OnInit {
   }
 
   onView(conductor: ConductorVM) {}
+  
+  onRowClick(conductor: ConductorVM, event: MouseEvent) {
+    // Verificar si hay texto seleccionado (el usuario está seleccionando para copiar)
+    const selection = window.getSelection();
+    if (selection && selection.toString().length > 0) {
+      return; // No abrir modal si hay texto seleccionado
+    }
+    
+    // Verificar si el clic fue en el select o sus hijos
+    const target = event.target as HTMLElement;
+    if (target.tagName === 'SELECT' || target.closest('select')) {
+      return; // No abrir modal si se hace clic en el select
+    }
+    
+    this.selectedConductor = conductor;
+    this.showEditModal = true;
+  }
+  
   onEdit(conductor: ConductorVM) {
     this.selectedConductor = conductor;
     this.showEditModal = true;
@@ -250,6 +303,11 @@ export class ConductorTable implements OnInit {
     this.showEditModal = false;
     this.selectedConductor = null;
     this.loadConductores();
+  }
+  onDeleteFromEdit() {
+    // Cerrar el modal de edición y abrir el de eliminación
+    this.showEditModal = false;
+    this.showDeleteModal = true;
   }
   onCancelDelete() {
     this.showDeleteModal = false;

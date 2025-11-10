@@ -1,7 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { ConductorHeader } from '../../components/conductor/conductor-header/conductor-header';
 import { ConductorTable } from '../../components/conductor/conductor-table/conductor-table';
-import { ConductorPagination } from '../../components/conductor/conductor-pagination/conductor-pagination';
 import { ConductorFormModal } from '../../components/conductor/conductor-form-modal/conductor-form-modal';
 import { ConductorDeleteModal } from '../../components/conductor/conductor-delete-modal/conductor-delete-modal';
 import { ConductorStatsComponent } from '../../components/conductor/conductor-stats/conductor-stats';
@@ -13,7 +12,6 @@ import { ConductorStatsComponent } from '../../components/conductor/conductor-st
     ConductorHeader,
     ConductorStatsComponent,
     ConductorTable,
-    ConductorPagination,
     ConductorFormModal,
     ConductorDeleteModal,
   ],

@@ -80,18 +80,18 @@ export class GreenNotificationComponent
   }
 
   getNotificationClass(): string {
-    const baseClass = 'bg-white border-l-4';
+    const baseClass = 'bg-white dark:bg-gray-800 border-l-4';
     switch (this.tip.type) {
       case 'achievement':
-        return `${baseClass} border-yellow-500`;
+        return `${baseClass} border-yellow-500 dark:border-yellow-400`;
       case 'challenge':
-        return `${baseClass} border-blue-500`;
+        return `${baseClass} border-blue-500 dark:border-blue-400`;
       case 'tip':
-        return `${baseClass} border-green-500`;
+        return `${baseClass} border-green-500 dark:border-green-400`;
       case 'info':
-        return `${baseClass} border-purple-500`;
+        return `${baseClass} border-purple-500 dark:border-purple-400`;
       default:
-        return `${baseClass} border-green-500`;
+        return `${baseClass} border-green-500 dark:border-green-400`;
     }
   }
 

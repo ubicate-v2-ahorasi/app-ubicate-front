@@ -1,10 +1,53 @@
 @import "tailwindcss";
 
+/* Configuración de modo oscuro para Tailwind v4 */
+@custom-variant dark (.dark &);
+
+/* Cursor pointer para elementos interactivos */
+button,
+select,
+input[type="checkbox"],
+input[type="radio"],
+a,
+[role="button"],
+.cursor-pointer {
+  cursor: pointer;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="number"],
+input[type="date"],
+textarea {
+  cursor: text;
+}
+
+button:disabled,
+select:disabled,
+input:disabled,
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
 /* Estilos personalizados para scrollbar */
-/* Ocultar scrollbar del html/body para evitar doble scrollbar */
+/* Permitir scroll vertical; evitar doble scrollbar manejando el contenedor principal */
 html, body {
-  overflow: hidden;
-  height: 100%;
+  /* Permitimos desplazamiento vertical en la página principal */
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 100vh;
+  width: 100%;
+  /* Scroll suave para navegación anchor */
+  scroll-behavior: smooth;
+}
+
+/* Transiciones suaves para el cambio de tema */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
 }
 
 /* Asegurar que el scrollbar del main sea estable */
@@ -12,6 +55,7 @@ main {
   scrollbar-gutter: stable;
 }
 
+/* Scrollbar - Modo Claro */
 ::-webkit-scrollbar {
   width: 12px;
   height: 12px;
@@ -32,8 +76,150 @@ main {
   background: linear-gradient(180deg, #021133 0%, #040E1C 100%);
 }
 
-/* Para Firefox */
+/* Para Firefox - Modo Claro */
 * {
   scrollbar-width: thin;
   scrollbar-color: #040E1C #f1f5f9;
+}
+
+/* Scrollbar - Modo Oscuro */
+.dark ::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+  border: 2px solid #1e293b;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #475569 0%, #334155 100%);
+}
+
+/* Para Firefox - Modo Oscuro */
+.dark * {
+  scrollbar-color: #334155 #1e293b;
+}
+
+/* Scrollbar - Modo Claro */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #040E1C 0%, #021133 100%);
+  border-radius: 10px;
+  border: 2px solid #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #021133 0%, #040E1C 100%);
+}
+
+/* Para Firefox - Modo Claro */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #040E1C #f1f5f9;
+}
+
+/* Scrollbar - Modo Oscuro */
+.dark ::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+  border: 2px solid #1e293b;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #475569 0%, #334155 100%);
+}
+
+/* Para Firefox - Modo Oscuro */
+.dark * {
+  scrollbar-color: #334155 #1e293b;
+}
+
+/* Transiciones suaves para el cambio de tema */
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Animaciones personalizadas */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes slide-open {
+  from {
+    width: 4rem;
+  }
+  to {
+    width: 16rem;
+  }
+}
+
+@keyframes slide-close {
+  from {
+    width: 16rem;
+  }
+  to {
+    width: 4rem;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-in-out;
+}
+
+.animate-slide-in {
+  animation: slide-in 0.4s ease-out;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+.animate-slide-open {
+  animation: slide-open 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-slide-close {
+  animation: slide-close 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }

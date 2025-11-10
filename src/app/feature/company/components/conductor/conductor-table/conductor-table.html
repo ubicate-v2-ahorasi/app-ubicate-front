@@ -2,10 +2,10 @@
   (onCategoriaChange)="onCategoriaChange($event)" (onClearFilters)="onClearFilters()" (onCreateNew)="handleCreateNew()">
 </app-conductor-filters>
 
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors">
   <div class="overflow-x-auto">
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gradient-to-r from-[#040E1C] to-[#021133]">
+    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+      <thead class="bg-gradient-to-r from-[#040E1C] to-[#021133] dark:from-gray-700 dark:to-gray-800">
         <tr>
           <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Conductor</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Licencia</th>
@@ -13,25 +13,26 @@
           <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Estado</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Contacto</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Vigencia</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Acciones</th>
         </tr>
       </thead>
 
-      <tbody class="bg-white divide-y divide-gray-200">
-        <tr *ngIf="conductores.length === 0">
-          <td colspan="7" class="px-6 py-12 text-center">
+      <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 transition-colors">
+        <tr *ngIf="paginatedConductores.length === 0">
+          <td colspan="6" class="px-6 py-12 text-center">
             <div class="flex flex-col items-center">
-              <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-12 h-12 text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M17 20h5v-2a3 3 0 0 0-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 0 1 5.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 0 1 9.288 0M15 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm6 3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM7 10a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
               </svg>
-              <h3 class="text-lg font-medium text-gray-900 mb-1">No hay conductores registrados</h3>
-              <p class="text-gray-500">Comienza agregando tu primer conductor</p>
+              <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">No hay conductores registrados</h3>
+              <p class="text-gray-500 dark:text-gray-400">Comienza agregando tu primer conductor</p>
             </div>
           </td>
         </tr>
 
-        <tr *ngFor="let conductor of conductores" class="hover:bg-gray-50 transition-colors">
+        <tr *ngFor="let conductor of paginatedConductores" 
+            (click)="onRowClick(conductor, $event)"
+            class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer select-text">
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="flex items-center">
               <div class="flex-shrink-0 h-10 w-10">
@@ -44,22 +45,23 @@
                 </div>
               </div>
               <div class="ml-4">
-                <div class="text-sm font-semibold text-[#040E1C]">{{ conductor.nombreCompleto }}</div>
-                <div class="text-xs text-gray-500">DNI: {{ conductor.dni }}</div>
+                <div class="text-sm font-semibold text-[#040E1C] dark:text-white">{{ conductor.nombreCompleto }}</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">DNI: {{ conductor.dni }}</div>
               </div>
             </div>
           </td>
 
           <td class="px-6 py-4 whitespace-nowrap">
-            <div class="text-sm text-gray-900 font-medium">{{ conductor.numeroLicencia }}</div>
-            <div class="text-xs text-gray-500">{{ conductor.categoriaLicencia }}</div>
+            <div class="text-sm text-gray-900 dark:text-white font-medium">{{ conductor.numeroLicencia }}</div>
+            <div class="text-xs text-gray-500 dark:text-gray-400">{{ conductor.categoriaLicencia }}</div>
           </td>
 
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="space-y-1">
               <select [(ngModel)]="selectedBusByConductor[conductor.id]"
                 (ngModelChange)="onBusAssignment(conductor, $event)"
-                class="text-xs font-medium px-2 py-1 rounded border border-gray-300 focus:ring-2 focus:ring-[#040E1C] bg-white transition-all w-full min-w-[220px]">
+                (click)="$event.stopPropagation()"
+                class="text-xs font-medium px-2 py-1 rounded border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-[#040E1C] bg-white dark:bg-gray-700 dark:text-white transition-all w-full min-w-[220px]">
                 <option [ngValue]="null">Sin bus asignado</option>
                 <option *ngFor="let bus of busesDisponibles" [ngValue]="bus.id"
                   [disabled]="bus.conductorAsignadoId && bus.conductorAsignadoId !== conductor.id">
@@ -77,8 +79,8 @@
           </td>
 
           <td class="px-6 py-4 whitespace-nowrap">
-            <div class="text-sm text-gray-900 flex items-center">
-              <svg class="w-4 h-4 text-gray-400 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-sm text-gray-900 dark:text-white flex items-center">
+              <svg class="w-4 h-4 text-gray-400 dark:text-gray-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M3 5a2 2 0 0 1 2-2h3.28a1 1 0 0 1 .948.684l1.498 4.493a1 1 0 0 1-.502 1.21l-2.257 1.13a11.042 11.042 0 0 0 5.516 5.516l1.13-2.257a1 1 0 0 1 1.21-.502l4.493 1.498a1 1 0 0 1 .684.949V19a2 2 0 0 1-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
@@ -117,42 +119,38 @@
               </span>
             </div>
           </td>
-
-          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-            <div class="flex space-x-2">
-              <button (click)="onView(conductor)"
-                class="text-blue-600 hover:text-blue-900 p-1 hover:bg-blue-50 rounded transition-colors"
-                title="Ver conductor">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-              </button>
-
-              <button (click)="onEdit(conductor)"
-                class="text-green-600 hover:text-green-900 p-1 hover:bg-green-50 rounded transition-colors"
-                title="Editar conductor">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5m-1.414-9.414a2 2 0 1 1 2.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-              </button>
-
-              <button (click)="onDelete(conductor)"
-                class="text-red-600 hover:text-red-900 p-1 hover:bg-red-50 rounded transition-colors"
-                title="Eliminar conductor">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            </div>
-          </td>
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Paginación -->
+  <div *ngIf="!loading && paginatedConductores.length > 0" class="bg-gray-50 dark:bg-gray-900 px-6 py-3 border-t border-gray-200 dark:border-gray-700 transition-colors">
+    <div class="flex items-center justify-between">
+      <div class="text-sm text-gray-700 dark:text-gray-300">
+        Mostrando {{ (currentPage * pageSize) + 1 }} a {{ Math.min((currentPage + 1) * pageSize, filteredCount) }} de {{ filteredCount }} conductores
+        <span *ngIf="filteredCount !== totalConductores" class="text-gray-500 dark:text-gray-400">
+          ({{ totalConductores }} total)
+        </span>
+      </div>
+      <div class="flex space-x-1">
+        <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 0"
+          class="px-3 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white transition-colors">
+          Anterior
+        </button>
+        <button
+          *ngFor="let page of getPages().slice(Math.max(0, currentPage - 2), Math.min(totalPages, currentPage + 3))"
+          (click)="onPageChange(page)"
+          [class]="page === currentPage ? 'bg-[#040E1C] dark:bg-gray-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'"
+          class="px-3 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 transition-colors">
+          {{ page + 1 }}
+        </button>
+        <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage >= totalPages - 1"
+          class="px-3 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white transition-colors">
+          Siguiente
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -161,5 +159,5 @@
 </app-conductor-delete-modal>
 
 <app-conductor-edit-modal [isVisible]="showEditModal" [conductor]="selectedConductor" [buses]="busesDisponibles"
-  (onCancel)="onCancelEdit()" (onSave)="onConfirmEdit()">
+  (onCancel)="onCancelEdit()" (onSave)="onConfirmEdit()" (onDelete)="onDeleteFromEdit()">
 </app-conductor-edit-modal>

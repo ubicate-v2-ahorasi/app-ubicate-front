@@ -1,6 +1,12 @@
-<div *ngIf="isVisible" class="fixed inset-0 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+@if (isVisible) {
+<!-- Fondo difuminado -->
+<div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" (click)="showCredentials ? null : cancel()"></div>
 
-  <div *ngIf="showCredentials" class="bg-white w-full max-w-sm shadow-2xl rounded-2xl overflow-hidden">
+<!-- Modal -->
+<div class="fixed inset-0 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4 pointer-events-none">
+
+  @if (showCredentials) {
+  <div class="bg-white dark:bg-gray-800 w-full max-w-sm shadow-2xl rounded-2xl overflow-hidden pointer-events-auto">
 
     <div class="p-4 bg-[#040E1C] text-white text-center">
       <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-2">
@@ -13,14 +19,14 @@
 
     <div class="p-4">
       <div class="space-y-3">
-        <div class="bg-gray-50 rounded-lg p-3">
-          <label class="block text-xs font-medium text-gray-700 mb-1">Email:</label>
-          <span class="text-sm text-[#040E1C] font-mono">{{ createdCredentials?.email }}</span>
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Email:</label>
+          <span class="text-sm text-[#040E1C] dark:text-white font-mono">{{ createdCredentials?.email }}</span>
         </div>
 
-        <div class="bg-red-50 rounded-lg p-3 border border-red-200">
-          <label class="block text-xs font-medium text-red-700 mb-1">Contraseña:</label>
-          <span class="text-sm text-red-800 font-mono font-bold">{{ createdCredentials?.password }}</span>
+        <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-3 border border-red-200 dark:border-red-800">
+          <label class="block text-xs font-medium text-red-700 dark:text-red-300 mb-1">Contraseña:</label>
+          <span class="text-sm text-red-800 dark:text-red-400 font-mono font-bold">{{ createdCredentials?.password }}</span>
         </div>
       </div>
 
@@ -40,8 +46,10 @@
       </div>
     </div>
   </div>
+  }
 
-  <div *ngIf="!showCredentials" class="bg-white w-full max-w-4xl shadow-2xl rounded-2xl overflow-hidden">
+  @if (!showCredentials) {
+  <div class="bg-white dark:bg-gray-800 w-full max-w-4xl shadow-2xl rounded-2xl overflow-hidden pointer-events-auto">
 
     <div class="flex justify-between items-center px-6 py-4 bg-[#040E1C] text-white">
       <h3 class="text-lg font-semibold">{{ isEditMode ? 'Editar Conductor' : 'Nuevo Conductor' }}</h3>
@@ -55,8 +63,8 @@
     <form [formGroup]="conductorForm" (ngSubmit)="onSubmit()" class="px-6 py-5 space-y-5">
 
       <div class="mb-6">
-        <h4 class="text-base font-medium text-[#040E1C] mb-4 flex items-center">
-          <svg class="w-4 h-4 mr-2 text-[#040E1C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <h4 class="text-base font-medium text-[#040E1C] dark:text-white mb-4 flex items-center">
+          <svg class="w-4 h-4 mr-2 text-[#040E1C] dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
@@ -65,50 +73,94 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
-            <label class="block text-xs font-medium text-[#040E1C] mb-1">Nombres *</label>
-            <input type="text" formControlName="nombre" placeholder="Juan Carlos"
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all" />
-            <div *ngIf="conductorForm.get('nombre')?.errors && conductorForm.get('nombre')?.touched"
-              class="text-red-500 text-xs mt-1">Nombre es obligatorio (mín. 2 caracteres)</div>
+            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Nombres *</label>
+            <input type="text" formControlName="nombre" placeholder="Juan Carlos" maxlength="30"
+              (keypress)="onlyLetters($event)"
+              [class.border-red-500]="conductorForm.get('nombre')?.errors && conductorForm.get('nombre')?.touched"
+              [class.dark:border-red-400]="conductorForm.get('nombre')?.errors && conductorForm.get('nombre')?.touched"
+              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500" />
+            @if (conductorForm.get('nombre')?.errors && conductorForm.get('nombre')?.touched) {
+            <div class="flex items-center mt-1 text-red-500 dark:text-red-400 text-xs">
+              <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+              <span>Solo letras, máx. 30 caracteres</span>
+            </div>
+            }
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-[#040E1C] mb-1">Apellidos *</label>
-            <input type="text" formControlName="apellido" placeholder="Pérez García"
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all" />
-            <div *ngIf="conductorForm.get('apellido')?.errors && conductorForm.get('apellido')?.touched"
-              class="text-red-500 text-xs mt-1">Apellido es obligatorio (mín. 2 caracteres)</div>
+            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Apellidos *</label>
+            <input type="text" formControlName="apellido" placeholder="Pérez García" maxlength="30"
+              (keypress)="onlyLetters($event)"
+              [class.border-red-500]="conductorForm.get('apellido')?.errors && conductorForm.get('apellido')?.touched"
+              [class.dark:border-red-400]="conductorForm.get('apellido')?.errors && conductorForm.get('apellido')?.touched"
+              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500" />
+            @if (conductorForm.get('apellido')?.errors && conductorForm.get('apellido')?.touched) {
+            <div class="flex items-center mt-1 text-red-500 dark:text-red-400 text-xs">
+              <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+              <span>Solo letras, máx. 30 caracteres</span>
+            </div>
+            }
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-[#040E1C] mb-1">DNI *</label>
+            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">DNI *</label>
             <input type="text" formControlName="dni" placeholder="12345678" maxlength="8"
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all" />
-            <div *ngIf="conductorForm.get('dni')?.errors && conductorForm.get('dni')?.touched"
-              class="text-red-500 text-xs mt-1">DNI debe tener 8 dígitos</div>
+              (keypress)="onlyNumbers($event)"
+              [class.border-red-500]="conductorForm.get('dni')?.errors && conductorForm.get('dni')?.touched"
+              [class.dark:border-red-400]="conductorForm.get('dni')?.errors && conductorForm.get('dni')?.touched"
+              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500" />
+            @if (conductorForm.get('dni')?.errors && conductorForm.get('dni')?.touched) {
+            <div class="flex items-center mt-1 text-red-500 dark:text-red-400 text-xs">
+              <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+              <span>8 dígitos numéricos</span>
+            </div>
+            }
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-[#040E1C] mb-1">Teléfono *</label>
-            <input type="tel" formControlName="telefono" placeholder="+51987654321"
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all" />
-            <div *ngIf="conductorForm.get('telefono')?.errors && conductorForm.get('telefono')?.touched"
-              class="text-red-500 text-xs mt-1">Teléfono es obligatorio</div>
+            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Teléfono *</label>
+            <input type="tel" formControlName="telefono" placeholder="987654321" maxlength="9"
+              (keypress)="onlyNumbers($event)"
+              [class.border-red-500]="conductorForm.get('telefono')?.errors && conductorForm.get('telefono')?.touched"
+              [class.dark:border-red-400]="conductorForm.get('telefono')?.errors && conductorForm.get('telefono')?.touched"
+              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500" />
+            @if (conductorForm.get('telefono')?.errors && conductorForm.get('telefono')?.touched) {
+            <div class="flex items-center mt-1 text-red-500 dark:text-red-400 text-xs">
+              <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+              <span>9 dígitos numéricos</span>
+            </div>
+            }
           </div>
 
           <div class="md:col-span-2">
-            <label class="block text-xs font-medium text-[#040E1C] mb-1">Email *</label>
+            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Email *</label>
             <input type="email" formControlName="email" placeholder="conductor@email.com"
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all" />
-            <div *ngIf="conductorForm.get('email')?.errors && conductorForm.get('email')?.touched"
-              class="text-red-500 text-xs mt-1">Email válido es obligatorio</div>
+              [class.border-red-500]="conductorForm.get('email')?.errors && conductorForm.get('email')?.touched"
+              [class.dark:border-red-400]="conductorForm.get('email')?.errors && conductorForm.get('email')?.touched"
+              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500" />
+            @if (conductorForm.get('email')?.errors && conductorForm.get('email')?.touched) {
+            <div class="flex items-center mt-1 text-red-500 dark:text-red-400 text-xs">
+              <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+              <span>Email válido es obligatorio</span>
+            </div>
+            }
           </div>
         </div>
       </div>
 
       <div class="mb-6">
-        <h4 class="text-base font-medium text-[#040E1C] mb-4 flex items-center">
-          <svg class="w-4 h-4 mr-2 text-[#040E1C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <h4 class="text-base font-medium text-[#040E1C] dark:text-white mb-4 flex items-center">
+          <svg class="w-4 h-4 mr-2 text-[#040E1C] dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
@@ -117,46 +169,72 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
-            <label class="block text-xs font-medium text-[#040E1C] mb-1">Número de Licencia *</label>
-            <input type="text" formControlName="numeroLicencia" placeholder="L12345678"
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all" />
-            <div *ngIf="conductorForm.get('numeroLicencia')?.errors && conductorForm.get('numeroLicencia')?.touched"
-              class="text-red-500 text-xs mt-1">Número de licencia es obligatorio</div>
+            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Número de Licencia *</label>
+            <input type="text" formControlName="numeroLicencia" placeholder="L12345678" maxlength="6" (keypress)="onlyAlphanumeric($event)"
+              [class.border-red-500]="conductorForm.get('numeroLicencia')?.errors && conductorForm.get('numeroLicencia')?.touched"
+              [class.dark:border-red-400]="conductorForm.get('numeroLicencia')?.errors && conductorForm.get('numeroLicencia')?.touched"
+              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500" />
+            @if (conductorForm.get('numeroLicencia')?.errors && conductorForm.get('numeroLicencia')?.touched) {
+            <div class="flex items-center mt-1 text-red-500 dark:text-red-400 text-xs">
+              <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+              <span>Número de licencia es obligatorio</span>
+            </div>
+            }
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-[#040E1C] mb-1">Categoría *</label>
+            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Categoría *</label>
             <select formControlName="categoriaLicencia"
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all">
+              [class.border-red-500]="conductorForm.get('categoriaLicencia')?.errors && conductorForm.get('categoriaLicencia')?.touched"
+              [class.dark:border-red-400]="conductorForm.get('categoriaLicencia')?.errors && conductorForm.get('categoriaLicencia')?.touched"
+              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
               <option value="">Seleccionar categoría</option>
-              <option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria }}</option>
+              @for (categoria of categorias; track categoria) {
+              <option [value]="categoria">{{ categoria }}</option>
+              }
             </select>
-            <div
-              *ngIf="conductorForm.get('categoriaLicencia')?.errors && conductorForm.get('categoriaLicencia')?.touched"
-              class="text-red-500 text-xs mt-1">Categoría es obligatoria</div>
+            @if (conductorForm.get('categoriaLicencia')?.errors && conductorForm.get('categoriaLicencia')?.touched) {
+            <div class="flex items-center mt-1 text-red-500 dark:text-red-400 text-xs">
+              <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+              <span>Categoría es obligatoria</span>
+            </div>
+            }
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-[#040E1C] mb-1">Fecha de Vencimiento *</label>
+            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Fecha de Vencimiento *</label>
             <input type="date" formControlName="fechaVencimientoLicencia"
-              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all" />
-            <div
-              *ngIf="conductorForm.get('fechaVencimientoLicencia')?.errors && conductorForm.get('fechaVencimientoLicencia')?.touched"
-              class="text-red-500 text-xs mt-1">Fecha de vencimiento es obligatoria</div>
+              [class.border-red-500]="conductorForm.get('fechaVencimientoLicencia')?.errors && conductorForm.get('fechaVencimientoLicencia')?.touched"
+              [class.dark:border-red-400]="conductorForm.get('fechaVencimientoLicencia')?.errors && conductorForm.get('fechaVencimientoLicencia')?.touched"
+              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
+            @if (conductorForm.get('fechaVencimientoLicencia')?.errors && conductorForm.get('fechaVencimientoLicencia')?.touched) {
+            <div class="flex items-center mt-1 text-red-500 dark:text-red-400 text-xs">
+              <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+              <span>Fecha de vencimiento es obligatoria</span>
+            </div>
+            }
           </div>
         </div>
       </div>
 
-      <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+      <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
         <button type="button" (click)="cancel()" [disabled]="isSubmitting"
-          class="px-4 py-2 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          class="px-4 py-2 text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
           Cancelar
         </button>
         <button type="submit" [disabled]="conductorForm.invalid || isSubmitting"
-          class="px-4 py-2 text-xs font-medium text-white bg-[#040E1C] rounded-lg hover:bg-[#021133] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          class="px-4 py-2 text-xs font-medium text-white bg-[#040E1C] dark:bg-[#021133] rounded-lg hover:bg-[#021133] dark:hover:bg-[#040E1C] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
           {{ isSubmitting ? 'Guardando...' : (isEditMode ? 'Actualizar' : 'Guardar') }}
         </button>
       </div>
     </form>
   </div>
+  }
 </div>
+}
