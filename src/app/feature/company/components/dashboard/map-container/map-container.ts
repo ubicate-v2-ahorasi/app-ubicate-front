@@ -72,7 +72,7 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
   showRouteList = false;
   isLoadingBuses = false;
   isLoadingRoutes = false;
-  showBuses = false; // ✅ CAMBIAR A FALSE - No mostrar buses por defecto
+  showBuses = false;
 
   buses: BusWithPosition[] = [];
   routes: RouteResponse[] = [];
@@ -88,14 +88,12 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
 
     if (sessionEmpresaId) {
       this.empresaId = sessionEmpresaId;
-      // ✅ NO subscribir buses automáticamente
     } else {
       this.firebaseService
         .findFirstEmpresaWithBuses()
         .subscribe((empresaId) => {
           if (empresaId) {
             this.empresaId = empresaId;
-            // ✅ NO subscribir buses automáticamente
           }
         });
     }
@@ -131,7 +129,7 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
 
     this.googleMapReady = true;
     this.mapInitialized = true;
-    this.setupBasicListeners();
+
     this.subscribeToServices();
     this.loadInitialData();
 
@@ -173,16 +171,7 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
       });
   }
 
-  private setupBasicListeners() {
-    if (!this.safeGoogleMap) return;
-    this.safeGoogleMap.addListener('click', () => {
-      if (!this.isCreatingRoute && (this.showBusList || this.showRouteList)) {
-        this.showBusList = false;
-        this.showRouteList = false;
-        this.cdr.markForCheck();
-      }
-    });
-  }
+
 
   private subscribeToServices() {
     this.locationService.isLocating$.subscribe((v) => {
@@ -257,9 +246,8 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
     this.isLoadingRoutes = true;
     this.selectedRouteId = routeId;
     this.rutaId = routeId;
-    this.showBuses = true; // ✅ ACTIVAR buses solo cuando selecciones una ruta
+    this.showBuses = true;
 
-    // Mostrar la ruta en el mapa
     this.routeMapService
       .getById(routeId)
       .pipe(
@@ -275,7 +263,6 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showRouteList = false;
       });
 
-    // ✅ MOSTRAR BUSES DE ESA RUTA ESPECÍFICA
     this.subscribeBusesStream(this.empresaId, routeId);
     this.cdr.markForCheck();
   }
@@ -283,7 +270,7 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
   showAllBuses() {
     this.selectedRouteId = null;
     this.rutaId = undefined;
-    this.showBuses = true; // ✅ Mostrar todos los buses
+    this.showBuses = true;
     this.subscribeBusesStream(this.empresaId, undefined);
     this.cdr.markForCheck();
   }
@@ -333,7 +320,7 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
   clearRouteAndBuses() {
     this.selectedRouteId = null;
     this.rutaId = undefined;
-    this.showBuses = false; // ✅ OCULTAR buses al limpiar
+    this.showBuses = false;
     this.busesSub?.unsubscribe();
     this.busesSub = undefined;
     this.busMarkerService.clearMarkers();

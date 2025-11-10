@@ -49,7 +49,7 @@
   <app-route-list [isVisible]="showRouteList && !isCreatingRoute" (selectRouteId)="onSelectRouteId($event)"
     (close)="onCloseRouteList()" class="z-25"></app-route-list>
 
-  <app-map-controls [isLocating]="isLocating" [isCreatingRoute]="isCreatingRoute" (getLocation)="getCurrentLocation()"
+  <app-map-controls [isLocating]="isLocating" [isCreatingRoute]="isCreatingRoute" 
     (startRoute)="startCreatingRoute()" class="z-20"></app-map-controls>
 
   <app-route-creator *ngIf="isCreatingRoute && isMapReady" [map]="safeGoogleMap" (routeCreated)="onRouteCreated()"

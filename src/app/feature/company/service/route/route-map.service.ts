@@ -1,4 +1,3 @@
-// src/app/feature/company/service/route/route-map.service.ts
 import { Injectable, inject } from '@angular/core';
 import {
   BehaviorSubject,
@@ -126,18 +125,19 @@ export class RouteMapService {
       bounds.extend(end);
     }
 
-    const origin = await this.createLabeledMarker(
+    // Utiliza los iconos personalizados para origen y destino
+    const origin = await this.createCustomIconMarker(
       map,
       start,
       'A',
-      '#10B981',
+      '#10B981', // Color verde para el origen
       'Origen'
     );
-    const dest = await this.createLabeledMarker(
+    const dest = await this.createCustomIconMarker(
       map,
       end,
       'B',
-      '#EF4444',
+      '#EF4444', // Color rojo para el destino
       'Destino'
     );
 
@@ -198,11 +198,31 @@ export class RouteMapService {
     }
 
     const address = this.addressCache.get(key)!;
+    const style = `
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px;
+    max-width: 180px;
+    color: #333;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    text-align: center;
+  `;
+
+    const contentStyle = `
+    margin: 2px 0;
+    font-size: 12px;
+    line-height: 1.2;
+  `;
+
     this.infoWindow!.setContent(
-      `<div style="min-width:220px">
-         <div style="font-weight:600;margin-bottom:4px">${title}</div>
-         <div style="font-size:12px;line-height:1.3">${address}</div>
-       </div>`
+      `<div style="${style}">
+       <div style="font-weight: bold; margin-bottom: 4px;">${title}</div>
+       <div style="${contentStyle}">${address}</div>
+     </div>`
     );
     this.infoWindow!.setPosition(pos);
     this.infoWindow!.open(
@@ -210,63 +230,34 @@ export class RouteMapService {
     );
   }
 
-  private async createLabeledMarker(
+  private async createCustomIconMarker(
     map: google.maps.Map,
     position: google.maps.LatLng | google.maps.LatLngLiteral,
     glyph: string,
     bg: string,
     title: string
   ): Promise<AnyMarker> {
-    const hasVectorMapId = !!(map as any)?.get?.('mapId');
+    const svgIcon = `<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24'>
+      <defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='1' stdDeviation='1' flood-color='rgba(0,0,0,0.25)'/></filter></defs>
+      <path filter='url(#s)' d='M12 2c-3.9 0-7 3.1-7 7 0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3.1-7-7-7z' fill='${bg}' stroke='white' stroke-width='1.2'/>
+      <text x='12' y='11.6' fill='white' font-size='7' text-anchor='middle' font-weight='bold'>${glyph}</text>
+    </svg>`;
+    const icon = {
+      url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svgIcon)}`,
+      scaledSize: new google.maps.Size(36, 36),
+      anchor: new google.maps.Point(18, 34),
+    };
 
-    if (hasVectorMapId) {
-      const { AdvancedMarkerElement, PinElement } =
-        (await google.maps.importLibrary(
-          'marker'
-        )) as google.maps.MarkerLibrary;
+    const marker = new google.maps.Marker({
+      map,
+      position,
+      title,
+      icon: icon,
+    });
 
-      const pin = new PinElement({
-        background: bg,
-        borderColor: '#ffffff',
-        glyphColor: '#ffffff',
-        glyph,
-        scale: 1.5,
-      });
-
-      const adv = new AdvancedMarkerElement({
-        map,
-        position,
-        title,
-        content: pin.element,
-      });
-
-      (adv as any).addListener('gmp-click', () =>
-        this.showAddressOnMarkerClick(adv, title)
-      );
-      return adv;
-    } else {
-      const marker = new google.maps.Marker({
-        map,
-        position,
-        title,
-        icon: {
-          url: 'https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2_hdpi.png',
-          scaledSize: new google.maps.Size(28, 28),
-          anchor: new google.maps.Point(14, 28),
-          labelOrigin: new google.maps.Point(14, 10),
-        },
-        label: {
-          text: glyph,
-          color: '#ffffff',
-          fontSize: '12px',
-          fontWeight: '700',
-        },
-      });
-
-      marker.addListener('click', () =>
-        this.showAddressOnMarkerClick(marker, title)
-      );
-      return marker;
-    }
+    marker.addListener('click', () =>
+      this.showAddressOnMarkerClick(marker, title)
+    );
+    return marker;
   }
 }
