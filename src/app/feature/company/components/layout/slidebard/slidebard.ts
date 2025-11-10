@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SessionService } from '../../../../../core/service/session.service';
+import { ThemeService } from '../../../../../core/service/theme.service';
 import { Router } from '@angular/router';
 import {
   GreenEducationService,
@@ -27,6 +28,7 @@ export class Slidebard implements OnInit {
   private router = inject(Router);
   private sessionService = inject(SessionService);
   private greenEducationService = inject(GreenEducationService);
+  themeService = inject(ThemeService);
 
   menuItems = [
     {
@@ -43,10 +45,16 @@ export class Slidebard implements OnInit {
   empresaNombre: string | null = null;
   showGreenNotification = false;
   currentGreenTip?: GreenTip;
+  isDarkMode = false;
 
   ngOnInit(): void {
     // Obtener el nombre de la empresa desde el SessionService
     this.empresaNombre = this.sessionService.getEmpresaNombre();
+
+    // Suscribirse al cambio de tema
+    this.themeService.isDarkMode$.subscribe(isDark => {
+      this.isDarkMode = isDark;
+    });
 
     // Mostrar tip verde después de 10 segundos
     setTimeout(() => {
@@ -91,6 +99,10 @@ export class Slidebard implements OnInit {
   onLearnMoreClicked(tip: GreenTip): void {
     console.log('Abrir información detallada:', tip);
     this.showGreenNotification = false;
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
   }
 
   trackByFn(index: number, item: any): any {

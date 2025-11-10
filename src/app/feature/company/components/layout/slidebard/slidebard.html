@@ -1,5 +1,5 @@
 <div
-  class="fixed top-0 left-0 h-screen bg-gradient-to-b from-[#040E1C] to-[#021133] shadow-xl z-40 transition-all duration-300"
+  class="fixed top-0 left-0 h-screen shadow-xl z-40 transition-all duration-300 bg-gradient-to-b from-[#040E1C] to-[#021133] dark:from-gray-800 dark:to-gray-900"
   [ngClass]="isOpen ? 'w-64' : 'w-16'">
 
   <div class="flex flex-col h-full">
@@ -14,16 +14,41 @@
         </svg>
       </button>
       
-      <!-- Botón verde - visible cuando está expandido -->
-      <button *ngIf="isOpen" (click)="showGreenTip()"
-        class="p-2 text-green-400 hover:bg-white/10 rounded-lg transition-colors duration-200 flex items-center space-x-1"
-        title="Consejos de Sostenibilidad">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <span class="text-xs">🌱</span>
-      </button>
+      <div *ngIf="isOpen" class="flex items-center space-x-2">
+        <!-- Botón de Modo Oscuro -->
+        <button (click)="toggleTheme()"
+          class="p-2 text-amber-400 hover:bg-white/10 rounded-lg transition-colors duration-200"
+          [title]="isDarkMode ? 'Modo Claro' : 'Modo Oscuro'">
+          <svg *ngIf="!isDarkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Icono de Luna (Modo Oscuro) -->
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+          <svg *ngIf="isDarkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Icono de Sol (Modo Claro) -->
+            <circle stroke-linecap="round" stroke-linejoin="round" stroke-width="2" cx="12" cy="12" r="5" />
+            <line stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12" y1="1" x2="12" y2="3" />
+            <line stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12" y1="21" x2="12" y2="23" />
+            <line stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="1" y1="12" x2="3" y2="12" />
+            <line stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="21" y1="12" x2="23" y2="12" />
+            <line stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </svg>
+        </button>
+        
+        <!-- Botón verde - visible cuando está expandido -->
+        <button (click)="showGreenTip()"
+          class="p-2 text-green-400 hover:bg-white/10 rounded-lg transition-colors duration-200 flex items-center space-x-1"
+          title="Consejos de Sostenibilidad">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="text-xs">🌱</span>
+        </button>
+      </div>
     </div>
 
     <!-- Company Header -->
@@ -47,7 +72,30 @@
     </div>
 
     <!-- Botón verde - visible cuando está colapsado -->
-    <div class="p-2 border-b border-white/10 flex justify-center" *ngIf="!isOpen">
+    <div class="p-2 border-b border-white/10 flex flex-col items-center space-y-2" *ngIf="!isOpen">
+      <!-- Botón de Modo Oscuro colapsado -->
+      <button (click)="toggleTheme()"
+        class="p-2 text-amber-400 hover:bg-white/10 rounded-lg transition-colors duration-200"
+        [title]="isDarkMode ? 'Modo Claro' : 'Modo Oscuro'">
+        <svg *ngIf="!isDarkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <!-- Icono de Luna -->
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+        <svg *ngIf="isDarkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <!-- Icono de Sol -->
+          <circle stroke-linecap="round" stroke-linejoin="round" stroke-width="2" cx="12" cy="12" r="5" />
+          <line stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12" y1="1" x2="12" y2="3" />
+          <line stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12" y1="21" x2="12" y2="23" />
+          <line stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+          <line stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+          <line stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="1" y1="12" x2="3" y2="12" />
+          <line stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="21" y1="12" x2="23" y2="12" />
+          <line stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+          <line stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </svg>
+      </button>
+      
       <button (click)="showGreenTip()"
         class="p-2 text-green-400 hover:bg-white/10 rounded-lg transition-colors duration-200"
         title="Consejos de Sostenibilidad">
