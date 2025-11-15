@@ -39,13 +39,7 @@ export class Slidebard implements OnInit {
     },
     { id: 'users', name: 'Conductores', icon: 'user', path: '/company/users' },
     { id: 'buses', name: 'Buses', icon: 'bus', path: '/company/buses' },
-    { 
-      id: 'software-verde', 
-      name: 'Software Verde', 
-      icon: 'leaf', 
-      path: 'https://aws.amazon.com/es/sustainability/?utm_source=chatgpt.com',
-      isExternal: true 
-    },
+    { id: 'comments', name: 'Comentarios', icon: 'message', path: '/company/comments' },
   ];
 
   activeItem = 'dashboard';
@@ -111,6 +105,10 @@ export class Slidebard implements OnInit {
   onLearnMoreClicked(tip: GreenTip): void {
     console.log('Abrir información detallada:', tip);
     this.showGreenNotification = false;
+  }
+
+  onSoftwareVerdeClick(): void {
+    window.open('https://aws.amazon.com/es/sustainability/?utm_source=chatgpt.com', '_blank');
   }
 
   toggleTheme(): void {

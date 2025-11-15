@@ -1,0 +1,375 @@
+<div class="flex flex-col h-full">
+  
+  <!-- Header -->
+  <div class="mb-4 flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-[#040E1C] dark:text-white transition-colors">Comentarios de Usuarios</h1>
+      <p class="text-[#040E1C]/60 dark:text-gray-300 mt-1 transition-colors">Gestiona los comentarios de los pasajeros</p>
+    </div>
+    
+    <!-- Botones de cambio de vista -->
+    <div class="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+      <button
+        (click)="setViewMode('detailed')"
+        [class.bg-white]="viewMode === 'detailed'"
+        [class.dark:bg-gray-600]="viewMode === 'detailed'"
+        [class.shadow-sm]="viewMode === 'detailed'"
+        class="p-2 rounded-md transition-all duration-200"
+        title="Vista detallada">
+        <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      <button
+        (click)="setViewMode('compact')"
+        [class.bg-white]="viewMode === 'compact'"
+        [class.dark:bg-gray-600]="viewMode === 'compact'"
+        [class.shadow-sm]="viewMode === 'compact'"
+        class="p-2 rounded-md transition-all duration-200"
+        title="Vista compacta">
+        <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Estadísticas -->
+  @if (comments.length > 0) {
+  <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+    <div class="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+      <div class="flex items-start justify-between">
+        <div class="flex flex-col">
+          <div class="text-2xl font-bold text-gray-900 dark:text-white mb-1">{{ stats.total }}</div>
+          <div class="text-xs text-gray-600 dark:text-gray-400 font-normal">Total comentarios</div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center flex-shrink-0">
+          <span class="text-xl">📊</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+      <div class="flex items-start justify-between">
+        <div class="flex flex-col">
+          <div class="text-2xl font-bold text-gray-900 dark:text-white mb-1">{{ stats.pendientes }}</div>
+          <div class="text-xs text-gray-600 dark:text-gray-400 font-normal">Pendientes</div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center flex-shrink-0">
+          <span class="text-xl">⏳</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+      <div class="flex items-start justify-between">
+        <div class="flex flex-col">
+          <div class="text-2xl font-bold text-gray-900 dark:text-white mb-1">{{ stats.revisados }}</div>
+          <div class="text-xs text-gray-600 dark:text-gray-400 font-normal">Revisados</div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center flex-shrink-0">
+          <span class="text-xl">👁️</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+      <div class="flex items-start justify-between">
+        <div class="flex flex-col">
+          <div class="text-2xl font-bold text-gray-900 dark:text-white mb-1">{{ stats.resueltos }}</div>
+          <div class="text-xs text-gray-600 dark:text-gray-400 font-normal">Resueltos</div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center flex-shrink-0">
+          <span class="text-xl">✅</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+      <div class="flex items-start justify-between">
+        <div class="flex flex-col">
+          <div class="text-2xl font-bold text-gray-900 dark:text-white mb-1">{{ stats.promedioRating }}</div>
+          <div class="text-xs text-gray-600 dark:text-gray-400 font-normal">Rating promedio</div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900 flex items-center justify-center flex-shrink-0">
+          <span class="text-xl">⭐</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- Filtros y Búsqueda -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 mb-4 border border-gray-200 dark:border-gray-700">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      
+      <!-- Búsqueda -->
+      <div>
+        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Buscar</label>
+        <div class="relative">
+          <input
+            type="text"
+            (input)="onSearch($event)"
+            placeholder="Placa del bus o contenido..."
+            class="w-full px-3 py-1.5 pl-9 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors">
+          <svg class="absolute left-2.5 top-2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Filtro por Rating -->
+      <div>
+        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Calificación</label>
+        <select
+          [(ngModel)]="selectedRating"
+          (change)="onRatingChange(selectedRating)"
+          class="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors">
+          @for (rating of ratingOptions; track rating.value) {
+            <option [value]="rating.value">{{ rating.label }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Filtro por Estado -->
+      <div>
+        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Estado</label>
+        <select
+          [(ngModel)]="selectedStatus"
+          (change)="onStatusChange(selectedStatus)"
+          class="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors">
+          @for (status of statusOptions; track status.value) {
+            <option [value]="status.value">{{ status.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista de Comentarios -->
+  <div class="space-y-3">
+      @if (filteredComments.length === 0) {
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-12 text-center border border-gray-200 dark:border-gray-700">
+          <div class="text-6xl mb-4">💬</div>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No hay comentarios</h3>
+          <p class="text-gray-600 dark:text-gray-400">No se encontraron comentarios con los filtros seleccionados.</p>
+        </div>
+      }
+
+      <!-- Vista Detallada -->
+      @if (viewMode === 'detailed') {
+      @for (comment of paginatedComments; track comment.id) {
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div class="p-6">
+            
+            <!-- Header del comentario -->
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex items-center space-x-3">
+                <!-- Avatar con icono de bus -->
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white">
+                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <rect x="4" y="6" width="16" height="10" rx="2" />
+                    <circle cx="8" cy="19" r="1.5" />
+                    <circle cx="16" cy="19" r="1.5" />
+                  </svg>
+                </div>
+                
+                <!-- Info del bus -->
+                <div>
+                  <h3 class="font-semibold text-gray-900 dark:text-white">Bus {{ comment.busPlaca }}</h3>
+                </div>
+              </div>
+
+              <!-- Tiempo -->
+              <div class="text-right">
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ getTimeAgo(comment.date) }}</p>
+              </div>
+            </div>
+
+            <!-- Contenido del comentario -->
+            <div class="mb-4">
+              <p class="text-gray-700 dark:text-gray-300 leading-relaxed">{{ comment.content }}</p>
+            </div>
+
+            <!-- Rating y datos adicionales -->
+            <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
+              <div class="flex items-center space-x-4">
+                <!-- Rating -->
+                <div class="flex items-center space-x-1">
+                  @for (star of getRatingStars(comment.rating); track $index) {
+                    <span class="text-amber-400 text-lg">{{ star }}</span>
+                  }
+                  <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">({{ comment.rating }}/5)</span>
+                </div>
+              </div>
+
+              <!-- Estado actual -->
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ getStatusColor(comment.status) }}">
+                {{ comment.status }}
+              </span>
+            </div>
+
+            <!-- Acciones -->
+            <div class="flex items-center justify-between">
+              <div class="text-sm text-gray-500 dark:text-gray-400">
+                <span class="italic">Fecha: {{ comment.date | date: 'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+
+              <div class="flex items-center space-x-2">
+                <button
+                  (click)="changeCommentStatus(comment, 'pendiente')"
+                  [disabled]="comment.status === 'pendiente'"
+                  [class.opacity-50]="comment.status === 'pendiente'"
+                  class="px-3 py-1.5 text-sm font-medium text-yellow-700 bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/50 rounded-lg transition-colors disabled:cursor-not-allowed">
+                  Pendiente
+                </button>
+
+                <button
+                  (click)="changeCommentStatus(comment, 'revisado')"
+                  [disabled]="comment.status === 'revisado'"
+                  [class.opacity-50]="comment.status === 'revisado'"
+                  class="px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 rounded-lg transition-colors disabled:cursor-not-allowed">
+                  Revisado
+                </button>
+
+                <button
+                  (click)="changeCommentStatus(comment, 'resuelto')"
+                  [disabled]="comment.status === 'resuelto'"
+                  [class.opacity-50]="comment.status === 'resuelto'"
+                  class="px-3 py-1.5 text-sm font-medium text-green-700 bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50 rounded-lg transition-colors disabled:cursor-not-allowed">
+                  Resuelto
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      }
+
+      <!-- Vista Compacta -->
+      @if (viewMode === 'compact') {
+      @for (comment of paginatedComments; track comment.id) {
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 dark:border-gray-700">
+          <div class="p-4">
+            <div class="grid grid-cols-[auto_1fr_auto] gap-4 items-start">
+              
+              <!-- Columna 1: Avatar, Bus y Rating (ancho fijo) -->
+              <div class="flex items-center space-x-3 w-56">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white flex-shrink-0">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <rect x="4" y="6" width="16" height="10" rx="2" />
+                    <circle cx="8" cy="19" r="1.5" />
+                    <circle cx="16" cy="19" r="1.5" />
+                  </svg>
+                </div>
+                
+                <div class="min-w-0 flex-1">
+                  <h3 class="font-semibold text-gray-900 dark:text-white text-sm truncate">Bus {{ comment.busPlaca }}</h3>
+                  <div class="flex items-center space-x-2 mt-0.5">
+                    <div class="flex items-center">
+                      @for (star of getRatingStars(comment.rating); track $index) {
+                        <span class="text-amber-400 text-xs">{{ star }}</span>
+                      }
+                    </div>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">{{ getTimeAgo(comment.date) }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Columna 2: Contenido del comentario (flexible) -->
+              <div class="min-w-0">
+                <p class="text-sm text-gray-700 dark:text-gray-300">{{ comment.content }}</p>
+              </div>
+
+              <!-- Columna 3: Estado y Acciones (ancho fijo) -->
+              <div class="flex items-center space-x-3 flex-shrink-0">
+                
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ getStatusColor(comment.status) }}">
+                  {{ comment.status }}
+                </span>
+
+                <!-- Menú de acciones compacto -->
+                <div class="flex items-center space-x-1">
+                  <button
+                    (click)="changeCommentStatus(comment, 'pendiente')"
+                    [disabled]="comment.status === 'pendiente'"
+                    [class.opacity-50]="comment.status === 'pendiente'"
+                    class="p-1.5 text-yellow-700 bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/50 rounded transition-colors disabled:cursor-not-allowed"
+                    title="Marcar como pendiente">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </button>
+
+                  <button
+                    (click)="changeCommentStatus(comment, 'revisado')"
+                    [disabled]="comment.status === 'revisado'"
+                    [class.opacity-50]="comment.status === 'revisado'"
+                    class="p-1.5 text-blue-700 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 rounded transition-colors disabled:cursor-not-allowed"
+                    title="Marcar como revisado">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </button>
+
+                  <button
+                    (click)="changeCommentStatus(comment, 'resuelto')"
+                    [disabled]="comment.status === 'resuelto'"
+                    [class.opacity-50]="comment.status === 'resuelto'"
+                    class="p-1.5 text-green-700 bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50 rounded transition-colors disabled:cursor-not-allowed"
+                    title="Marcar como resuelto">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      }
+    </div>
+
+    <!-- Paginación -->
+    @if (filteredComments.length > 0) {
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 mt-4 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="text-sm text-gray-700 dark:text-gray-300">
+            Mostrando {{ (currentPage * pageSize) + 1 }} a {{ Math.min((currentPage + 1) * pageSize, filteredComments.length) }} de {{ filteredComments.length }} comentarios
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-gray-600 dark:text-gray-400">Filas por página:</label>
+            <select [(ngModel)]="pageSize" (change)="onPageSizeChange()" 
+              class="px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 dark:text-white">
+              <option [value]="10">10</option>
+              <option [value]="25">25</option>
+              <option [value]="50">50</option>
+              <option [value]="100">100</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex space-x-1">
+          <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 0"
+            class="px-3 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white transition-colors">
+            Anterior
+          </button>
+          @for (page of getPages().slice(Math.max(0, currentPage - 2), Math.min(totalPages, currentPage + 3)); track page) {
+          <button
+            (click)="onPageChange(page)"
+            [class]="page === currentPage ? 'bg-[#040E1C] dark:bg-gray-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'"
+            class="px-3 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 transition-colors">
+            {{ page + 1 }}
+          </button>
+          }
+          <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage >= totalPages - 1"
+            class="px-3 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white transition-colors">
+            Siguiente
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+</div>

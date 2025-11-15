@@ -19,6 +19,7 @@ import { ConductorStatsComponent } from '../../components/conductor/conductor-st
 })
 export class Users {
   @ViewChild(ConductorTable) conductorTable!: ConductorTable;
+  @ViewChild(ConductorStatsComponent) conductorStats!: ConductorStatsComponent;
 
   isModalVisible = false;
   isEditModalVisible = false;
@@ -47,5 +48,10 @@ export class Users {
     this.closeModal();
     this.closeEditModal();
     this.conductorTable.loadConductores();
+    this.conductorStats.load(); // Recargar estadísticas
+  }
+
+  onDataChanged() {
+    this.conductorStats.load(); // Recargar estadísticas cuando hay cambios
   }
 }
