@@ -163,6 +163,11 @@ export class BusList implements OnInit {
     }
   }
 
+  onPageSizeChange(size: number) {
+    this.pageSize.set(size);
+    this.currentPage.set(0);
+  }
+
   getPages(): number[] {
     return Array.from({ length: this.totalPages() }, (_, i) => i);
   }

@@ -26,6 +26,12 @@ export const COMPANY_ROUTES: Routes = [
         title: 'Dashboard',
       },
       {
+        path: 'comments',
+        loadComponent: () =>
+          import('./pages/comments/comments').then((m) => m.Comments),
+        title: 'Comentarios',
+      },
+      {
         path: 'users',
         loadComponent: () => import('./pages/users/users').then((m) => m.Users),
         title: 'Gestión de Usuarios',

@@ -2,7 +2,7 @@
 
 <app-conductor-stats></app-conductor-stats>
 
-<app-conductor-table (onCreateNew)="openCreateModal()"></app-conductor-table>
+<app-conductor-table (onCreateNew)="openCreateModal()" (onDataChanged)="onDataChanged()"></app-conductor-table>
 
 <app-conductor-form-modal [isVisible]="isModalVisible" (onCancel)="closeModal()" (onSave)="onConductorSaved()">
 </app-conductor-form-modal>

@@ -47,6 +47,7 @@ export class ConductorTable implements OnInit {
   private busService = inject(BusService);
 
   @Output() onCreateNew = new EventEmitter<void>();
+  @Output() onDataChanged = new EventEmitter<void>();
 
   conductores: ConductorVM[] = [];
   allConductores: ConductorVM[] = [];
@@ -221,6 +222,11 @@ export class ConductorTable implements OnInit {
     }
   }
 
+  onPageSizeChange(): void {
+    this.currentPage = 0;
+    this.applyFiltersAndPagination();
+  }
+
   getPages(): number[] {
     return Array.from({ length: this.totalPages }, (_, i) => i);
   }
@@ -303,6 +309,7 @@ export class ConductorTable implements OnInit {
     this.showEditModal = false;
     this.selectedConductor = null;
     this.loadConductores();
+    this.onDataChanged.emit(); // Notificar cambio
   }
   onDeleteFromEdit() {
     // Cerrar el modal de edición y abrir el de eliminación
@@ -317,6 +324,7 @@ export class ConductorTable implements OnInit {
     this.showDeleteModal = false;
     this.selectedConductor = null;
     this.loadConductores();
+    this.onDataChanged.emit(); // Notificar cambio
   }
 
   getEstadoClass(estado: Estado): string {

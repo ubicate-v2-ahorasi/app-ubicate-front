@@ -1,5 +1,6 @@
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors">
-  <div *ngIf="loading()" class="flex items-center justify-center py-12">
+  @if (loading()) {
+  <div class="flex items-center justify-center py-12">
     <div class="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
       <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -10,17 +11,19 @@
       <span class="text-sm">Cargando buses...</span>
     </div>
   </div>
+  }
 
-  <div *ngIf="!loading()" class="overflow-x-auto">
+  @if (!loading()) {
+  <div class="overflow-x-auto">
     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
       <thead class="bg-gradient-to-r from-[#040E1C] to-[#021133] dark:from-gray-700 dark:to-gray-800">
         <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Bus</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Marca</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Modelo</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Capacidad</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Año</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+          <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider">Bus</th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider">Marca</th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider">Modelo</th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider">Capacidad</th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider">Año</th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider">
             <div class="flex items-center gap-2">
               Ruta Asignada
               <button (click)="recargarRutas()" [disabled]="rutasLoading()"
@@ -34,12 +37,13 @@
               </button>
             </div>
           </th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Estado</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Acciones</th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider">Estado</th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider">Acciones</th>
         </tr>
       </thead>
       <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 transition-colors">
-        <tr *ngIf="paginatedBuses().length === 0 && !loading()">
+        @if (paginatedBuses().length === 0 && !loading()) {
+        <tr>
           <td colspan="8" class="px-6 py-12 text-center">
             <div class="flex flex-col items-center">
               <svg class="w-12 h-12 text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,14 +62,16 @@
             </div>
           </td>
         </tr>
+        }
 
-        <tr *ngFor="let bus of paginatedBuses(); trackBy: trackByBusId" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-          <td class="px-6 py-4 whitespace-nowrap">
+        @for (bus of paginatedBuses(); track trackByBusId($index, bus)) {
+        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+          <td class="px-4 py-3 whitespace-nowrap">
             <div class="flex items-center">
-              <div class="flex-shrink-0 h-10 w-10">
+              <div class="flex-shrink-0 h-8 w-8">
                 <div
-                  class="h-10 w-10 rounded-lg bg-gradient-to-r from-[#040E1C] to-[#021133] flex items-center justify-center">
-                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  class="h-8 w-8 rounded-lg bg-gradient-to-r from-[#040E1C] to-[#021133] flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M9 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM19 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -80,15 +86,15 @@
             </div>
           </td>
 
-          <td class="px-6 py-4 whitespace-nowrap">
+          <td class="px-4 py-3 whitespace-nowrap">
             <div class="text-sm text-gray-900 dark:text-white font-medium">{{ bus.marca || 'Sin especificar' }}</div>
           </td>
 
-          <td class="px-6 py-4 whitespace-nowrap">
+          <td class="px-4 py-3 whitespace-nowrap">
             <div class="text-sm text-gray-900 dark:text-white">{{ bus.modelo }}</div>
           </td>
 
-          <td class="px-6 py-4 whitespace-nowrap">
+          <td class="px-4 py-3 whitespace-nowrap">
             <div class="text-sm text-gray-900 dark:text-white flex items-center">
               <svg class="w-4 h-4 text-gray-400 dark:text-gray-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -98,12 +104,13 @@
             </div>
           </td>
 
-          <td class="px-6 py-4 whitespace-nowrap">
+          <td class="px-4 py-3 whitespace-nowrap">
             <div class="text-sm text-gray-900 dark:text-white">{{ bus.anio }}</div>
           </td>
 
-          <td class="px-6 py-4 whitespace-nowrap">
-            <div *ngIf="rutasLoading()" class="text-xs text-blue-600 mb-1 flex items-center">
+          <td class="px-4 py-3 whitespace-nowrap">
+            @if (rutasLoading()) {
+            <div class="text-xs text-blue-600 mb-1 flex items-center">
               <svg class="animate-spin w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor"
@@ -112,6 +119,7 @@
               </svg>
               Cargando rutas...
             </div>
+            }
 
             <select [value]="bus.ruta?.id?.toString() || ''" (change)="onRutaChange(bus, getSelectValue($event))"
               class="text-xs font-medium px-2 py-1 rounded border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-[#040E1C] bg-white dark:bg-gray-700 dark:text-white transition-all w-full"
@@ -126,7 +134,8 @@
               </option>
             </select>
 
-            <div *ngIf="updatingRutaId() === bus.id" class="text-xs text-blue-600 mt-1 flex items-center">
+            @if (updatingRutaId() === bus.id) {
+            <div class="text-xs text-blue-600 mt-1 flex items-center">
               <svg class="animate-spin w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor"
@@ -135,28 +144,33 @@
               </svg>
               Actualizando...
             </div>
+            }
           </td>
 
-          <td class="px-6 py-4 whitespace-nowrap">
+          <td class="px-4 py-3 whitespace-nowrap">
             <div class="flex items-center">
               <select [ngModel]="bus.estado" (ngModelChange)="onEstadoChange(bus, $event)"
                 class="text-xs font-medium px-2 py-1 rounded-full border-0 focus:ring-2 focus:ring-[#040E1C] transition-all"
                 [class]="getEstadoBadge(bus.estado)" [disabled]="updatingId() === bus.id">
-                <option *ngFor="let estado of ESTADOS" [value]="estado">
+                @for (estado of ESTADOS; track estado) {
+                <option [value]="estado">
                   {{ getEstadoLabel(estado) }}
                 </option>
+                }
               </select>
-              <svg *ngIf="updatingId() === bus.id" class="animate-spin ml-2 h-4 w-4 text-gray-400" fill="none"
+              @if (updatingId() === bus.id) {
+              <svg class="animate-spin ml-2 h-4 w-4 text-gray-400" fill="none"
                 viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor"
                   d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 0 1 4 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                 </path>
               </svg>
+              }
             </div>
           </td>
 
-          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+          <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
             <div class="flex justify-center">
               <button (click)="openDeleteModal(bus)"
                 class="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded transition-colors flex items-center justify-center"
@@ -169,31 +183,49 @@
             </div>
           </td>
         </tr>
+        }
       </tbody>
     </table>
   </div>
+  }
 
-  <div *ngIf="!loading() && paginatedBuses().length > 0" class="bg-gray-50 dark:bg-gray-900 px-6 py-3 border-t border-gray-200 dark:border-gray-700 transition-colors">
+  @if (!loading() && paginatedBuses().length > 0) {
+  <div class="bg-gray-50 dark:bg-gray-900 px-6 py-3 border-t border-gray-200 dark:border-gray-700 transition-colors">
     <div class="flex items-center justify-between">
-      <div class="text-sm text-gray-700 dark:text-gray-300">
-        Mostrando {{ (currentPage() * pageSize()) + 1 }} a {{ Math.min((currentPage() + 1) * pageSize(),
-        filteredCount()) }} de {{ filteredCount() }} buses
-        <span *ngIf="filteredCount() !== totalBuses()" class="text-gray-500 dark:text-gray-400">
-          ({{ totalBuses() }} total)
-        </span>
+      <div class="flex items-center gap-4">
+        <div class="text-sm text-gray-700 dark:text-gray-300">
+          Mostrando {{ (currentPage() * pageSize()) + 1 }} a {{ Math.min((currentPage() + 1) * pageSize(),
+          filteredCount()) }} de {{ filteredCount() }} buses
+          @if (filteredCount() !== totalBuses()) {
+          <span class="text-gray-500 dark:text-gray-400">
+            ({{ totalBuses() }} total)
+          </span>
+          }
+        </div>
+        <div class="flex items-center gap-2">
+          <label class="text-xs text-gray-600 dark:text-gray-400">Filas por página:</label>
+          <select [ngModel]="pageSize()" (ngModelChange)="onPageSizeChange($event)" 
+            class="px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 dark:text-white">
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+            <option [value]="100">100</option>
+          </select>
+        </div>
       </div>
       <div class="flex space-x-1">
         <button (click)="onPageChange(currentPage() - 1)" [disabled]="currentPage() === 0"
           class="px-3 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white transition-colors">
           Anterior
         </button>
+        @for (page of getPages().slice(Math.max(0, currentPage() - 2), Math.min(totalPages(), currentPage() + 3)); track page) {
         <button
-          *ngFor="let page of getPages().slice(Math.max(0, currentPage() - 2), Math.min(totalPages(), currentPage() + 3))"
           (click)="onPageChange(page)"
           [class]="page === currentPage() ? 'bg-[#040E1C] dark:bg-gray-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'"
           class="px-3 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 transition-colors">
           {{ page + 1 }}
         </button>
+        }
         <button (click)="onPageChange(currentPage() + 1)" [disabled]="currentPage() >= totalPages() - 1"
           class="px-3 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white transition-colors">
           Siguiente
@@ -201,6 +233,7 @@
       </div>
     </div>
   </div>
+  }
 </div>
 
 <app-bus-delete-modal [isOpen]="showDeleteModal()" [bus]="selectedBus()" (onClose)="closeDeleteModal()"
