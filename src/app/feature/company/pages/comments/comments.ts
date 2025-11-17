@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { FirebaseService } from '../../../../core/service/firebase.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-interface Comment {
-  id: number;
+export interface Comment {
+  id: string; // Cambiado ID a string para Firebase
   busPlaca: string;
   userRole: string;
   userAvatar?: string;
@@ -16,7 +17,6 @@ interface Comment {
 
 @Component({
   selector: 'app-comments',
-  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './comments.html',
   styleUrls: ['./comments.css'],
@@ -25,18 +25,22 @@ export class Comments implements OnInit {
   comments: Comment[] = [];
   filteredComments: Comment[] = [];
   paginatedComments: Comment[] = [];
+
   selectedCategory: string = 'todas';
   selectedStatus: string = 'todos';
   selectedRating: string = 'todas';
   searchTerm: string = '';
-  viewMode: 'detailed' | 'compact' = (localStorage.getItem('commentsViewMode') as 'detailed' | 'compact') || 'detailed';
+
+  viewMode: 'detailed' | 'compact' =
+    (localStorage.getItem('commentsViewMode') as 'detailed' | 'compact') ||
+    'detailed';
+
   currentPage: number = 0;
   pageSize: number = 10;
   totalPages: number = 0;
-  
+
   Math = Math;
-  
-  // Estadísticas
+
   stats = {
     total: 0,
     pendientes: 0,
@@ -61,117 +65,139 @@ export class Comments implements OnInit {
     { value: '1', label: '⭐ (1 estrella)' },
   ];
 
+  constructor(private firebaseService: FirebaseService) {}
+
   ngOnInit(): void {
-    this.loadMockComments();
-    this.applyFilters();
-    this.calculateStats();
+    this.loadCommentsFromFirebase();
   }
 
-  loadMockComments(): void {
-    // Datos de ejemplo para demostración
-    this.comments = [
-      {
-        id: 1,
-        busPlaca: 'ABC-123',
-        userRole: 'Pasajero Regular',
-        content: 'Excelente servicio, el conductor muy amable y el bus llegó puntual. La ruta fue cómoda y sin contratiempos.',
-        rating: 5,
-        date: new Date('2025-11-14T08:30:00'),
-        category: 'servicio',
-        status: 'resuelto',
+  loadCommentsFromFirebase(): void {
+    this.comments = []; // Limpiamos comentarios al reiniciar carga
+
+    const authUser = localStorage.getItem('auth_user');
+    if (!authUser) {
+      console.error('auth_user no encontrado en localStorage');
+      return;
+    }
+
+    const empresaId = JSON.parse(authUser)?.empresa_id; // Obtener empresa ID
+    if (!empresaId) {
+      console.error('No se encontró un empresa_id válido en auth_user');
+      return;
+    }
+
+    this.firebaseService.streamBusesByEmpresaAndRoute(empresaId).subscribe({
+      next: (buses) => {
+        console.log('Buses obtenidos para empresa:', empresaId, buses);
+
+        if (!buses || buses.length === 0) {
+          console.log('No se encontraron buses para esta empresa.');
+          return;
+        }
+
+        buses.forEach((bus) => {
+          console.log(`Consultando comentarios para el bus: ${bus.id}`);
+
+          this.firebaseService
+            .streamBusComments(empresaId, Number(bus.id))
+            .subscribe({
+              next: (comments) => {
+                if (!comments || comments.length === 0) {
+                  console.log(`El bus ${bus.id} no tiene comentarios.`);
+                  return;
+                }
+
+                const busComments: Comment[] = comments.map((comment) => ({
+                  id: comment.id,
+                  busPlaca: bus.placa,
+                  userRole: comment.userRole ?? 'Usuario desconocido',
+                  content: comment.comment,
+                  date: new Date(comment.timestamp),
+                  rating: comment.stars,
+                  category: comment.category ?? 'otro',
+                  status: comment.status ?? 'pendiente', // Estado por defecto
+                }));
+
+                // Evitar duplicados en la lista de comentarios
+                const uniqueComments = busComments.filter(
+                  (newComment) =>
+                    !this.comments.some(
+                      (existingComment) => existingComment.id === newComment.id
+                    )
+                );
+
+                this.comments = [...this.comments, ...uniqueComments];
+                this.applyFilters(); // Reaplicar filtros después de cargar
+                this.calculateStats(); // Recalcular estadísticas
+              },
+              error: (err) => {
+                console.error(
+                  `Error al obtener comentarios del bus ${bus.id}:`,
+                  err
+                );
+              },
+            });
+        });
       },
-      {
-        id: 2,
-        busPlaca: 'XYZ-456',
-        userRole: 'Pasajero',
-        content: 'El bus estaba muy limpio, pero el aire acondicionado no funcionaba correctamente. Hace mucho calor.',
-        rating: 3,
-        date: new Date('2025-11-14T09:15:00'),
-        category: 'vehiculo',
-        status: 'revisado',
+      error: (err) => {
+        console.error(
+          `Error al obtener los buses para la empresa ${empresaId}:`,
+          err
+        );
       },
-      {
-        id: 3,
-        busPlaca: 'DEF-789',
-        userRole: 'Pasajero Frecuente',
-        content: 'El conductor maneja muy rápido y de forma imprudente. Me sentí insegura durante todo el trayecto.',
-        rating: 2,
-        date: new Date('2025-11-13T14:20:00'),
-        category: 'conductor',
-        status: 'pendiente',
-      },
-      {
-        id: 4,
-        busPlaca: 'ABC-123',
-        userRole: 'Pasajero',
-        content: 'Todo perfecto, llegué a tiempo a mi destino. El conductor muy profesional.',
-        rating: 5,
-        date: new Date('2025-11-13T07:45:00'),
-        category: 'puntualidad',
-        status: 'resuelto',
-      },
-      {
-        id: 5,
-        busPlaca: 'GHI-321',
-        userRole: 'Pasajero Regular',
-        content: 'El bus se retrasó 20 minutos sin previo aviso. Llegué tarde a mi trabajo.',
-        rating: 2,
-        date: new Date('2025-11-12T06:30:00'),
-        category: 'puntualidad',
-        status: 'revisado',
-      },
-      {
-        id: 6,
-        busPlaca: 'JKL-654',
-        userRole: 'Pasajero',
-        content: 'Me gustaría que hubiera más información en tiempo real sobre el paradero del bus.',
-        rating: 4,
-        date: new Date('2025-11-12T16:00:00'),
-        category: 'otro',
-        status: 'pendiente',
-      },
-    ];
+    });
   }
 
   calculateStats(): void {
     this.stats.total = this.comments.length;
-    this.stats.pendientes = this.comments.filter(c => c.status === 'pendiente').length;
-    this.stats.revisados = this.comments.filter(c => c.status === 'revisado').length;
-    this.stats.resueltos = this.comments.filter(c => c.status === 'resuelto').length;
-    
-    const totalRatings = this.comments.reduce((sum, c) => sum + c.rating, 0);
-    this.stats.promedioRating = this.comments.length > 0 
-      ? Math.round((totalRatings / this.comments.length) * 10) / 10 
-      : 0;
-  }
+    this.stats.pendientes = this.comments.filter(
+      (c) => c.status === 'pendiente'
+    ).length;
+    this.stats.revisados = this.comments.filter(
+      (c) => c.status === 'revisado'
+    ).length;
+    this.stats.resueltos = this.comments.filter(
+      (c) => c.status === 'resuelto'
+    ).length;
 
-  setViewMode(mode: 'detailed' | 'compact'): void {
-    this.viewMode = mode;
-    localStorage.setItem('commentsViewMode', mode);
+    const totalRatings = this.comments.reduce((sum, c) => sum + c.rating, 0);
+    this.stats.promedioRating =
+      this.comments.length > 0
+        ? Math.round((totalRatings / this.comments.length) * 10) / 10
+        : 0;
   }
 
   applyFilters(): void {
-    this.filteredComments = this.comments.filter(comment => {
-      const matchesCategory = this.selectedCategory === 'todas' || comment.category === this.selectedCategory;
-      const matchesStatus = this.selectedStatus === 'todos' || comment.status === this.selectedStatus;
-      const matchesRating = this.selectedRating === 'todas' || comment.rating === parseInt(this.selectedRating);
-      const matchesSearch = !this.searchTerm || 
-        comment.busPlaca.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+    this.filteredComments = this.comments.filter((comment) => {
+      const matchesCategory =
+        this.selectedCategory === 'todas' ||
+        comment.category === this.selectedCategory;
+      const matchesStatus =
+        this.selectedStatus === 'todos' ||
+        comment.status === this.selectedStatus;
+      const matchesRating =
+        this.selectedRating === 'todas' ||
+        comment.rating === parseInt(this.selectedRating);
+      const matchesSearch =
+        !this.searchTerm ||
+        comment.busPlaca
+          .toLowerCase()
+          .includes(this.searchTerm.toLowerCase()) ||
         comment.content.toLowerCase().includes(this.searchTerm.toLowerCase());
-      
+
       return matchesCategory && matchesStatus && matchesRating && matchesSearch;
     });
-    
+
     this.updatePagination();
   }
 
   updatePagination(): void {
     this.totalPages = Math.ceil(this.filteredComments.length / this.pageSize);
-    if (this.currentPage >= this.totalPages && this.totalPages > 0) {
-      this.currentPage = this.totalPages - 1;
-    }
     const start = this.currentPage * this.pageSize;
-    this.paginatedComments = this.filteredComments.slice(start, start + this.pageSize);
+    this.paginatedComments = this.filteredComments.slice(
+      start,
+      start + this.pageSize
+    );
   }
 
   onPageChange(page: number): void {
@@ -179,17 +205,18 @@ export class Comments implements OnInit {
     this.updatePagination();
   }
 
-  onPageSizeChange(): void {
-    this.currentPage = 0;
-    this.updatePagination();
+  onSearch(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.searchTerm = target.value;
+    this.applyFilters();
+  }
+  setViewMode(mode: 'detailed' | 'compact'): void {
+    this.viewMode = mode;
+    localStorage.setItem('commentsViewMode', mode);
   }
 
-  getPages(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i);
-  }
-
-  onCategoryChange(category: string): void {
-    this.selectedCategory = category;
+  onRatingChange(rating: string): void {
+    this.selectedRating = rating;
     this.applyFilters();
   }
 
@@ -198,33 +225,62 @@ export class Comments implements OnInit {
     this.applyFilters();
   }
 
-  onRatingChange(rating: string): void {
-    this.selectedRating = rating;
-    this.applyFilters();
-  }
-
-  onSearch(event: Event): void {
-    this.searchTerm = (event.target as HTMLInputElement).value;
-    this.applyFilters();
-  }
-
-  changeCommentStatus(comment: Comment, newStatus: 'pendiente' | 'revisado' | 'resuelto'): void {
-    comment.status = newStatus;
-    this.calculateStats();
-    this.applyFilters();
-  }
-
-  getStatusColor(status: string): string {
-    switch (status) {
-      case 'pendiente': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
-      case 'revisado': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
-      case 'resuelto': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
+  changeCommentStatus(
+    comment: Comment,
+    newStatus: 'pendiente' | 'revisado' | 'resuelto'
+  ): void {
+    // Recuperamos el usuario autenticado desde localStorage
+    const authUser = localStorage.getItem('auth_user');
+    if (!authUser) {
+      console.error('auth_user no encontrado en localStorage');
+      return;
     }
+
+    const empresaId = JSON.parse(authUser)?.empresa_id; // Obtener empresa ID
+    if (!empresaId) {
+      console.error('No se encontró un empresa_id válido en auth_user.');
+      return;
+    }
+
+    const busId = comment.busPlaca; // ID único del bus (placa o identificador)
+    const commentId = comment.id; // ID único del comentario
+
+    // Validamos los identificadores antes de proceder
+    if (!busId || busId === 'NaN') {
+      console.error(`Invalid busId detected: ${busId}`);
+      return;
+    }
+
+    if (!commentId) {
+      console.error(`Invalid commentId detected: ${commentId}`);
+      return;
+    }
+
+    // Actualizamos el estado local para reflejar cambios inmediatos en la UI
+    comment.status = newStatus;
+
+    // Enviamos la actualización al servicio Firebase
+    this.firebaseService
+      .updateCommentState(empresaId, busId, commentId, newStatus)
+      .then(() => {
+        console.log(
+          `El comentario ${commentId} del bus ${busId} fue actualizado correctamente a: ${newStatus}.`
+        );
+
+        this.applyFilters(); // Reaplicamos los filtros para reflejar los cambios en la lista
+        this.calculateStats(); // Recalculamos estadísticas después del cambio
+      })
+      .catch((error) => {
+        console.error(`Error al actualizar el comentario ${commentId}:`, error);
+      });
+  }
+  onPageSizeChange(): void {
+    this.currentPage = 0;
+    this.updatePagination();
   }
 
-  getRatingStars(rating: number): string[] {
-    return Array(5).fill('').map((_, i) => i < rating ? '★' : '☆');
+  getPages(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i);
   }
 
   getTimeAgo(date: Date): string {
@@ -235,11 +291,26 @@ export class Comments implements OnInit {
     const diffDays = Math.floor(diffMs / 86400000);
 
     if (diffMins < 60) return `Hace ${diffMins} min`;
-    if (diffHours < 24) return `Hace ${diffHours}h`;
-    return `Hace ${diffDays}d`;
+    if (diffHours < 24) return `Hace ${diffHours} horas`;
+    return `Hace ${diffDays} días`;
   }
 
-  getUserInitials(name: string): string {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  getRatingStars(rating: number): string[] {
+    return Array(5)
+      .fill('★')
+      .map((_, i) => (i < rating ? '★' : '☆'));
+  }
+
+  getStatusColor(status: string): string {
+    switch (status) {
+      case 'pendiente':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
+      case 'revisado':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
+      case 'resuelto':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
+    }
   }
 }

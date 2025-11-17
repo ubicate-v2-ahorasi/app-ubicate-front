@@ -21,7 +21,5 @@ export class App {
       .catch((error) => console.error('Error al registrar el dato:', error));
   }
 
-  loadTestData() {
-    this.firebaseService.getTestData();
-  }
+
 }
