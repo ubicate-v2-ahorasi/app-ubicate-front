@@ -57,4 +57,16 @@ export class BusService {
   removerRuta(busId: number): Observable<Bus> {
     return this.httpClient.delete<Bus>(`buses/${busId}/ruta`);
   }
+  getBusQR(busId: number, empresaId: number): Observable<Blob> {
+    console.log(
+      `[BusService] Obteniendo QR para bus ${busId} y empresa ${empresaId}`
+    );
+    return this.httpClient.getBlob(`qr/${busId}/${empresaId}`);
+  }
+
+  getBusQRUrl(busId: number, empresaId: number): string {
+    const url = `${this.httpClient.getBaseUrl()}/qr/${busId}/${empresaId}`;
+    const token = localStorage.getItem('authToken');
+    return token ? `${url}?token=${token}` : url;
+  }
 }

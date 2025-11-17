@@ -1,4 +1,3 @@
-// bus-list.component.ts
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BusService } from '../../../service/bus/bus.service';
@@ -8,16 +7,18 @@ import { RouteResponse } from '../../../models/route.model';
 import { BusDeleteModal } from '../bus-delete-modal/bus-delete-modal';
 import { BusFilter, BusFilterCriteria } from '../bus-filter/bus-filter';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-bus-list',
   standalone: true,
   imports: [CommonModule, FormsModule, BusDeleteModal],
-  templateUrl: './bus-list.html',
+  templateUrl: './bus-list.html'
 })
 export class BusList implements OnInit {
   private busService = inject(BusService);
   private routeService = inject(RouteService);
+  private sanitizer = inject(DomSanitizer);
 
   // Signals para el estado
   allBuses = signal<Bus[]>([]);
@@ -25,6 +26,13 @@ export class BusList implements OnInit {
   loading = signal(false);
   rutasLoading = signal(false);
   filterCriteria = signal<BusFilterCriteria>({ search: '' });
+
+  // ✨ Signals para el modal de QR
+  showQRModal = signal(false);
+  selectedBusForQR = signal<Bus | null>(null);
+  qrImageUrl = signal<SafeUrl | null>(null);
+  loadingQR = signal(false);
+  qrError = signal(false);
 
   // Buses filtrados (computed signal)
   buses = computed(() => {
@@ -75,7 +83,7 @@ export class BusList implements OnInit {
 
   totalPages = computed(() => Math.ceil(this.buses().length / this.pageSize()));
 
-  // Estado del modal
+  // Estado del modal de eliminación
   showDeleteModal = signal(false);
   selectedBus = signal<Bus | null>(null);
   updatingId = signal<number | null>(null);
@@ -107,7 +115,7 @@ export class BusList implements OnInit {
   onFilterChange(criteria: BusFilterCriteria) {
     console.log('🔍 Filtros cambiados:', criteria);
     this.filterCriteria.set(criteria);
-    this.currentPage.set(0); // Reset a primera página
+    this.currentPage.set(0);
   }
 
   trackByBusId(index: number, bus: Bus): number {
@@ -124,7 +132,6 @@ export class BusList implements OnInit {
     console.log('📡 Cargando buses...');
     this.loading.set(true);
 
-    // Cargar todos los buses sin paginación para filtrado local
     this.busService.getBuses(0, 1000).subscribe({
       next: (res) => {
         console.log('✅ Buses cargados:', res);
@@ -197,7 +204,6 @@ export class BusList implements OnInit {
     this.busService.updateBusStatus(bus.id, nuevoEstado).subscribe({
       next: () => {
         this.updatingId.set(null);
-        // Actualizar en la lista local
         this.allBuses.update((buses) =>
           buses.map((b) =>
             b.id === bus.id ? { ...b, estado: nuevoEstado } : b
@@ -252,5 +258,239 @@ export class BusList implements OnInit {
   recargarRutas() {
     console.log('🔄 Recargando rutas manualmente...');
     this.loadRutas();
+  }
+
+  // ========================================
+  // ✨ MÉTODOS PARA EL QR
+  // ========================================
+
+  /**
+   * Abre el modal de QR y carga la imagen
+   */
+  openQRModal(bus: Bus) {
+    console.log('📱 Abriendo modal QR para bus:', bus);
+
+    // Resetear estados
+    this.qrError.set(false);
+    this.qrImageUrl.set(null);
+
+    // Establecer el bus seleccionado y mostrar modal
+    this.selectedBusForQR.set(bus);
+    this.showQRModal.set(true);
+
+    // Cargar el QR
+    this.loadBusQR(bus);
+  }
+
+  /**
+   * Cierra el modal de QR y limpia los estados
+   */
+  closeQRModal() {
+    console.log('❌ Cerrando modal QR');
+
+    // Limpiar la URL del objeto si existe
+    const currentUrl = this.qrImageUrl();
+    if (currentUrl && typeof currentUrl === 'string') {
+      URL.revokeObjectURL(currentUrl as string);
+    }
+
+    // Resetear todos los estados
+    this.showQRModal.set(false);
+    this.selectedBusForQR.set(null);
+    this.qrImageUrl.set(null);
+    this.loadingQR.set(false);
+    this.qrError.set(false);
+  }
+
+  /**
+   * Carga el QR del bus desde el backend
+   */
+  loadBusQR(bus: Bus) {
+    // Obtener empresa_id del localStorage
+    const authUser = localStorage.getItem('auth_user');
+    if (!authUser) {
+      console.error('❌ No se encontró auth_user en localStorage');
+      this.qrError.set(true);
+      this.loadingQR.set(false);
+      return;
+    }
+
+    const empresaId = JSON.parse(authUser)?.empresa_id;
+    if (!empresaId) {
+      console.error('❌ No se encontró empresa_id en auth_user');
+      this.qrError.set(true);
+      this.loadingQR.set(false);
+      return;
+    }
+
+    console.log(
+      `📡 Cargando QR para bus ID: ${bus.id}, Empresa ID: ${empresaId}`
+    );
+    this.loadingQR.set(true);
+    this.qrError.set(false);
+
+    this.busService.getBusQR(bus.id, empresaId).subscribe({
+      next: (blob) => {
+        console.log('✅ QR cargado exitosamente, tamaño:', blob.size, 'bytes');
+
+        // Crear URL del blob
+        const objectUrl = URL.createObjectURL(blob);
+
+        // Sanitizar la URL para evitar problemas de seguridad
+        const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+
+        this.qrImageUrl.set(safeUrl);
+        this.loadingQR.set(false);
+        this.qrError.set(false);
+      },
+      error: (error) => {
+        console.error('❌ Error cargando QR:', error);
+        this.loadingQR.set(false);
+        this.qrError.set(true);
+      },
+    });
+  }
+
+  /**
+   * Descarga el QR como imagen PNG
+   */
+  downloadQR() {
+    const bus = this.selectedBusForQR();
+    if (!bus) {
+      console.warn('⚠️ No hay bus seleccionado para descargar QR');
+      return;
+    }
+
+    const authUser = localStorage.getItem('auth_user');
+    if (!authUser) {
+      console.error('❌ No se encontró auth_user en localStorage');
+      return;
+    }
+
+    const empresaId = JSON.parse(authUser)?.empresa_id;
+    if (!empresaId) {
+      console.error('❌ No se encontró empresa_id en auth_user');
+      return;
+    }
+
+    console.log(`💾 Descargando QR para bus: ${bus.placa}`);
+
+    // Obtener el blob nuevamente para descargar
+    this.busService.getBusQR(bus.id, empresaId).subscribe({
+      next: (blob) => {
+        // Crear un link temporal
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `QR-Bus-${bus.placa}-${new Date().getTime()}.png`;
+
+        // Simular click para descargar
+        document.body.appendChild(link);
+        link.click();
+
+        // Limpiar
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        console.log('✅ QR descargado exitosamente');
+      },
+      error: (error) => {
+        console.error('❌ Error descargando QR:', error);
+        alert(
+          'Error al descargar el código QR. Por favor, intenta nuevamente.'
+        );
+      },
+    });
+  }
+
+  /**
+   * Imprime el QR
+   */
+  printQR() {
+    const bus = this.selectedBusForQR();
+    if (!bus || !this.qrImageUrl()) {
+      console.warn('⚠️ No hay QR cargado para imprimir');
+      return;
+    }
+
+    console.log(`🖨️ Imprimiendo QR para bus: ${bus.placa}`);
+
+    // Crear una ventana de impresión
+    const printWindow = window.open('', '_blank', 'width=600,height=600');
+
+    if (!printWindow) {
+      alert(
+        'No se pudo abrir la ventana de impresión. Verifica que no estén bloqueadas las ventanas emergentes.'
+      );
+      return;
+    }
+
+    const qrUrl = this.qrImageUrl();
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>QR Code - Bus ${bus.placa}</title>
+          <style>
+            body {
+              margin: 0;
+              padding: 20px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              font-family: Arial, sans-serif;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 20px;
+            }
+            h1 {
+              font-size: 24px;
+              margin: 0 0 10px 0;
+            }
+            .bus-info {
+              font-size: 16px;
+              color: #666;
+            }
+            img {
+              max-width: 400px;
+              height: auto;
+              border: 2px solid #000;
+              padding: 10px;
+              background: white;
+            }
+            .footer {
+              margin-top: 20px;
+              text-align: center;
+              font-size: 12px;
+              color: #999;
+            }
+            @media print {
+              body {
+                padding: 0;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Código QR</h1>
+            <div class="bus-info">
+              <strong>Bus:</strong> ${bus.placa}<br>
+              <strong>Modelo:</strong> ${bus.modelo}<br>
+              <strong>ID:</strong> ${bus.id}
+            </div>
+          </div>
+          <img src="${qrUrl}" alt="QR Code" onload="window.print(); window.close();">
+          <div class="footer">
+            Generado el ${new Date().toLocaleString('es-ES')}
+          </div>
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
   }
 }

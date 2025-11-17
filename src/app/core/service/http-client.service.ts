@@ -71,4 +71,22 @@ export class HttpClientService {
       })
       .pipe(catchError(handleHttpError));
   }
+  getBlob(endpoint: string, params?: HttpParams): Observable<Blob> {
+    const url = `${this.baseUrl}/${endpoint}`;
+    const token = localStorage.getItem('authToken');
+
+    const headers = new HttpHeaders({
+      Authorization: token ? `Bearer ${token}` : '',
+    });
+
+    return this.http.get(url, {
+      params,
+      headers,
+      responseType: 'blob',
+    });
+  }
+
+  getBaseUrl(): string {
+    return this.baseUrl;
+  }
 }
