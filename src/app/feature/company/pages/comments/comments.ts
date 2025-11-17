@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FirebaseService } from '../../../../core/service/firebase.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 export interface Comment {
-  id: string; // Cambiado ID a string para Firebase
+  id: string;
+  busId: string; // Agregamos busId para identificar el bus
   busPlaca: string;
   userRole: string;
   userAvatar?: string;
@@ -21,7 +23,7 @@ export interface Comment {
   templateUrl: './comments.html',
   styleUrls: ['./comments.css'],
 })
-export class Comments implements OnInit {
+export class Comments implements OnInit, OnDestroy {
   comments: Comment[] = [];
   filteredComments: Comment[] = [];
   paginatedComments: Comment[] = [];
@@ -40,6 +42,10 @@ export class Comments implements OnInit {
   totalPages: number = 0;
 
   Math = Math;
+
+  // Mapa para gestionar suscripciones por bus
+  private busSubscriptions = new Map<string, Subscription>();
+  private empresaId: number | null = null;
 
   stats = {
     total: 0,
@@ -71,81 +77,96 @@ export class Comments implements OnInit {
     this.loadCommentsFromFirebase();
   }
 
-  loadCommentsFromFirebase(): void {
-    this.comments = []; // Limpiamos comentarios al reiniciar carga
+  ngOnDestroy(): void {
+    // Limpiar todas las suscripciones
+    this.busSubscriptions.forEach((sub) => sub.unsubscribe());
+    this.busSubscriptions.clear();
+  }
 
+  loadCommentsFromFirebase(): void {
     const authUser = localStorage.getItem('auth_user');
     if (!authUser) {
       console.error('auth_user no encontrado en localStorage');
       return;
     }
 
-    const empresaId = JSON.parse(authUser)?.empresa_id; // Obtener empresa ID
-    if (!empresaId) {
+    this.empresaId = JSON.parse(authUser)?.empresa_id;
+    if (!this.empresaId) {
       console.error('No se encontró un empresa_id válido en auth_user');
       return;
     }
 
-    this.firebaseService.streamBusesByEmpresaAndRoute(empresaId).subscribe({
-      next: (buses) => {
-        console.log('Buses obtenidos para empresa:', empresaId, buses);
+    // Primero obtenemos los buses
+    this.firebaseService
+      .streamBusesByEmpresaAndRoute(this.empresaId)
+      .subscribe({
+        next: (buses) => {
+          console.log('Buses obtenidos para empresa:', this.empresaId, buses);
 
-        if (!buses || buses.length === 0) {
-          console.log('No se encontraron buses para esta empresa.');
-          return;
-        }
+          if (!buses || buses.length === 0) {
+            console.log('No se encontraron buses para esta empresa.');
+            return;
+          }
 
-        buses.forEach((bus) => {
-          console.log(`Consultando comentarios para el bus: ${bus.id}`);
+          buses.forEach((bus) => {
+            // Si ya existe una suscripción para este bus, la cancelamos
+            if (this.busSubscriptions.has(bus.id)) {
+              this.busSubscriptions.get(bus.id)?.unsubscribe();
+            }
 
-          this.firebaseService
-            .streamBusComments(empresaId, Number(bus.id))
-            .subscribe({
-              next: (comments) => {
-                if (!comments || comments.length === 0) {
-                  console.log(`El bus ${bus.id} no tiene comentarios.`);
-                  return;
-                }
+            // Creamos una nueva suscripción para los comentarios del bus
+            const subscription = this.firebaseService
+              .streamBusComments(this.empresaId!, Number(bus.id))
+              .subscribe({
+                next: (comments) => {
+                  // Actualizamos los comentarios de este bus específico
+                  this.updateBusComments(bus, comments);
+                },
+                error: (err) => {
+                  console.error(
+                    `Error al obtener comentarios del bus ${bus.id}:`,
+                    err
+                  );
+                },
+              });
 
-                const busComments: Comment[] = comments.map((comment) => ({
-                  id: comment.id,
-                  busPlaca: bus.placa,
-                  userRole: comment.userRole ?? 'Usuario desconocido',
-                  content: comment.comment,
-                  date: new Date(comment.timestamp),
-                  rating: comment.stars,
-                  category: comment.category ?? 'otro',
-                  status: comment.status ?? 'pendiente', // Estado por defecto
-                }));
+            // Guardamos la suscripción
+            this.busSubscriptions.set(bus.id, subscription);
+          });
+        },
+        error: (err) => {
+          console.error(
+            `Error al obtener los buses para la empresa ${this.empresaId}:`,
+            err
+          );
+        },
+      });
+  }
 
-                // Evitar duplicados en la lista de comentarios
-                const uniqueComments = busComments.filter(
-                  (newComment) =>
-                    !this.comments.some(
-                      (existingComment) => existingComment.id === newComment.id
-                    )
-                );
+  updateBusComments(bus: any, newComments: any[]): void {
+    // Removemos los comentarios antiguos de este bus
+    this.comments = this.comments.filter((c) => c.busId !== bus.id);
 
-                this.comments = [...this.comments, ...uniqueComments];
-                this.applyFilters(); // Reaplicar filtros después de cargar
-                this.calculateStats(); // Recalcular estadísticas
-              },
-              error: (err) => {
-                console.error(
-                  `Error al obtener comentarios del bus ${bus.id}:`,
-                  err
-                );
-              },
-            });
-        });
-      },
-      error: (err) => {
-        console.error(
-          `Error al obtener los buses para la empresa ${empresaId}:`,
-          err
-        );
-      },
-    });
+    // Agregamos los nuevos comentarios
+    const busComments: Comment[] = newComments.map((comment) => ({
+      id: comment.id,
+      busId: bus.id, // Guardamos el ID del bus
+      busPlaca: bus.placa,
+      userRole: comment.userRole ?? 'Usuario desconocido',
+      content: comment.comment,
+      date: new Date(comment.timestamp),
+      rating: comment.stars,
+      category: comment.category ?? 'otro',
+      status: comment.status ?? 'pendiente',
+    }));
+
+    this.comments = [...this.comments, ...busComments];
+
+    // Ordenamos por fecha descendente (más recientes primero)
+    this.comments.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+    this.applyFilters();
+    this.calculateStats();
   }
 
   calculateStats(): void {
@@ -208,8 +229,10 @@ export class Comments implements OnInit {
   onSearch(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.searchTerm = target.value;
+    this.currentPage = 0; // Resetear a primera página
     this.applyFilters();
   }
+
   setViewMode(mode: 'detailed' | 'compact'): void {
     this.viewMode = mode;
     localStorage.setItem('commentsViewMode', mode);
@@ -217,11 +240,13 @@ export class Comments implements OnInit {
 
   onRatingChange(rating: string): void {
     this.selectedRating = rating;
+    this.currentPage = 0;
     this.applyFilters();
   }
 
   onStatusChange(status: string): void {
     this.selectedStatus = status;
+    this.currentPage = 0;
     this.applyFilters();
   }
 
@@ -229,51 +254,35 @@ export class Comments implements OnInit {
     comment: Comment,
     newStatus: 'pendiente' | 'revisado' | 'resuelto'
   ): void {
-    // Recuperamos el usuario autenticado desde localStorage
-    const authUser = localStorage.getItem('auth_user');
-    if (!authUser) {
-      console.error('auth_user no encontrado en localStorage');
+    if (!this.empresaId) {
+      console.error('No se encontró empresa_id');
       return;
     }
 
-    const empresaId = JSON.parse(authUser)?.empresa_id; // Obtener empresa ID
-    if (!empresaId) {
-      console.error('No se encontró un empresa_id válido en auth_user.');
+    const busId = comment.busId; // Usamos el busId guardado
+    const commentId = comment.id;
+
+    if (!busId || !commentId) {
+      console.error(`Invalid busId or commentId: ${busId}, ${commentId}`);
       return;
     }
 
-    const busId = comment.busPlaca; // ID único del bus (placa o identificador)
-    const commentId = comment.id; // ID único del comentario
+    // NO actualizamos el estado local aquí, dejamos que Firebase lo haga
+    // mediante el observable que ya está escuchando
 
-    // Validamos los identificadores antes de proceder
-    if (!busId || busId === 'NaN') {
-      console.error(`Invalid busId detected: ${busId}`);
-      return;
-    }
-
-    if (!commentId) {
-      console.error(`Invalid commentId detected: ${commentId}`);
-      return;
-    }
-
-    // Actualizamos el estado local para reflejar cambios inmediatos en la UI
-    comment.status = newStatus;
-
-    // Enviamos la actualización al servicio Firebase
     this.firebaseService
-      .updateCommentState(empresaId, busId, commentId, newStatus)
+      .updateCommentState(this.empresaId, busId, commentId, newStatus)
       .then(() => {
         console.log(
-          `El comentario ${commentId} del bus ${busId} fue actualizado correctamente a: ${newStatus}.`
+          `Estado del comentario ${commentId} actualizado a: ${newStatus}`
         );
-
-        this.applyFilters(); // Reaplicamos los filtros para reflejar los cambios en la lista
-        this.calculateStats(); // Recalculamos estadísticas después del cambio
+        // El cambio se reflejará automáticamente a través del observable
       })
       .catch((error) => {
         console.error(`Error al actualizar el comentario ${commentId}:`, error);
       });
   }
+
   onPageSizeChange(): void {
     this.currentPage = 0;
     this.updatePagination();
