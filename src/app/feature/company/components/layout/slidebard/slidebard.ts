@@ -108,7 +108,7 @@ export class Slidebard implements OnInit {
   }
 
   onSoftwareVerdeClick(): void {
-    window.open('https://aws.amazon.com/es/sustainability/?utm_source=chatgpt.com', '_blank');
+    window.open('https://aws.amazon.com/es/sustainability/', '_blank');
   }
 
   toggleTheme(): void {
