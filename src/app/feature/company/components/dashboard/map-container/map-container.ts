@@ -238,7 +238,10 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
 
   toggleRouteList() {
     this.showRouteList = !this.showRouteList;
-    if (this.showRouteList) this.showBusList = false;
+    if (this.showRouteList) {
+      this.showBusList = false;
+      this.isCreatingRoute = false;
+    }
     this.cdr.markForCheck();
   }
 

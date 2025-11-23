@@ -1,15 +1,48 @@
 <div class="flex flex-col h-full">
 
-  <div class="flex-shrink-0 mb-6">
+  <div class="flex-shrink-0 mb-6 flex items-center justify-between">
     <h1 class="text-3xl font-bold text-[#040E1C] dark:text-white transition-colors">Geolocalización de Buses</h1>
+    <button
+      (click)="toggleLayout()"
+      class="px-4 py-2 bg-[#021133] hover:bg-[#040E1C] dark:bg-[#1a2332] dark:hover:bg-[#2a3342] text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
+      [title]="isVerticalLayout ? 'Cambiar a vista horizontal' : 'Cambiar a vista vertical'"
+    >
+      <svg *ngIf="!isVerticalLayout" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 4H5a2 2 0 00-2 2v14a2 2 0 002 2h4m0-18v18m0-18l7-2v18l-7 2" />
+      </svg>
+      <svg *ngIf="isVerticalLayout" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      <span>{{ isVerticalLayout ? 'Vista Horizontal' : 'Vista Vertical' }}</span>
+    </button>
   </div>
 
-  <div class="flex-shrink-0 mb-6">
-    <app-stats></app-stats>
-  </div>
+  <div class="flex-1 min-h-0" [ngClass]="isVerticalLayout ? 'flex gap-0 relative' : 'flex flex-col'">
+    <div [ngClass]="isVerticalLayout ? 'flex-1 min-w-0' : 'flex-shrink-0 mb-6'">
+      <app-stats [isVerticalLayout]="isVerticalLayout" *ngIf="!isVerticalLayout"></app-stats>
+      <app-map-container *ngIf="isVerticalLayout"></app-map-container>
+    </div>
 
-  <div class="flex-1 min-h-0">
-    <app-map-container></app-map-container>
+    <!-- Divisor redimensionable -->
+    <div 
+      *ngIf="isVerticalLayout"
+      (mousedown)="onMouseDown($event)"
+      class="w-1 bg-gray-300 dark:bg-gray-600 hover:bg-blue-500 dark:hover:bg-blue-400 cursor-col-resize flex-shrink-0 transition-colors relative group"
+      [class.bg-blue-500]="isResizing"
+      [class.dark:bg-blue-400]="isResizing"
+    >
+      <div class="absolute inset-y-0 -left-1 -right-1"></div>
+    </div>
+
+    <div 
+      [ngClass]="isVerticalLayout ? 'flex-shrink-0 overflow-hidden' : 'flex-1 min-h-0'"
+      [style.width.px]="isVerticalLayout ? sidebarWidth : null"
+    >
+      <div class="h-full overflow-y-auto px-4">
+        <app-stats [isVerticalLayout]="isVerticalLayout" *ngIf="isVerticalLayout"></app-stats>
+        <app-map-container *ngIf="!isVerticalLayout"></app-map-container>
+      </div>
+    </div>
   </div>
 
 </div>

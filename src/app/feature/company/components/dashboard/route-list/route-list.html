@@ -1,50 +1,50 @@
-<div *ngIf="isVisible" class="absolute top-16 left-4 bg-white rounded-lg shadow-xl z-20 w-96 max-h-96 overflow-hidden">
-  <div class="bg-[#021133] text-white p-3 flex justify-between items-center">
-    <h4 class="font-semibold text-sm">🛣️ Lista de Rutas</h4>
-    <div class="flex items-center gap-2">
+<div *ngIf="isVisible" class="absolute top-16 left-4 bg-white rounded-lg shadow-xl z-20 w-80 max-h-80 overflow-hidden">
+  <div class="bg-[#021133] text-white p-2.5 flex justify-between items-center">
+    <h4 class="font-semibold text-xs">🛣️ Lista de Rutas</h4>
+    <div class="flex items-center gap-1.5">
       <button (click)="loadRoutes()" [disabled]="loading"
         class="p-1 hover:bg-white hover:bg-opacity-20 rounded transition-colors" title="Recargar rutas">
-        <lucide-icon name="refresh-cw" class="w-4 h-4" [class.animate-spin]="loading"></lucide-icon>
+        <lucide-icon name="refresh-cw" class="w-3.5 h-3.5" [class.animate-spin]="loading"></lucide-icon>
       </button>
       <button (click)="onClose()" class="text-white hover:text-gray-300 transition-colors" aria-label="Cerrar">
-        <lucide-icon name="x" class="w-5 h-5"></lucide-icon>
+        <lucide-icon name="x" class="w-4 h-4"></lucide-icon>
       </button>
     </div>
   </div>
 
-  <div *ngIf="error" class="p-3 bg-red-50 border-l-4 border-red-400 text-red-700 text-sm">{{error}}</div>
+  <div *ngIf="error" class="p-2.5 bg-red-50 border-l-4 border-red-400 text-red-700 text-xs">{{error}}</div>
 
-  <div *ngIf="loading" class="p-4 text-center">
-    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-    <p class="text-sm text-gray-600 mt-2">Cargando rutas...</p>
+  <div *ngIf="loading" class="p-3 text-center">
+    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+    <p class="text-xs text-gray-600 mt-1.5">Cargando rutas...</p>
   </div>
 
-  <div *ngIf="!loading" class="max-h-80 overflow-y-auto">
-    <div *ngIf="routes.length === 0" class="p-4 text-center text-gray-500 text-sm">No hay rutas disponibles</div>
+  <div *ngIf="!loading" class="max-h-64 overflow-y-auto">
+    <div *ngIf="routes.length === 0" class="p-3 text-center text-gray-500 text-xs">No hay rutas disponibles</div>
 
     <div *ngFor="let route of routes; trackBy: trackByRoute" (click)="onSelectRoute(route)"
-      class="p-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
+      class="p-2.5 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
       [class.opacity-50]="route.estado !== 'ACTIVA'">
       <div class="flex items-start justify-between">
-        <div class="flex items-start gap-3 flex-1 min-w-0">
+        <div class="flex items-start gap-2 flex-1 min-w-0">
           <div [style.background-color]="route.color_hex"
-            class="w-4 h-4 rounded border border-gray-300 flex-shrink-0 mt-0.5"></div>
+            class="w-3 h-3 rounded border border-gray-300 flex-shrink-0 mt-0.5"></div>
           <div class="min-w-0 flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <div class="font-medium text-gray-900 text-sm truncate">{{route.nombre}}</div>
-              <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full flex-shrink-0">
+            <div class="flex items-center gap-1.5 mb-0.5">
+              <div class="font-medium text-gray-900 text-xs truncate">{{route.nombre}}</div>
+              <span class="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full flex-shrink-0">
                 {{route.codigo}}
               </span>
             </div>
-            <div class="text-xs text-gray-500 mb-1 truncate">{{getOriginDestination(route)}}</div>
-            <div class="text-xs text-gray-400 truncate">{{getRouteInfo(route)}}</div>
-            <div class="text-xs text-gray-400 mt-1">Creada: {{formatDate(route.fecha_creacion)}}</div>
+            <div class="text-[10px] text-gray-500 mb-0.5 truncate">{{getOriginDestination(route)}}</div>
+            <div class="text-[10px] text-gray-400 truncate">{{getRouteInfo(route)}}</div>
+            <div class="text-[10px] text-gray-400 mt-0.5">Creada: {{formatDate(route.fecha_creacion)}}</div>
           </div>
         </div>
-        <div class="flex flex-col gap-1 ml-2 flex-shrink-0">
+        <div class="flex flex-col gap-1 ml-1.5 flex-shrink-0">
           <button (click)="onToggleRoute($event, route)"
             [class]="route.estado === 'ACTIVA' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
-            class="text-xs px-2 py-1 rounded-full transition-colors">
+            class="text-[10px] px-1.5 py-0.5 rounded-full transition-colors">
             {{route.estado === 'ACTIVA' ? 'Activa' : 'Inactiva'}}
           </button>
          

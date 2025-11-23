@@ -35,7 +35,7 @@
 
         <button (click)="toggleRouteList()"
           class="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-xs transition-colors flex items-center gap-1"
-          [class.bg-purple-800]="showRouteList" [disabled]="isCreatingRoute || !isMapReady" title="Rutas">
+          [class.bg-purple-800]="showRouteList" [disabled]="!isMapReady" title="Rutas">
           <lucide-icon name="route" class="w-4 h-4"></lucide-icon>
           Rutas
         </button>
