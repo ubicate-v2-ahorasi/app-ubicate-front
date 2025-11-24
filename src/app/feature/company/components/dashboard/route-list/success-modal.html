@@ -1,0 +1,32 @@
+<div *ngIf="isVisible">
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" (click)="onClose()"></div>
+  
+  <div class="fixed inset-0 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4 pointer-events-none">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-md w-full pointer-events-auto">
+    <div class="p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+          <lucide-icon name="check-circle" class="w-6 h-6 text-green-600 dark:text-green-400"></lucide-icon>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ruta Eliminada</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">La operación se completó exitosamente</p>
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <p class="text-gray-700 dark:text-gray-300">La ruta <strong class="dark:text-white">{{routeName}}</strong> ha sido eliminada correctamente del sistema.</p>
+      </div>
+
+      <div class="flex justify-end">
+        <button
+          (click)="onClose()"
+          class="px-4 py-2 bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white rounded-lg transition-colors font-medium"
+        >
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>

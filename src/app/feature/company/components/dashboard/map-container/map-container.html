@@ -33,16 +33,11 @@
           <lucide-icon name="crosshair" class="w-4 h-4"></lucide-icon>
         </button>
 
-        <button (click)="toggleMapStyle()"
-          class="px-2 py-1 rounded text-xs transition-colors flex items-center gap-1"
-          [class.bg-gray-800]="isDarkMapStyle"
-          [class.bg-gray-700]="!isDarkMapStyle"
-          [class.hover:bg-gray-900]="isDarkMapStyle"
-          [class.hover:bg-gray-600]="!isDarkMapStyle"
-          [disabled]="!isMapReady" 
-          [title]="isDarkMapStyle ? 'Modo claro' : 'Modo oscuro'">
-          <lucide-icon [name]="isDarkMapStyle ? 'sun' : 'moon'" class="w-4 h-4"></lucide-icon>
-        </button>
+        <!-- <app-map-dark-mode
+          [disabled]="!isMapReady"
+          [isDarkMode]="isDarkModeEnabled"
+          (toggled)="onMapThemeToggle()"
+        ></app-map-dark-mode> -->
 
         <button (click)="toggleRouteList()"
           class="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-xs transition-colors flex items-center gap-1"
@@ -66,9 +61,15 @@
   <app-route-creator *ngIf="isCreatingRoute && isMapReady" [map]="safeGoogleMap" (routeCreated)="onRouteCreated()"
     (cancel)="onCancelRouteCreation()" class="z-40"></app-route-creator>
 
-  <google-map [center]="center" [zoom]="zoom" [options]="mapOptions" [width]="mapWidth" [height]="mapHeight"
-    class="z-10">
-  </google-map>
+  <google-map
+    *ngIf="renderMap"
+    [center]="center"
+    [zoom]="zoom"
+    [options]="mapOptions"
+    [width]="mapWidth"
+    [height]="mapHeight"
+    class="z-10"
+  ></google-map>
 
   <div *ngIf="isLocating" class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg p-4 flex items-center gap-3 shadow-lg">

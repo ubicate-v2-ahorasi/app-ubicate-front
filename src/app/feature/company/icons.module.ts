@@ -15,6 +15,8 @@ import {
   Loader2,
   Sun,
   Moon,
+  AlertTriangle,
+  CheckCircle,
 } from 'lucide-angular';
 
 const icons = {
@@ -31,6 +33,8 @@ const icons = {
   Loader2,
   Sun,
   Moon,
+  AlertTriangle,
+  CheckCircle,
 };
 
 @NgModule({

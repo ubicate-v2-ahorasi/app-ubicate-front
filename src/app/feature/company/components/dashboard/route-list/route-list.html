@@ -2,10 +2,6 @@
   <div class="bg-[#021133] text-white p-2.5 flex justify-between items-center">
     <h4 class="font-semibold text-xs">🛣️ Lista de Rutas</h4>
     <div class="flex items-center gap-1.5">
-      <button (click)="loadRoutes()" [disabled]="loading"
-        class="p-1 hover:bg-white hover:bg-opacity-20 rounded transition-colors" title="Recargar rutas">
-        <lucide-icon name="refresh-cw" class="w-3.5 h-3.5" [class.animate-spin]="loading"></lucide-icon>
-      </button>
       <button (click)="onClose()" class="text-white hover:text-gray-300 transition-colors" aria-label="Cerrar">
         <lucide-icon name="x" class="w-4 h-4"></lucide-icon>
       </button>
@@ -57,3 +53,17 @@
     </div>
   </div>
 </div>
+
+<app-delete-route-modal
+  [isVisible]="showDeleteModal"
+  [route]="routeToDelete"
+  [isDeleting]="isDeleting"
+  (confirm)="onConfirmDelete()"
+  (cancel)="onCancelDelete()"
+></app-delete-route-modal>
+
+<app-success-modal
+  [isVisible]="showSuccessModal"
+  [routeName]="deletedRouteName"
+  (close)="onCloseSuccess()"
+></app-success-modal>
