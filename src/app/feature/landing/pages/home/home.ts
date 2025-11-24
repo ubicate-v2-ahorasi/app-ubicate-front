@@ -56,7 +56,7 @@ export class Home implements OnInit {
     },
     {
       title: 'Gestión de Rutas',
-      description: 'Administra rutas, paradas y horarios de forma eficiente',
+      description: 'Administra rutas, conductores y buses de forma eficiente',
       image: 'assets/empresa-rutas.jpg'
     }
   ];
@@ -73,8 +73,8 @@ export class Home implements OnInit {
       image: 'assets/TDE.jpg'
     },
     {
-      title: 'Notificaciones inteligentes',
-      description: 'Te avisamos cuando tu bus está cerca',
+      title: 'Vista para conductores',
+      description: 'Tu escoges cuando empezar a mostrar tu ruta en la app',
       image: 'assets/Interfazchofer.jpg'
     }
   ];
