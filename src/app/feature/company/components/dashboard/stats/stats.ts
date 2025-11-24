@@ -18,7 +18,7 @@ export class Stats implements OnInit {
   ngOnInit(): void {
     this.busService.getBusStats().subscribe({
       next: (data) => (this.stats = data),
-      error: (err) => console.error('Error al obtener estadísticas', err),
+      error: (err) => {},
     });
   }
 }

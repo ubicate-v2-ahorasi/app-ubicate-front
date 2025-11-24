@@ -35,7 +35,6 @@ export class Bus {
 
   // Manejar cambio de filtros
   onFilterChange(criteria: BusFilterCriteria) {
-    console.log('🔍 Filtros recibidos en componente padre:', criteria);
     if (this.busList) {
       this.busList.onFilterChange(criteria);
     }

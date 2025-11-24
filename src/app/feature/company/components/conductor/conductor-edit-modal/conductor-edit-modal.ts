@@ -89,7 +89,6 @@ export class ConductorEditModal implements OnInit, OnChanges {
             this.onSave.emit();
           },
           error: (error) => {
-            console.error('Error al actualizar conductor:', error);
             this.isSubmitting = false;
           },
         });

@@ -103,7 +103,6 @@ export class Slidebard implements OnInit {
   }
 
   onLearnMoreClicked(tip: GreenTip): void {
-    console.log('Abrir información detallada:', tip);
     this.showGreenNotification = false;
   }
 

@@ -49,8 +49,6 @@ function handleError(error: HttpErrorResponse): void {
     case 500: errorMessage = 'Error interno del servidor'; break;
     default: errorMessage = `Error ${error.status}: ${error.message}`;
   }
-
-  console.error('❌ HTTP Error:', { status: error.status, message: errorMessage });
 }
 
 export function hasActiveRequests(): boolean {

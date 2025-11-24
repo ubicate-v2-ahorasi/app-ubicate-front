@@ -36,7 +36,6 @@ export class BusDeleteModal {
           this.onConfirm.emit();
         },
         error: (error) => {
-          console.error('Error eliminando bus:', error);
           this.isDeleting = false;
         },
       });

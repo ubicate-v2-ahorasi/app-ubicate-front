@@ -31,7 +31,6 @@ export class ConductorStatsComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error(err);
         this.error = 'No se pudieron cargar las estadísticas.';
         this.loading = false;
       },

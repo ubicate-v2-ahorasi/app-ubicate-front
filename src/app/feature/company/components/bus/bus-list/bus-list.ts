@@ -98,14 +98,12 @@ export class BusList implements OnInit {
   Math = Math;
 
   ngOnInit() {
-    console.log('🚌 Inicializando BusList component...');
     this.loadRutas();
     this.loadBuses();
   }
 
   // Manejo de filtros
   onFilterChange(criteria: BusFilterCriteria) {
-    console.log('🔍 Filtros cambiados:', criteria);
     this.filterCriteria.set(criteria);
     this.currentPage.set(0); // Reset a primera página
   }
@@ -121,36 +119,30 @@ export class BusList implements OnInit {
   }
 
   loadBuses() {
-    console.log('📡 Cargando buses...');
     this.loading.set(true);
 
     // Cargar todos los buses sin paginación para filtrado local
     this.busService.getBuses(0, 1000).subscribe({
       next: (res) => {
-        console.log('✅ Buses cargados:', res);
         this.allBuses.set(res.content);
         this.loading.set(false);
       },
       error: (error) => {
-        console.error('❌ Error cargando buses:', error);
         this.loading.set(false);
       },
     });
   }
 
   loadRutas() {
-    console.log('🛣️ Cargando rutas...');
     this.rutasLoading.set(true);
 
     this.routeService.getRoutes().subscribe({
       next: (rutas) => {
-        console.log('✅ Rutas cargadas:', rutas);
         const rutasActivas = rutas.filter((ruta) => ruta.estado === 'ACTIVA');
         this.rutas.set(rutasActivas);
         this.rutasLoading.set(false);
       },
       error: (error) => {
-        console.error('❌ Error cargando rutas:', error);
         this.rutas.set([]);
         this.rutasLoading.set(false);
       },
@@ -222,14 +214,12 @@ export class BusList implements OnInit {
 
     operation.subscribe({
       next: (updatedBus) => {
-        console.log('✅ Bus actualizado exitosamente:', updatedBus);
         this.allBuses.update((buses) =>
           buses.map((b) => (b.id === bus.id ? updatedBus : b))
         );
         this.updatingRutaId.set(null);
       },
       error: (error) => {
-        console.error('❌ Error actualizando ruta del bus:', error);
         this.updatingRutaId.set(null);
       },
     });
@@ -250,7 +240,6 @@ export class BusList implements OnInit {
   }
 
   recargarRutas() {
-    console.log('🔄 Recargando rutas manualmente...');
     this.loadRutas();
   }
 }

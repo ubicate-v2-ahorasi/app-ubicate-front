@@ -143,7 +143,6 @@ export class Home implements OnInit {
   }
 
   onApkDownload() {
-    console.log('Descarga de APK iniciada');
   }
 
   goToLogin() {

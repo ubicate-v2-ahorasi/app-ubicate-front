@@ -32,7 +32,6 @@ export class ConductorDeleteModal {
             this.onConfirm.emit();
           },
           error: (error) => {
-            console.error('Error al eliminar conductor:', error);
             this.isDeleting = false;
           }
         });

@@ -47,7 +47,11 @@
             class="text-[10px] px-1.5 py-0.5 rounded-full transition-colors">
             {{route.estado === 'ACTIVA' ? 'Activa' : 'Inactiva'}}
           </button>
-         
+          <button (click)="onDeleteRoute($event, route)"
+            class="p-1 bg-red-100 hover:bg-red-200 text-red-600 rounded-full transition-colors flex items-center justify-center"
+            title="Eliminar ruta">
+            <lucide-icon name="trash-2" class="w-3 h-3"></lucide-icon>
+          </button>
         </div>
       </div>
     </div>

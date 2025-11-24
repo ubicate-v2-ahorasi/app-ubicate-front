@@ -120,7 +120,6 @@ export class BusCreate implements OnInit {
           this.onSave.emit();
         },
         error: (error) => {
-          console.error('Error saving bus:', error);
           this.loading = false;
         },
       });

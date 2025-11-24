@@ -30,7 +30,6 @@ export class LocationService {
       this.currentLocationSubject.next(location);
       return location;
     } catch (error) {
-      console.error('Geolocation error:', error);
       throw error;
     } finally {
       this.isLocatingSubject.next(false);
