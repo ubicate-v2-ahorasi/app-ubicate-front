@@ -17,7 +17,7 @@ export class Home implements OnInit {
   appName = 'Ubicate';
   appDescription =
     'Encuentra tu bus en tiempo real y nunca más pierdas tiempo esperando';
-  appVersion = 'v2.0.0';
+  appVersion = 'v1.0.0';
   apkSize = '25 MB';
 
   // Estado del navbar
@@ -28,7 +28,6 @@ export class Home implements OnInit {
   features = [
     '🚌 Ubicación en tiempo real',
     '⏱️ Tiempo de espera estimado',
-    '🆓 Completamente gratis',
   ];
 
   benefits = [
@@ -40,13 +39,44 @@ export class Home implements OnInit {
     {
       icon: '⚡',
       title: 'Súper rápido',
-      description: 'Información actualizada cada 10 segundos',
+      description: 'Información actualizada cada 5 segundos',
     },
     {
       icon: '🌟',
       title: 'Fácil de usar',
       description: 'Interfaz simple e intuitiva para todas las edades',
     },
+  ];
+
+  companyFeatures = [
+    {
+      title: 'Dashboard Completo',
+      description: 'Monitorea tu flota en tiempo real con estadísticas detalladas',
+      image: 'assets/empresa-dashboard.jpg'
+    },
+    {
+      title: 'Gestión de Rutas',
+      description: 'Administra rutas, conductores y buses de forma eficiente',
+      image: 'assets/empresa-rutas.jpg'
+    }
+  ];
+
+  demos = [
+    {
+      title: 'Mapa en tiempo real',
+      description: 'Ve todos los buses cerca de ti en un mapa interactivo',
+      image: 'assets/MapaEnTiempoReal.jpg'
+    },
+    {
+      title: 'Tiempos exactos',
+      description: 'Lista ordenada por proximidad con tiempos precisos',
+      image: 'assets/TDE.jpg'
+    },
+    {
+      title: 'Vista para conductores',
+      description: 'Tu escoges cuando empezar a mostrar tu ruta en la app',
+      image: 'assets/Interfazchofer.jpg'
+    }
   ];
 
   ngOnInit() {
@@ -113,7 +143,6 @@ export class Home implements OnInit {
   }
 
   onApkDownload() {
-    console.log('Descarga de APK iniciada');
   }
 
   goToLogin() {
@@ -121,7 +150,7 @@ export class Home implements OnInit {
   }
 
   goToCompany() {
-    this.router.navigate(['/company']);
+    this.router.navigate(['/auth/login']);
   }
 
   toggleTheme() {

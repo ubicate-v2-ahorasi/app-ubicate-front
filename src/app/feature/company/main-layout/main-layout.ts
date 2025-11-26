@@ -19,6 +19,5 @@ export class MainLayout {
 
   onLogout(): void {
     // El logout se maneja en el SessionService del Slidebard
-    console.log('Logout event received');
   }
 }

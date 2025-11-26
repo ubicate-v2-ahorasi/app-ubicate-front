@@ -192,7 +192,6 @@ Cambia tu contraseña en el primer acceso.`;
               this.onSave.emit();
             },
             error: (error) => {
-              console.error('Error al actualizar conductor:', error);
               this.isSubmitting = false;
             },
           });
@@ -208,7 +207,6 @@ Cambia tu contraseña en el primer acceso.`;
             this.showCredentials = true;
           },
           error: (error) => {
-            console.error('Error al crear conductor:', error);
             this.isSubmitting = false;
           },
         });

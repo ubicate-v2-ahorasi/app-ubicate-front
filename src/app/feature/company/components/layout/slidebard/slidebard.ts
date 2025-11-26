@@ -103,12 +103,11 @@ export class Slidebard implements OnInit {
   }
 
   onLearnMoreClicked(tip: GreenTip): void {
-    console.log('Abrir información detallada:', tip);
     this.showGreenNotification = false;
   }
 
   onSoftwareVerdeClick(): void {
-    window.open('https://aws.amazon.com/es/sustainability/?utm_source=chatgpt.com', '_blank');
+    window.open('https://aws.amazon.com/es/sustainability/', '_blank');
   }
 
   toggleTheme(): void {

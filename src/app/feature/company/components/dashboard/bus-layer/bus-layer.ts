@@ -75,7 +75,7 @@ export class BusLayerComponent implements OnChanges, OnDestroy {
       )
       .subscribe({
         next: (list) => this.syncMarkers(list),
-        error: (err) => console.error('[BusLayer] error ubicaciones:', err),
+        error: (err) => {},
       });
   }
 
@@ -88,7 +88,7 @@ export class BusLayerComponent implements OnChanges, OnDestroy {
   private fetchOnce() {
     this.busService.getBusLocations().subscribe({
       next: (list) => this.syncMarkers(list),
-      error: (err) => console.error('[BusLayer] error inicial:', err),
+      error: (err) => {},
     });
   }
 

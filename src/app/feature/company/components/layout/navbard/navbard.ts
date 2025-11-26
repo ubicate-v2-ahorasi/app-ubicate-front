@@ -62,7 +62,6 @@ export class Navbard implements OnInit {
   }
 
   onLearnMoreClicked(tip: GreenTip): void {
-    console.log('Abrir información detallada:', tip);
     this.showGreenNotification = false;
     // Aquí puedes abrir un modal o navegar a una página de info
   }

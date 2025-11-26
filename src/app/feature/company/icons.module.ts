@@ -13,6 +13,8 @@ import {
   Trash2,
   Edit,
   Loader2,
+  Sun,
+  Moon,
 } from 'lucide-angular';
 
 const icons = {
@@ -27,6 +29,8 @@ const icons = {
   Trash2,
   Edit,
   Loader2,
+  Sun,
+  Moon,
 };
 
 @NgModule({

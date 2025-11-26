@@ -111,7 +111,6 @@ export class Register {
         },
         error: (error) => {
           this.isLoading = false;
-          console.error('Error de registro:', error);
 
           if (error.error?.details) {
             const details = error.error.details;
