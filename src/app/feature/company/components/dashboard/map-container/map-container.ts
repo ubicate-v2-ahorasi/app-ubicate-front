@@ -203,6 +203,7 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
     maxZoom: 20,
     center: this.center,
     zoom: this.zoom,
+    mapId: undefined,
     styles: [],
   };
 
@@ -458,8 +459,12 @@ export class MapContainerComponent implements AfterViewInit, OnDestroy, OnInit {
       return;
     }
 
+    const mapId = this.isDarkMapStyle
+      ? 'YOUR_DARK_MAP_ID'
+      : 'YOUR_LIGHT_MAP_ID';
     this.safeGoogleMap.setOptions({
       styles: this.isDarkMapStyle ? this.darkMapStyles : [],
+      mapId, // <- aquí pasas el Map ID
     });
   }
 
