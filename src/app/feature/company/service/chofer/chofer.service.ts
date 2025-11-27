@@ -45,26 +45,45 @@ export class ConductorService {
   private httpClient = inject(HttpClientService);
   private readonly base = 'conductores';
 
+  // Crear conductor
   createConductor(body: any): Observable<ConductorCreatedResponse> {
     return this.httpClient.post<ConductorCreatedResponse>(this.base, body);
   }
 
+  // Obtener estadísticas de conductores
   getConductorStats(): Observable<any> {
     return this.httpClient.get<any>(`${this.base}/stats`);
   }
 
   getConductores(
-    page = 1,
-    size = 20,
-    sort = 'fechaIngreso,desc'
-  ): Observable<Page<ConductorResponse>> {
-    const params = new HttpParams()
-      .set('page', String(page))
-      .set('size', String(size))
-      .set('sort', sort);
-    return this.httpClient.get<Page<ConductorResponse>>(this.base, params);
+  page = 0,
+  size = 20,
+  sort = 'fechaIngreso,desc',
+  search?: string,
+  estado?: Estado,
+  categoria?: string // Agregar este parámetro
+): Observable<Page<ConductorResponse>> {
+  let params = new HttpParams()
+    .set('page', String(page))
+    .set('size', String(size))
+    .set('sort', sort);
+
+  if (search && search.trim().length > 0) {
+    params = params.set('search', search.trim());
   }
 
+  if (estado) {
+    params = params.set('estado', estado);
+  }
+
+  if (categoria && categoria !== 'Todas') {
+    params = params.set('categoria', categoria); // Agregar el parámetro de categoría
+  }
+
+  return this.httpClient.get<Page<ConductorResponse>>(this.base, params );
+}
+
+  // Buscar conductores con un término de búsqueda
   searchConductores(
     q: string,
     page = 0,
@@ -73,6 +92,7 @@ export class ConductorService {
     let params = new HttpParams()
       .set('page', String(page))
       .set('size', String(size));
+
     if (q && q.trim().length > 0) params = params.set('q', q.trim());
     return this.httpClient.get<Page<ConductorResponse>>(
       `${this.base}/search`,
@@ -80,12 +100,14 @@ export class ConductorService {
     );
   }
 
+  // Obtener conductor por ID
   getConductorById(conductorId: number): Observable<ConductorResponse> {
     return this.httpClient.get<ConductorResponse>(
       `${this.base}/${conductorId}`
     );
   }
 
+  // Actualizar conductor
   updateConductor(
     conductorId: number,
     body: any
@@ -96,6 +118,7 @@ export class ConductorService {
     );
   }
 
+  // Actualizar estado del conductor
   updateConductorStatus(
     conductorId: number,
     estado: Estado
@@ -108,6 +131,7 @@ export class ConductorService {
     );
   }
 
+  // Asignar un bus al conductor
   asignarBus(
     conductorId: number,
     busId: number
@@ -120,6 +144,7 @@ export class ConductorService {
     );
   }
 
+  // Remover el bus asignado al conductor
   removerBus(conductorId: number): Observable<ConductorResponse> {
     return this.httpClient.patch<ConductorResponse>(
       `${this.base}/${conductorId}/remover-bus`,
@@ -127,12 +152,14 @@ export class ConductorService {
     );
   }
 
+  // Obtener conductores por estado
   getConductoresByEstado(estado: Estado): Observable<ConductorResponse[]> {
     return this.httpClient.get<ConductorResponse[]>(
       `${this.base}/estado/${estado}`
     );
   }
 
+  // Eliminar conductor
   deleteConductor(conductorId: number): Observable<ApiResponse> {
     return this.httpClient.delete<ApiResponse>(`${this.base}/${conductorId}`);
   }

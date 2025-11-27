@@ -4,6 +4,14 @@ import { HttpParams } from '@angular/common/http';
 import { HttpClientService } from '../../../../core/service/http-client.service';
 import { Bus, BusesStats } from '../../models/buses.model';
 
+export interface Page<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class BusService {
   private httpClient = inject(HttpClientService);
@@ -16,16 +24,36 @@ export class BusService {
     return this.httpClient.get<BusesStats>('buses/stats');
   }
 
-  getBuses(page = 0, size = 10, rutaId?: number): Observable<any> {
+  getBuses(
+    page = 1,
+    size = 10,
+    rutaId?: number,
+    search?: string,
+    estado?: string,
+    sort = 'id,desc'
+  ): Observable<Page<Bus>> {
     let params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString());
+      .set('page', String(page))
+      .set('size', String(size))
+      .set('sort', sort);
 
     if (rutaId !== undefined && rutaId !== null) {
-      params = params.set('rutaId', rutaId.toString());
+      params = params.set('rutaId', String(rutaId));
     }
 
-    return this.httpClient.get<any>('buses', params);
+    if (search && search.trim().length > 0) {
+      params = params.set('search', search.trim());
+    }
+
+    if (estado && estado !== '') {
+      params = params.set('estado', estado);
+    }
+
+    return this.httpClient.get<Page<Bus>>('buses', params);
+  }
+
+  getBusById(busId: number): Observable<Bus> {
+    return this.httpClient.get<Bus>(`buses/${busId}`);
   }
 
   getBusLocations(): Observable<any[]> {
@@ -57,10 +85,8 @@ export class BusService {
   removerRuta(busId: number): Observable<Bus> {
     return this.httpClient.delete<Bus>(`buses/${busId}/ruta`);
   }
+
   getBusQR(busId: number, empresaId: number): Observable<Blob> {
-    console.log(
-      `[BusService] Obteniendo QR para bus ${busId} y empresa ${empresaId}`
-    );
     return this.httpClient.getBlob(`qr/${busId}/${empresaId}`);
   }
 

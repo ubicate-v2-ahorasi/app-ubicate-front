@@ -44,7 +44,7 @@
         </tr>
       </thead>
       <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 transition-colors">
-        @if (paginatedBuses().length === 0 && !loading()) {
+        @if (buses().length === 0 && !loading()) {
         <tr>
           <td colspan="9" class="px-6 py-12 text-center">
             <div class="flex flex-col items-center">
@@ -56,18 +56,18 @@
                   d="M13 16V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1m8-1a1 1 0 0 1-1 1H9m4-1V8a1 1 0 0 1 1-1h2.586a1 1 0 0 1 .707.293l2.414 2.414A1 1 0 0 1 20 10.414V16a1 1 0 0 1-1 1h-1m-6 0a1 1 0 0 0 1 1h2M9 7h1" />
               </svg>
               <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">
-                {{ filteredCount() === 0 && totalBuses() > 0 ? 'No se encontraron buses' : 'No hay buses registrados' }}
+                {{ totalElements() === 0 ? 'No hay buses registrados' : 'No se encontraron buses' }}
               </h3>
               <p class="text-gray-500 dark:text-gray-400">
-                {{ filteredCount() === 0 && totalBuses() > 0 ? 'Intenta ajustar los filtros de búsqueda' : 'Comienza
-                agregando tu primer bus a la flota' }}
+                {{ totalElements() === 0 ? 'Comienza agregando tu primer bus a la flota' : 'Intenta ajustar los filtros
+                de búsqueda' }}
               </p>
             </div>
           </td>
         </tr>
         }
 
-        @for (bus of paginatedBuses(); track trackByBusId($index, bus)) {
+        @for (bus of buses(); track trackByBusId($index, bus)) {
         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
           <td class="px-4 py-3 whitespace-nowrap">
             <div class="flex items-center">
@@ -94,11 +94,11 @@
           </td>
 
           <td class="px-4 py-3 whitespace-nowrap">
-            <div class="text-sm text-gray-900 dark:text-white">{{ bus.modelo }}</div>
+            <div class="text-sm text-gray-900 dark:text-gray-400">{{ bus.modelo }}</div>
           </td>
 
           <td class="px-4 py-3 whitespace-nowrap">
-            <div class="text-sm text-gray-900 dark:text-white flex items-center">
+            <div class="text-sm text-gray-900 dark:text-gray-400 flex items-center">
               <svg class="w-4 h-4 text-gray-400 dark:text-gray-500 mr-1" fill="none" stroke="currentColor"
                 viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -109,7 +109,7 @@
           </td>
 
           <td class="px-4 py-3 whitespace-nowrap">
-            <div class="text-sm text-gray-900 dark:text-white">{{ bus.anio }}</div>
+            <div class="text-sm text-gray-900 dark:text-gray-400">{{ bus.anio }}</div>
           </td>
 
           <td class="px-4 py-3 whitespace-nowrap">
@@ -173,7 +173,6 @@
             </div>
           </td>
 
-          <!-- Columna QR -->
           <td class="px-4 py-3 whitespace-nowrap">
             <div class="flex justify-center">
               <button (click)="openQRModal(bus)"
@@ -206,180 +205,170 @@
   </div>
   }
 
-  @if (!loading() && paginatedBuses().length > 0) {
-  <div class="bg-gray-50 dark:bg-gray-900 px-6 py-3 border-t border-gray-200 dark:border-gray-700 transition-colors">
+  @if (!loading() && buses().length > 0) {
+  <div class="bg-gray-50 dark:bg-gray-900 px-4 py-3 border-t border-gray-200 dark:border-gray-700 transition-colors">
     <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-700 dark:text-gray-300 mb-1">
+          Se encontraron <strong class="text-[#040E1C] dark:text-white">{{ totalElements() }}</strong> elementos.
+        </p>
+        <p class="text-sm text-gray-700 dark:text-gray-300">
+          Registros divididos entre <strong class="text-[#040E1C] dark:text-white">{{ totalPages() }}</strong> páginas.
+        </p>
+      </div>
+
       <div class="flex items-center gap-4">
-        <div class="text-sm text-gray-700 dark:text-gray-300">
-          Mostrando {{ (currentPage() * pageSize()) + 1 }} a {{ Math.min((currentPage() + 1) * pageSize(),
-          filteredCount()) }} de {{ filteredCount() }} buses
-          @if (filteredCount() !== totalBuses()) {
-          <span class="text-gray-500 dark:text-gray-400">
-            ({{ totalBuses() }} total)
-          </span>
-          }
-        </div>
         <div class="flex items-center gap-2">
-          <label class="text-xs text-gray-600 dark:text-gray-400">Filas por página:</label>
+          <label class="text-xs text-gray-600 dark:text-gray-400">Filas por página</label>
           <select [ngModel]="pageSize()" (ngModelChange)="onPageSizeChange($event)"
-            class="px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 dark:text-white">
+            class="ml-2 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 dark:text-white">
             <option [value]="10">10</option>
             <option [value]="25">25</option>
             <option [value]="50">50</option>
             <option [value]="100">100</option>
           </select>
         </div>
-      </div>
-      <div class="flex space-x-1">
-        <button (click)="onPageChange(currentPage() - 1)" [disabled]="currentPage() === 0"
-          class="px-3 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white transition-colors">
-          Anterior
-        </button>
-        @for (page of getPages().slice(Math.max(0, currentPage() - 2), Math.min(totalPages(), currentPage() + 3)); track
-        page) {
-        <button (click)="onPageChange(page)"
-          [class]="page === currentPage() ? 'bg-[#040E1C] dark:bg-gray-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'"
-          class="px-3 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 transition-colors">
-          {{ page + 1 }}
-        </button>
-        }
-        <button (click)="onPageChange(currentPage() + 1)" [disabled]="currentPage() >= totalPages() - 1"
-          class="px-3 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white transition-colors">
-          Siguiente
-        </button>
+
+        <div class="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+          Página {{ currentPage() }} de {{ totalPages() }}
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <button (click)="onPageChange(currentPage() - 1)" [disabled]="currentPage() === 1"
+            class="p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            title="Anterior">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <button (click)="onPageChange(currentPage() + 1)" [disabled]="currentPage() >= totalPages()"
+            class="p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            title="Siguiente">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
   }
-</div>
 
-<!-- Modal de eliminación -->
-<app-bus-delete-modal [isOpen]="showDeleteModal()" [bus]="selectedBus()" (onClose)="closeDeleteModal()"
-  (onConfirm)="onBusDeleted()">
-</app-bus-delete-modal>
+  <app-bus-delete-modal [isOpen]="showDeleteModal()" [bus]="selectedBus()" (onClose)="closeDeleteModal()"
+    (onConfirm)="onBusDeleted()">
+  </app-bus-delete-modal>
 
-<!-- Modal de QR -->
-@if (showQRModal()) {
-<div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-  <!-- Overlay -->
-  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm " (click)="closeDeleteModal()"></div>
-  <!-- Contenedor del modal -->
-  <div class="flex items-center justify-center min-h-screen p-4">
-    <!-- Panel del modal -->
-    <div
-      class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full transform transition-all animate-scaleIn">
+  @if (showQRModal()) {
+  <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" (click)="closeQRModal()"></div>
+    <div class="flex items-center justify-center min-h-screen p-4">
+      <div
+        class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full transform transition-all animate-scaleIn">
 
-      <!-- Header -->
-      <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-3">
-            <div
-              class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-              <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div
+                class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1zm12 0h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1zM5 20h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                  Código QR
+                </h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                  Bus {{ selectedBusForQR()?.placa }}
+                </p>
+              </div>
+            </div>
+            <button (click)="closeQRModal()"
+              class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="px-6 py-6">
+          @if (loadingQR()) {
+          <div class="flex flex-col items-center justify-center py-12">
+            <div class="relative">
+              <div class="w-16 h-16 border-4 border-blue-200 dark:border-blue-900 rounded-full"></div>
+              <div
+                class="w-16 h-16 border-4 border-blue-600 dark:border-blue-400 border-t-transparent rounded-full animate-spin absolute top-0 left-0">
+              </div>
+            </div>
+            <p class="mt-4 text-sm font-medium text-gray-600 dark:text-gray-400">Generando código QR...</p>
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-500">Por favor espera un momento</p>
+          </div>
+          } @else if (qrError()) {
+          <div class="flex flex-col items-center justify-center py-12">
+            <div class="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
+              <svg class="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1zm12 0h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1zM5 20h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1z" />
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <div>
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                Código QR
-              </h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400">
-                Bus {{ selectedBusForQR()?.placa }}
-              </p>
-            </div>
-          </div>
-          <button (click)="closeQRModal()"
-            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- Contenido -->
-      <div class="px-6 py-6">
-        @if (loadingQR()) {
-        <!-- Loading -->
-        <div class="flex flex-col items-center justify-center py-12">
-          <div class="relative">
-            <div class="w-16 h-16 border-4 border-blue-200 dark:border-blue-900 rounded-full"></div>
-            <div
-              class="w-16 h-16 border-4 border-blue-600 dark:border-blue-400 border-t-transparent rounded-full animate-spin absolute top-0 left-0">
-            </div>
-          </div>
-          <p class="mt-4 text-sm font-medium text-gray-600 dark:text-gray-400">Generando código QR...</p>
-          <p class="mt-1 text-xs text-gray-500 dark:text-gray-500">Por favor espera un momento</p>
-        </div>
-        } @else if (qrError()) {
-        <!-- Error -->
-        <div class="flex flex-col items-center justify-center py-12">
-          <div class="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
-            <svg class="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <p class="text-sm font-medium text-gray-900 dark:text-white mb-1">Error al cargar el código QR</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400 text-center mb-4">
-            No se pudo generar el código QR. Por favor, intenta nuevamente.
-          </p>
-          <button (click)="loadBusQR(selectedBusForQR()!)"
-            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
-            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 0 0 4.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 0 1-15.357-2m15.357 2H15" />
-            </svg>
-            Reintentar
-          </button>
-        </div>
-        } @else if (qrImageUrl()) {
-        <!-- QR Code -->
-        <div class="flex flex-col items-center">
-          <div class="bg-white p-6 rounded-xl shadow-inner border-2 border-gray-100 dark:border-gray-700">
-            <img [src]="qrImageUrl()" alt="QR Code del bus {{ selectedBusForQR()?.placa }}"
-              class="w-72 h-72 object-contain">
-          </div>
-
-          <!-- Info adicional -->
-          <div class="mt-6 w-full bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
-            <p class="text-xs text-gray-600 dark:text-gray-400 text-center mb-3">
-              📱 Escanea este código QR para acceder a la información del bus
+            <p class="text-sm font-medium text-gray-900 dark:text-white mb-1">Error al cargar el código QR</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 text-center mb-4">
+              No se pudo generar el código QR. Por favor, intenta nuevamente.
             </p>
-            <div class="grid grid-cols-2 gap-2 text-xs">
-              <div class="text-center">
-                <p class="text-gray-500 dark:text-gray-400">Modelo</p>
-                <p class="font-medium text-gray-900 dark:text-white">{{ selectedBusForQR()?.modelo }}</p>
-              </div>
-              <div class="text-center">
-                <p class="text-gray-500 dark:text-gray-400">ID</p>
-                <p class="font-medium text-gray-900 dark:text-white">#{{ selectedBusForQR()?.id }}</p>
+            <button (click)="loadBusQR(selectedBusForQR()!)"
+              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+              <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 0 0 4.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 0 1-15.357-2m15.357 2H15" />
+              </svg>
+              Reintentar
+            </button>
+          </div>
+          } @else if (qrImageUrl()) {
+          <div class="flex flex-col items-center">
+            <div class="bg-white p-6 rounded-xl shadow-inner border-2 border-gray-100 dark:border-gray-700">
+              <img [src]="qrImageUrl()" alt="QR Code del bus {{ selectedBusForQR()?.placa }}"
+                class="w-72 h-72 object-contain">
+            </div>
+
+            <div class="mt-6 w-full bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+              <p class="text-xs text-gray-600 dark:text-gray-400 text-center mb-3">
+                📱 Escanea este código QR para acceder a la información del bus
+              </p>
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="text-center">
+                  <p class="text-gray-500 dark:text-gray-400">Modelo</p>
+                  <p class="font-medium text-gray-900 dark:text-white">{{ selectedBusForQR()?.modelo }}</p>
+                </div>
+                <div class="text-center">
+                  <p class="text-gray-500 dark:text-gray-400">ID</p>
+                  <p class="font-medium text-gray-900 dark:text-white">#{{ selectedBusForQR()?.id }}</p>
+                </div>
               </div>
             </div>
+          </div>
+          }
+        </div>
+
+        @if (qrImageUrl() && !loadingQR()) {
+        <div class="px-6 py-4 bg-gray-50 dark:bg-gray-900 rounded-b-2xl border-t border-gray-200 dark:border-gray-700">
+          <div class="flex space-x-3">
+            <button (click)="downloadQR()"
+              class="flex-1 inline-flex justify-center items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Descargar
+            </button>
           </div>
         </div>
         }
       </div>
-
-      <!-- Footer con acciones -->
-      @if (qrImageUrl() && !loadingQR()) {
-      <div class="px-6 py-4 bg-gray-50 dark:bg-gray-900 rounded-b-2xl border-t border-gray-200 dark:border-gray-700">
-        <div class="flex space-x-3">
-
-          <button (click)="downloadQR()"
-            class="flex-1 inline-flex justify-center items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            Descargar
-          </button>
-        </div>
-      </div>
-      }
     </div>
   </div>
-</div>
-}
+  }

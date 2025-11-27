@@ -128,54 +128,50 @@ export class ConductorTable implements OnInit {
 
   loadConductores() {
     this.loading = true;
-
-    // Send the page as the UI uses it (1-based). We'll adapt to API's response.
     const requestedPage = this.currentPage;
 
-    this.conductorService.getConductores(requestedPage, this.pageSize).subscribe({
-      next: (response: any) => {
-        const content = response?.content ?? [];
-        this.conductores = content.map(this.toConductorVM);
+    // Se pasa solo el estado si no es 'Todos'
+    this.conductorService
+      .getConductores(
+        requestedPage,
+        this.pageSize,
+        'fechaIngreso,desc',
+        this.currentSearchTerm,
+        this.currentEstado !== 'Todos' ? this.currentEstado : undefined, // Solo pasa el estado si no es 'Todos'
+        this.currentCategoria !== 'Todas' ? this.currentCategoria : undefined // Asegurarse de que la categoría se pasa correctamente
+      )
+      .subscribe({
+        next: (response: any) => {
+          const content = response?.content ?? [];
+          this.conductores = content.map(this.toConductorVM);
 
-        // totalElements / totalPages fallback snake_case / camelCase
-        this.totalElements =
-          response?.total_elements ?? response?.totalElements ?? 0;
-        this.totalPages =
-          response?.total_pages ?? response?.totalPages ?? 1;
+          this.totalElements =
+            response?.total_elements ?? response?.totalElements ?? 0;
+          this.totalPages = response?.total_pages ?? response?.totalPages ?? 1;
 
-        // Detect whether API returned response.number in 0-based or 1-based indexing.
-        // If response.number is not a number, keep requestedPage.
-        if (typeof response?.number === 'number') {
-          const respNumber = response.number;
+          if (typeof response?.number === 'number') {
+            const respNumber = response.number;
 
-          // If API responded with the same numeric value we asked => it's 1-based
-          if (respNumber === requestedPage) {
-            this.currentPage = respNumber;
-          }
-          // If API responded with requestedPage - 1 => it's 0-based
-          else if (respNumber === requestedPage - 1) {
-            this.currentPage = respNumber + 1;
-          }
-          // Fallback heuristics:
-          else if (respNumber === 0 && requestedPage === 1) {
-            // likely 0-based; map to 1
-            this.currentPage = 1;
+            if (respNumber === requestedPage) {
+              this.currentPage = respNumber;
+            } else if (respNumber === requestedPage - 1) {
+              this.currentPage = respNumber + 1;
+            } else if (respNumber === 0 && requestedPage === 1) {
+              this.currentPage = 1;
+            } else {
+              this.currentPage = respNumber + 1;
+            }
           } else {
-            // last resort: try to normalize assuming response is 0-based
-            this.currentPage = respNumber + 1;
+            this.currentPage = requestedPage;
           }
-        } else {
-          // no number returned; keep the requested page
-          this.currentPage = requestedPage;
-        }
 
-        this.reconcileSelectedBus();
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-      },
-    });
+          this.reconcileSelectedBus();
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+        },
+      });
   }
 
   onSearch(searchTerm: string) {

@@ -48,10 +48,10 @@ export class Users {
     this.closeModal();
     this.closeEditModal();
     this.conductorTable.loadConductores();
-    this.conductorStats.load(); // Recargar estadísticas
+    this.conductorStats.load();
   }
 
   onDataChanged() {
-    this.conductorStats.load(); // Recargar estadísticas cuando hay cambios
+    this.conductorStats.load();
   }
 }
