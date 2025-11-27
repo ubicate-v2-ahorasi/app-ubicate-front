@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { HttpParams } from '@angular/common/http';
+import { catchError, Observable, throwError } from 'rxjs';
+import { HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { HttpClientService } from '../../../../core/service/http-client.service';
 
 export interface ApiResponse {
@@ -131,18 +131,22 @@ export class ConductorService {
     );
   }
 
-  // Asignar un bus al conductor
-  asignarBus(
-    conductorId: number,
-    busId: number
-  ): Observable<ConductorResponse> {
-    const params = new HttpParams().set('busId', String(busId));
-    return this.httpClient.patch<ConductorResponse>(
-      `${this.base}/${conductorId}/asignar-bus`,
-      null,
-      params
-    );
-  }
+  asignarBus(conductorId: number, busId: number): Observable<ConductorResponse> {
+  const params = new HttpParams().set('busId', String(busId));
+  return this.httpClient.patch<ConductorResponse>(
+    `${this.base}/${conductorId}/asignar-bus`,
+    null,
+     params
+  ).pipe(
+    catchError((error: HttpErrorResponse) => {
+      let errorMessage = 'Ocurrió un error al asignar el bus.';
+      if (error.error && error.error.message) {
+        errorMessage = error.error.message; // Extraer el mensaje del error
+      }
+      return throwError(() => new Error(errorMessage)); // Lanza un error con el mensaje
+    })
+  );
+}
 
   // Remover el bus asignado al conductor
   removerBus(conductorId: number): Observable<ConductorResponse> {

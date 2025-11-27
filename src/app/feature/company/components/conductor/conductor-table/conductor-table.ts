@@ -48,7 +48,7 @@ export class ConductorTable implements OnInit {
 
   @Output() onCreateNew = new EventEmitter<void>();
   @Output() onDataChanged = new EventEmitter<void>();
-
+  formErrorMessage: string | null = null;
   conductores: ConductorVM[] = [];
   busesDisponibles: BusVM[] = [];
   selectedBusByConductor: Record<number, number | null> = {};
@@ -274,7 +274,11 @@ export class ConductorTable implements OnInit {
         this.selectedBusByConductor[conductor.id] = newBusId ?? null;
         this.loadingBusAssignment[conductor.id] = false;
       },
-      error: () => {
+      error: (err) => {
+        // Asignamos el mensaje de error a la propiedad 'formErrorMessage'
+        this.formErrorMessage = err.message; // Aquí puedes asignar el mensaje de error
+
+        // Restauramos el bus asignado si ocurre un error
         this.selectedBusByConductor[conductor.id] = prevBusId;
         this.loadingBusAssignment[conductor.id] = false;
       },
