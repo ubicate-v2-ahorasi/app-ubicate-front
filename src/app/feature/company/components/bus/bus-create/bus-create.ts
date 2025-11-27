@@ -15,6 +15,7 @@ import {
 } from '@angular/forms';
 import { BusService } from '../../../service/bus/bus.service';
 import { Bus } from '../../../models/buses.model';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-bus-create',
@@ -34,6 +35,10 @@ export class BusCreate implements OnInit {
   busForm!: FormGroup;
   loading = false;
   isEdit = false;
+
+  // 👇 NUEVO: Variables para manejo de errores
+  formErrorMessage: string | null = null;
+  formErrorDetails: { [key: string]: any } | null = null;
 
   // Validadores personalizados
   private plateValidator(control: any) {
@@ -77,8 +82,8 @@ export class BusCreate implements OnInit {
       capacidad: [
         '',
         [
-          Validators.required, 
-          Validators.min(1), 
+          Validators.required,
+          Validators.min(1),
           Validators.max(99),
           this.onlyNumbersValidator
         ],
@@ -105,9 +110,108 @@ export class BusCreate implements OnInit {
     }
   }
 
+  // 👇 NUEVO: Método para normalizar errores del backend
+  private normalizeErrorBody(err: HttpErrorResponse): {
+    message: string;
+    details: any | null;
+  } {
+    let body = err.error;
+
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch {
+        return { message: body, details: null };
+      }
+    }
+
+    if (!body || typeof body !== 'object') {
+      return { message: 'Error inesperado del servidor', details: null };
+    }
+
+    const message = body.message || 'Error inesperado del servidor';
+    let details = body.details || null;
+
+    // Mapeos basados en código de error y detección por mensaje
+    if (!details && body.code) {
+      let field: string | null = null;
+
+      // Detectar por el mensaje del backend
+      if (message.toLowerCase().includes('placa')) {
+        field = 'placa';
+      } else if (message.toLowerCase().includes('capacidad')) {
+        field = 'capacidad';
+      } else if (message.toLowerCase().includes('marca')) {
+        field = 'marca';
+      } else if (message.toLowerCase().includes('modelo')) {
+        field = 'modelo';
+      }
+
+      // Mapeos explícitos por código (tienen prioridad)
+      const fieldMappings: { [key: string]: string } = {
+        'RSE_409': 'placa',
+        'BUS_001': 'placa',
+        'BUS_002': 'capacidad',
+        'BUS_003': 'marca',
+      };
+
+      const mappedField = fieldMappings[body.code];
+      if (mappedField) {
+        field = mappedField;
+      }
+
+      if (field) {
+        details = { [field]: message };
+      }
+    }
+
+    return { message, details };
+  }
+
+  // 👇 NUEVO: Método para marcar errores en el formulario
+  private markServerErrorsOnForm(details: { [key: string]: any } | null) {
+    if (!details) return;
+
+    const fieldMapping: { [key: string]: string } = {
+      placa: 'placa',
+      marca: 'marca',
+      modelo: 'modelo',
+      capacidad: 'capacidad',
+      anio: 'anio',
+    };
+
+    Object.keys(details).forEach((key) => {
+      if (key === 'error') return;
+
+      const formFieldName = fieldMapping[key] || key;
+      const control = this.busForm.get(formFieldName);
+
+      if (control) {
+        const val = details[key];
+        control.setErrors({ server: val });
+        control.markAsTouched();
+      }
+    });
+  }
+
+  // 👇 NUEVO: Método para limpiar errores
+  private clearErrors() {
+    this.formErrorMessage = null;
+    this.formErrorDetails = null;
+    Object.keys(this.busForm.controls || {}).forEach((k) => {
+      const control = this.busForm.get(k);
+      if (control?.errors?.['server']) {
+        const { server, ...otherErrors } = control.errors;
+        control.setErrors(Object.keys(otherErrors).length > 0 ? otherErrors : null);
+      }
+    });
+  }
+
   onSubmit() {
     if (this.busForm.valid) {
       this.loading = true;
+      this.clearErrors(); // 👈 Limpiar errores antes de enviar
+
       const formData = this.busForm.value;
 
       const operation = this.isEdit
@@ -119,20 +223,59 @@ export class BusCreate implements OnInit {
           this.loading = false;
           this.onSave.emit();
         },
-        error: (error) => {
+        error: (error: HttpErrorResponse) => {
           this.loading = false;
+
+          // 👇 Procesar el error
+          const normalized = this.normalizeErrorBody(error);
+          this.formErrorMessage = normalized.message;
+          this.formErrorDetails = normalized.details;
+
+          if (normalized.details) {
+            this.markServerErrorsOnForm(normalized.details);
+          } else {
+            this.busForm.setErrors({ backend: normalized.message });
+          }
         },
       });
     }
   }
 
   closeModal() {
+    this.clearErrors(); // 👈 Limpiar errores al cerrar
     this.onClose.emit();
+  }
+
+  // 👇 NUEVOS: Métodos helper para el template
+  hasFieldErrors(): boolean {
+    if (!this.formErrorDetails) return false;
+    const keys = Object.keys(this.formErrorDetails).filter(
+      (k) => k !== 'error'
+    );
+    return keys.length > 0;
+  }
+
+  getFieldErrors(): Array<{ key: string; value: any }> {
+    if (!this.formErrorDetails) return [];
+    return Object.keys(this.formErrorDetails)
+      .filter((k) => k !== 'error')
+      .map((k) => ({ key: k, value: this.formErrorDetails![k] }));
+  }
+
+  translateFieldName(fieldName: string): string {
+    const translations: { [key: string]: string } = {
+      placa: 'Placa',
+      marca: 'Marca',
+      modelo: 'Modelo',
+      capacidad: 'Capacidad',
+      anio: 'Año',
+      estado: 'Estado',
+    };
+    return translations[fieldName] || fieldName;
   }
 
   onlyNumbers(event: KeyboardEvent): void {
     const key = event.key;
-    // Permitir teclas de control (backspace, delete, arrows, etc.)
     if (key.length === 1 && !/^\d$/.test(key)) {
       event.preventDefault();
     }
@@ -140,7 +283,6 @@ export class BusCreate implements OnInit {
 
   onlyAlphanumeric(event: KeyboardEvent): void {
     const key = event.key;
-    // Permitir teclas de control (backspace, delete, arrows, etc.)
     if (key.length === 1 && !/^[a-zA-Z0-9]$/.test(key)) {
       event.preventDefault();
     }

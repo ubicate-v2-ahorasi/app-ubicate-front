@@ -33,16 +33,16 @@
           <lucide-icon name="crosshair" class="w-4 h-4"></lucide-icon>
         </button>
 
-        <button (click)="toggleMapStyle()"
+       <!-- <button (click)="toggleMapStyle()"
           class="px-2 py-1 rounded text-xs transition-colors flex items-center gap-1"
           [class.bg-gray-800]="isDarkMapStyle"
           [class.bg-gray-700]="!isDarkMapStyle"
           [class.hover:bg-gray-900]="isDarkMapStyle"
           [class.hover:bg-gray-600]="!isDarkMapStyle"
-          [disabled]="!isMapReady" 
+          [disabled]="!isMapReady"
           [title]="isDarkMapStyle ? 'Modo claro' : 'Modo oscuro'">
           <lucide-icon [name]="isDarkMapStyle ? 'sun' : 'moon'" class="w-4 h-4"></lucide-icon>
-        </button>
+        </button>-->
 
         <button (click)="toggleRouteList()"
           class="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-xs transition-colors flex items-center gap-1"
@@ -60,7 +60,7 @@
   <app-route-list [isVisible]="showRouteList && !isCreatingRoute" (selectRouteId)="onSelectRouteId($event)"
     (close)="onCloseRouteList()" class="z-25"></app-route-list>
 
-  <app-map-controls [isLocating]="isLocating" [isCreatingRoute]="isCreatingRoute" 
+  <app-map-controls [isLocating]="isLocating" [isCreatingRoute]="isCreatingRoute"
     (startRoute)="startCreatingRoute()" class="z-20"></app-map-controls>
 
   <app-route-creator *ngIf="isCreatingRoute && isMapReady" [map]="safeGoogleMap" (routeCreated)="onRouteCreated()"

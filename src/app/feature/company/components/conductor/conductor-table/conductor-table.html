@@ -17,7 +17,7 @@
       </thead>
 
       <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 transition-colors">
-        <tr *ngIf="paginatedConductores.length === 0">
+        <tr *ngIf="conductores.length === 0">
           <td colspan="6" class="px-6 py-12 text-center">
             <div class="flex flex-col items-center">
               <svg class="w-12 h-12 text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -30,7 +30,7 @@
           </td>
         </tr>
 
-        <tr *ngFor="let conductor of paginatedConductores" 
+        <tr *ngFor="let conductor of conductores"
             (click)="onRowClick(conductor, $event)"
             class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer select-text">
           <td class="px-4 py-3 whitespace-nowrap">
@@ -124,43 +124,54 @@
     </table>
   </div>
 
-  <!-- Paginación -->
-  <div *ngIf="!loading && paginatedConductores.length > 0" class="bg-gray-50 dark:bg-gray-900 px-4 py-2 border-t border-gray-200 dark:border-gray-700 transition-colors">
+  <!-- Footer de paginación corregido -->
+  <div *ngIf="!loading && conductores.length > 0" class="bg-gray-50 dark:bg-gray-900 px-4 py-3 border-t border-gray-200 dark:border-gray-700 transition-colors">
     <div class="flex items-center justify-between">
-      <div class="flex items-center gap-4">
+      <!-- Izquierda: mensaje en dos líneas -->
+      <div>
         <div class="text-sm text-gray-700 dark:text-gray-300">
-          Mostrando {{ (currentPage * pageSize) + 1 }} a {{ Math.min((currentPage + 1) * pageSize, filteredCount) }} de {{ filteredCount }} conductores
-          <span *ngIf="filteredCount !== totalConductores" class="text-gray-500 dark:text-gray-400">
-            ({{ totalConductores }} total)
-          </span>
+          <p class="mb-1">Se encontraron <strong class="text-[#040E1C] dark:text-white">{{ totalElements }}</strong> elementos.</p>
+          <p>Registros divididos entre <strong class="text-[#040E1C] dark:text-white">{{ totalPages }}</strong> páginas.</p>
         </div>
+      </div>
+
+      <!-- Derecha: Filas por página / Página X de Y / flechas -->
+      <div class="flex items-center gap-4">
+        <!-- Filas por página -->
         <div class="flex items-center gap-2">
-          <label class="text-xs text-gray-600 dark:text-gray-400">Filas por página:</label>
-          <select [(ngModel)]="pageSize" (change)="onPageSizeChange()" 
-            class="px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 dark:text-white">
+          <label class="text-xs text-gray-600 dark:text-gray-400">Filas por página</label>
+          <select [(ngModel)]="pageSize" (change)="onPageSizeChange()"
+            class="ml-1 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 dark:text-white">
             <option [value]="10">10</option>
             <option [value]="25">25</option>
             <option [value]="50">50</option>
             <option [value]="100">100</option>
           </select>
         </div>
-      </div>
-      <div class="flex space-x-1">
-        <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 0"
-          class="px-3 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white transition-colors">
-          Anterior
-        </button>
-        <button
-          *ngFor="let page of getPages().slice(Math.max(0, currentPage - 2), Math.min(totalPages, currentPage + 3))"
-          (click)="onPageChange(page)"
-          [class]="page === currentPage ? 'bg-[#040E1C] dark:bg-gray-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'"
-          class="px-3 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 transition-colors">
-          {{ page + 1 }}
-        </button>
-        <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage >= totalPages - 1"
-          class="px-3 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white transition-colors">
-          Siguiente
-        </button>
+
+        <!-- Página X de Y -->
+        <div class="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+          Página {{ currentPage }} de {{ totalPages }}
+        </div>
+
+        <!-- Botones flecha (únicos) -->
+        <div class="flex items-center space-x-2">
+          <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1"
+            class="p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            title="Anterior">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage >= totalPages"
+            class="p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            title="Siguiente">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>

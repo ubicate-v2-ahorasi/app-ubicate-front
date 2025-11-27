@@ -3,159 +3,223 @@
   <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" (click)="closeModal()"></div>
 
   <!-- Modal -->
-  <div class="fixed inset-0 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4 pointer-events-none">
+  <div
+    class="fixed inset-0 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4 pointer-events-none">
     <div class="bg-white dark:bg-gray-800 w-full max-w-lg shadow-2xl rounded-2xl overflow-hidden pointer-events-auto">
-    <!-- Header -->
-    <div class="flex items-center justify-between px-6 py-4 bg-[#040E1C] text-white">
-      <h3 class="text-lg font-semibold">
-        {{ isEdit ? 'Editar Bus' : 'Nuevo Bus' }}
-      </h3>
-      <button (click)="closeModal()" class="text-white/70 hover:text-white transition-colors">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
+      <!-- Header -->
+      <div class="flex items-center justify-between px-6 py-4 bg-[#040E1C] text-white">
+        <h3 class="text-lg font-semibold">
+          {{ isEdit ? 'Editar Bus' : 'Nuevo Bus' }}
+        </h3>
+        <button (click)="closeModal()" class="text-white/70 hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="busForm" (ngSubmit)="onSubmit()" class="p-6">
+
+        <!-- Error GLOBAL del formulario -->
+        <div *ngIf="busForm.errors?.['backend']" class="mb-4">
+          <div
+            class="rounded-lg border border-red-200 bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-800 dark:text-red-300">
+            <strong class="font-semibold">{{ busForm.errors?.['backend'] }}</strong>
+          </div>
+        </div>
+
+        <!-- Información del Bus -->
+        <div class="space-y-4 mb-6">
+          <h4
+            class="text-sm font-medium text-[#040E1C] dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 flex items-center">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l2.414 2.414A1 1 0 0020 10.414V16a1 1 0 01-1 1h-1m-6 0a1 1 0 001 1h2M9 7h1" />
+            </svg>
+            Información del Bus
+          </h4>
+
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Placa -->
+            <div>
+              <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Placa *</label>
+              <input type="text" formControlName="placa" maxlength="6" (keypress)="onlyAlphanumeric($event)"
+                [class.border-red-500]="busForm.get('placa')?.errors && busForm.get('placa')?.touched"
+                [class.dark:border-red-400]="busForm.get('placa')?.errors && busForm.get('placa')?.touched"
+                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                placeholder="ABC123">
+              <!-- 👇 ACTUALIZADO: Mostrar errores incluyendo del servidor -->
+              <div *ngIf="busForm.get('placa')?.errors && busForm.get('placa')?.touched"
+                class="flex items-center mt-1 text-red-500 dark:text-red-400 text-xs">
+                <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd" />
+                </svg>
+                <span *ngIf="busForm.get('placa')?.errors?.['required']">La placa es requerida</span>
+                <span *ngIf="busForm.get('placa')?.errors?.['invalidPlate']">Placa inválida (máx. 6 caracteres
+                  alfanuméricos)</span>
+                <span *ngIf="busForm.get('placa')?.errors?.['server']">{{ busForm.get('placa')?.errors?.['server']
+                  }}</span>
+              </div>
+            </div>
+
+            <!-- Año -->
+            <div>
+              <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Año *</label>
+              <select formControlName="anio"
+                [class.border-red-500]="busForm.get('anio')?.errors && busForm.get('anio')?.touched"
+                [class.dark:border-red-400]="busForm.get('anio')?.errors && busForm.get('anio')?.touched"
+                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                <option value="">Año</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+                <option value="2020">2020</option>
+                <option value="2019">2019</option>
+                <option value="2018">2018</option>
+                <option value="2017">2017</option>
+                <option value="2016">2016</option>
+                <option value="2015">2015</option>
+              </select>
+              <div *ngIf="busForm.get('anio')?.errors && busForm.get('anio')?.touched"
+                class="flex items-center mt-1 text-red-500 dark:text-red-400 text-xs">
+                <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd" />
+                </svg>
+                <span *ngIf="busForm.get('anio')?.errors?.['required']">El año es requerido</span>
+                <span *ngIf="busForm.get('anio')?.errors?.['server']">{{ busForm.get('anio')?.errors?.['server']
+                  }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Marca -->
+            <div>
+              <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Marca *</label>
+              <select formControlName="marca"
+                [class.border-red-500]="busForm.get('marca')?.errors && busForm.get('marca')?.touched"
+                [class.dark:border-red-400]="busForm.get('marca')?.errors && busForm.get('marca')?.touched"
+                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                <option value="">Marca</option>
+                <option value="Mercedes Benz">Mercedes Benz</option>
+                <option value="Volvo">Volvo</option>
+                <option value="Scania">Scania</option>
+                <option value="Iveco">Iveco</option>
+                <option value="Hyundai">Hyundai</option>
+                <option value="Yutong">Yutong</option>
+                <option value="King Long">King Long</option>
+                <option value="Marcopolo">Marcopolo</option>
+                <option value="Otra">Otra</option>
+              </select>
+              <div *ngIf="busForm.get('marca')?.errors && busForm.get('marca')?.touched"
+                class="flex items-center mt-1 text-red-500 dark:text-red-400 text-xs">
+                <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd" />
+                </svg>
+                <span *ngIf="busForm.get('marca')?.errors?.['required']">La marca es requerida</span>
+                <span *ngIf="busForm.get('marca')?.errors?.['server']">{{ busForm.get('marca')?.errors?.['server']
+                  }}</span>
+              </div>
+            </div>
+
+            <!-- Capacidad Pasajeros -->
+            <div>
+              <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Capacidad *</label>
+              <input type="number" formControlName="capacidad" min="1" max="99" maxlength="2"
+                (keypress)="onlyNumbers($event)"
+                [class.border-red-500]="busForm.get('capacidad')?.errors && busForm.get('capacidad')?.touched"
+                [class.dark:border-red-400]="busForm.get('capacidad')?.errors && busForm.get('capacidad')?.touched"
+                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                placeholder="40 pasajeros">
+              <div *ngIf="busForm.get('capacidad')?.errors && busForm.get('capacidad')?.touched"
+                class="flex items-center mt-1 text-red-500 dark:text-red-400 text-xs">
+                <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd" />
+                </svg>
+                <span *ngIf="busForm.get('capacidad')?.errors?.['required']">Capacidad requerida</span>
+                <span
+                  *ngIf="busForm.get('capacidad')?.errors?.['min'] || busForm.get('capacidad')?.errors?.['max']">Capacidad
+                  debe ser entre 1-99</span>
+                <span *ngIf="busForm.get('capacidad')?.errors?.['server']">{{
+                  busForm.get('capacidad')?.errors?.['server'] }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modelo Bus -->
+          <div>
+            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Modelo del Bus *</label>
+            <input type="text" formControlName="modelo" maxlength="30"
+              [class.border-red-500]="busForm.get('modelo')?.errors && busForm.get('modelo')?.touched"
+              [class.dark:border-red-400]="busForm.get('modelo')?.errors && busForm.get('modelo')?.touched"
+              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+              placeholder="O500U BlueTec 5, B270F, Torino, etc.">
+            <div *ngIf="busForm.get('modelo')?.errors && busForm.get('modelo')?.touched"
+              class="flex items-center mt-1 text-red-500 dark:text-red-400 text-xs">
+              <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd" />
+              </svg>
+              <span *ngIf="busForm.get('modelo')?.errors?.['required']">El modelo del bus es requerido</span>
+              <span *ngIf="busForm.get('modelo')?.errors?.['server']">{{ busForm.get('modelo')?.errors?.['server']
+                }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Estado Operativo -->
+        <div class="space-y-4">
+          <h4
+            class="text-sm font-medium text-[#040E1C] dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 flex items-center">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Estado del Bus
+          </h4>
+
+          <div>
+            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Estado Operativo *</label>
+            <select formControlName="estado"
+              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+              <option value="ACTIVO">🟢 Activo - Disponible para servicio</option>
+              <option value="INACTIVO">🔴 Inactivo - Fuera de servicio</option>
+              <option value="MANTENIMIENTO">🔧 En Mantenimiento</option>
+              <option value="EN_RUTA">🚌 En Ruta - Prestando servicio</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex space-x-3 mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <button type="button" (click)="closeModal()" [disabled]="loading"
+            class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="busForm.invalid || loading"
+            class="flex-1 px-4 py-2.5 text-sm font-medium bg-[#040E1C] dark:bg-[#021133] text-white rounded-lg hover:bg-[#021133] dark:hover:bg-[#040E1C] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all">
+            <svg *ngIf="loading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+              </path>
+            </svg>
+            {{ loading ? 'Guardando...' : (isEdit ? 'Actualizar' : 'Crear') }}
+          </button>
+        </div>
+      </form>
     </div>
-
-    <!-- Form -->
-    <form [formGroup]="busForm" (ngSubmit)="onSubmit()" class="p-6">
-
-      <!-- Información del Bus -->
-      <div class="space-y-4 mb-6">
-        <h4 class="text-sm font-medium text-[#040E1C] dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 flex items-center">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l2.414 2.414A1 1 0 0020 10.414V16a1 1 0 01-1 1h-1m-6 0a1 1 0 001 1h2M9 7h1" />
-          </svg>
-          Información del Bus
-        </h4>
-
-        <div class="grid grid-cols-2 gap-4">
-          <!-- Placa -->
-          <div>
-            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Placa *</label>
-            <input type="text" formControlName="placa" maxlength="6" (keypress)="onlyAlphanumeric($event)"
-              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-              placeholder="ABC123">
-            <div *ngIf="busForm.get('placa')?.invalid && busForm.get('placa')?.touched"
-              class="text-red-500 dark:text-red-400 text-xs mt-1">
-              La placa es requerida
-            </div>
-          </div>
-
-          <!-- Año -->
-          <div>
-            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Año *</label>
-            <select formControlName="anio"
-              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-              <option value="">Año</option>
-              <option value="2024">2024</option>
-              <option value="2023">2023</option>
-              <option value="2022">2022</option>
-              <option value="2021">2021</option>
-              <option value="2020">2020</option>
-              <option value="2019">2019</option>
-              <option value="2018">2018</option>
-              <option value="2017">2017</option>
-              <option value="2016">2016</option>
-              <option value="2015">2015</option>
-            </select>
-            <div *ngIf="busForm.get('anio')?.invalid && busForm.get('anio')?.touched" class="text-red-500 dark:text-red-400 text-xs mt-1">
-              El año es requerido
-            </div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <!-- Marca -->
-          <div>
-            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Marca *</label>
-            <select formControlName="marca"
-              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-              <option value="">Marca</option>
-              <option value="Mercedes Benz">Mercedes Benz</option>
-              <option value="Volvo">Volvo</option>
-              <option value="Scania">Scania</option>
-              <option value="Iveco">Iveco</option>
-              <option value="Hyundai">Hyundai</option>
-              <option value="Yutong">Yutong</option>
-              <option value="King Long">King Long</option>
-              <option value="Marcopolo">Marcopolo</option>
-              <option value="Otra">Otra</option>
-            </select>
-            <div *ngIf="busForm.get('marca')?.invalid && busForm.get('marca')?.touched"
-              class="text-red-500 dark:text-red-400 text-xs mt-1">
-              La marca es requerida
-            </div>
-          </div>
-
-          <!-- Capacidad Pasajeros -->
-          <div>
-            <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Capacidad *</label>
-            <input type="number" formControlName="capacidad" min="1" max="99" maxlength="2" (keypress)="onlyNumbers($event)"
-              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-              placeholder="40 pasajeros">
-            <div *ngIf="busForm.get('capacidad')?.invalid && busForm.get('capacidad')?.touched"
-              class="text-red-500 dark:text-red-400 text-xs mt-1">
-              Capacidad requerida (15-80 pasajeros)
-            </div>
-          </div>
-        </div>
-
-        <!-- Modelo Bus -->
-        <div>
-          <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Modelo del Bus *</label>
-          <input type="text" formControlName="modelo" maxlength="30"
-            class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-            placeholder="O500U BlueTec 5, B270F, Torino, etc.">
-          <div *ngIf="busForm.get('modelo')?.invalid && busForm.get('modelo')?.touched"
-            class="text-red-500 dark:text-red-400 text-xs mt-1">
-            El modelo del bus es requerido
-          </div>
-        </div>
-      </div>
-
-      <!-- Estado Operativo -->
-      <div class="space-y-4">
-        <h4 class="text-sm font-medium text-[#040E1C] dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 flex items-center">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          Estado del Bus
-        </h4>
-
-        <div>
-          <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Estado Operativo *</label>
-          <select formControlName="estado"
-            class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#040E1C] focus:border-[#040E1C] transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-            <option value="ACTIVO">🟢 Activo - Disponible para servicio</option>
-            <option value="INACTIVO">🔴 Inactivo - Fuera de servicio</option>
-            <option value="MANTENIMIENTO">🔧 En Mantenimiento</option>
-            <option value="EN_RUTA">🚌 En Ruta - Prestando servicio</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Buttons -->
-      <div class="flex space-x-3 mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
-        <button type="button" (click)="closeModal()"
-          class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
-          Cancelar
-        </button>
-        <button type="submit" [disabled]="busForm.invalid || loading"
-          class="flex-1 px-4 py-2.5 text-sm font-medium bg-[#040E1C] dark:bg-[#021133] text-white rounded-lg hover:bg-[#021133] dark:hover:bg-[#040E1C] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all">
-          <svg *ngIf="loading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-            </path>
-          </svg>
-          {{ loading ? 'Guardando...' : (isEdit ? 'Actualizar' : 'Crear') }}
-        </button>
-      </div>
-    </form>
   </div>
-</div>

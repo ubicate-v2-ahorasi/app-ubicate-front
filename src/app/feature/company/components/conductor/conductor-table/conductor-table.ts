@@ -50,16 +50,13 @@ export class ConductorTable implements OnInit {
   @Output() onDataChanged = new EventEmitter<void>();
 
   conductores: ConductorVM[] = [];
-  allConductores: ConductorVM[] = [];
-  paginatedConductores: ConductorVM[] = [];
   busesDisponibles: BusVM[] = [];
   selectedBusByConductor: Record<number, number | null> = {};
   loading = false;
-  currentPage = 0;
+  currentPage = 1;
   pageSize = 10;
   totalPages = 0;
-  filteredCount = 0;
-  totalConductores = 0;
+  totalElements = 0;
   loadingBusAssignment: Record<number, boolean> = {};
   currentSearchTerm = '';
   currentEstado: 'Todos' | Estado = 'Todos';
@@ -119,7 +116,7 @@ export class ConductorTable implements OnInit {
   }
 
   loadBusesDisponibles() {
-    this.busService.getBuses(0, 100).subscribe({
+    this.busService.getBuses(1, 1000).subscribe({
       next: (response) => {
         const arr = response?.content ?? response ?? [];
         this.busesDisponibles = (arr as any[]).map(this.toBusVM);
@@ -131,104 +128,118 @@ export class ConductorTable implements OnInit {
 
   loadConductores() {
     this.loading = true;
-    const handlePage = (res: any) => {
-      const content = res?.content ?? res ?? [];
-      this.allConductores = content.map(this.toConductorVM);
-      this.totalConductores = this.allConductores.length;
-      this.applyFiltersAndPagination();
-      this.reconcileSelectedBus();
-      this.loading = false;
-    };
 
-    this.conductorService
-      .getConductores(0, 200)
-      .subscribe({
-        next: handlePage,
-        error: () => {
-          this.loading = false;
-        },
-      });
-  }
+    // Send the page as the UI uses it (1-based). We'll adapt to API's response.
+    const requestedPage = this.currentPage;
 
-  applyFiltersAndPagination() {
-    this.conductores = this.applyLocalFilters(this.allConductores);
-    this.filteredCount = this.conductores.length;
-    this.totalPages = Math.ceil(this.filteredCount / this.pageSize);
-    this.updatePaginatedConductores();
-  }
+    this.conductorService.getConductores(requestedPage, this.pageSize).subscribe({
+      next: (response: any) => {
+        const content = response?.content ?? [];
+        this.conductores = content.map(this.toConductorVM);
 
-  updatePaginatedConductores() {
-    const start = this.currentPage * this.pageSize;
-    const end = start + this.pageSize;
-    this.paginatedConductores = this.conductores.slice(start, end);
-  }
+        // totalElements / totalPages fallback snake_case / camelCase
+        this.totalElements =
+          response?.total_elements ?? response?.totalElements ?? 0;
+        this.totalPages =
+          response?.total_pages ?? response?.totalPages ?? 1;
 
-  applyLocalFilters(conductores: ConductorVM[]): ConductorVM[] {
-    let filtered = [...conductores];
+        // Detect whether API returned response.number in 0-based or 1-based indexing.
+        // If response.number is not a number, keep requestedPage.
+        if (typeof response?.number === 'number') {
+          const respNumber = response.number;
 
-    if (this.currentCategoria !== 'Todas') {
-      filtered = filtered.filter(
-        (c) => c.categoriaLicencia === this.currentCategoria
-      );
-    }
+          // If API responded with the same numeric value we asked => it's 1-based
+          if (respNumber === requestedPage) {
+            this.currentPage = respNumber;
+          }
+          // If API responded with requestedPage - 1 => it's 0-based
+          else if (respNumber === requestedPage - 1) {
+            this.currentPage = respNumber + 1;
+          }
+          // Fallback heuristics:
+          else if (respNumber === 0 && requestedPage === 1) {
+            // likely 0-based; map to 1
+            this.currentPage = 1;
+          } else {
+            // last resort: try to normalize assuming response is 0-based
+            this.currentPage = respNumber + 1;
+          }
+        } else {
+          // no number returned; keep the requested page
+          this.currentPage = requestedPage;
+        }
 
-    if (this.currentEstado !== 'Todos') {
-      filtered = filtered.filter((c) => c.estado === this.currentEstado);
-    }
-
-    if (this.currentSearchTerm) {
-      const searchTerm = this.currentSearchTerm.toLowerCase();
-      filtered = filtered.filter(
-        (c) =>
-          c.nombreCompleto.toLowerCase().includes(searchTerm) ||
-          c.dni.includes(searchTerm) ||
-          c.numeroLicencia.includes(searchTerm)
-      );
-    }
-
-    return filtered;
+        this.reconcileSelectedBus();
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      },
+    });
   }
 
   onSearch(searchTerm: string) {
     this.currentSearchTerm = searchTerm;
-    this.currentPage = 0;
-    this.applyFiltersAndPagination();
+    this.currentPage = 1;
+    this.loadConductores();
   }
 
   onEstadoChange(estado: Estado | 'Todos') {
     this.currentEstado = estado;
-    this.currentPage = 0;
-    this.applyFiltersAndPagination();
+    this.currentPage = 1;
+    this.loadConductores();
   }
 
   onCategoriaChange(categoria: string) {
     this.currentCategoria = categoria;
-    this.currentPage = 0;
-    this.applyFiltersAndPagination();
+    this.currentPage = 1;
+    this.loadConductores();
   }
 
   onClearFilters() {
     this.currentSearchTerm = '';
     this.currentEstado = 'Todos';
     this.currentCategoria = 'Todas';
-    this.currentPage = 0;
-    this.applyFiltersAndPagination();
+    this.currentPage = 1;
+    this.loadConductores();
   }
 
   onPageChange(page: number) {
-    if (page >= 0 && page < this.totalPages) {
+    if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
-      this.updatePaginatedConductores();
+      this.loadConductores();
     }
   }
 
   onPageSizeChange(): void {
-    this.currentPage = 0;
-    this.applyFiltersAndPagination();
+    this.currentPage = 1;
+    this.loadConductores();
   }
 
   getPages(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i);
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  getVisiblePages(): number[] {
+    const maxVisible = 5;
+    const pages: number[] = [];
+
+    if (this.totalPages <= maxVisible) {
+      return this.getPages();
+    }
+
+    let start = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
+    let end = Math.min(this.totalPages, start + maxVisible - 1);
+
+    if (end === this.totalPages) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    return pages;
   }
 
   handleCreateNew() {
@@ -275,56 +286,60 @@ export class ConductorTable implements OnInit {
   }
 
   onView(conductor: ConductorVM) {}
-  
+
   onRowClick(conductor: ConductorVM, event: MouseEvent) {
-    // Verificar si hay texto seleccionado (el usuario está seleccionando para copiar)
     const selection = window.getSelection();
     if (selection && selection.toString().length > 0) {
-      return; // No abrir modal si hay texto seleccionado
+      return;
     }
-    
-    // Verificar si el clic fue en el select o sus hijos
+
     const target = event.target as HTMLElement;
     if (target.tagName === 'SELECT' || target.closest('select')) {
-      return; // No abrir modal si se hace clic en el select
+      return;
     }
-    
+
     this.selectedConductor = conductor;
     this.showEditModal = true;
   }
-  
+
   onEdit(conductor: ConductorVM) {
     this.selectedConductor = conductor;
     this.showEditModal = true;
   }
+
   onDelete(conductor: ConductorVM) {
     this.selectedConductor = conductor;
     this.showDeleteModal = true;
   }
+
   onCancelEdit() {
     this.showEditModal = false;
     this.selectedConductor = null;
   }
+
   onConfirmEdit() {
     this.showEditModal = false;
     this.selectedConductor = null;
+    this.currentPage = 1;
     this.loadConductores();
-    this.onDataChanged.emit(); // Notificar cambio
+    this.onDataChanged.emit();
   }
+
   onDeleteFromEdit() {
-    // Cerrar el modal de edición y abrir el de eliminación
     this.showEditModal = false;
     this.showDeleteModal = true;
   }
+
   onCancelDelete() {
     this.showDeleteModal = false;
     this.selectedConductor = null;
   }
+
   onConfirmDelete() {
     this.showDeleteModal = false;
     this.selectedConductor = null;
     this.loadConductores();
-    this.onDataChanged.emit(); // Notificar cambio
+    this.onDataChanged.emit();
   }
 
   getEstadoClass(estado: Estado): string {
