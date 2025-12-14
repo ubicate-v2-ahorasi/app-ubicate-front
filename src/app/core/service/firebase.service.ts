@@ -58,7 +58,10 @@ export class FirebaseService {
    * @param busId ID del bus
    * @returns Observable con array de comentarios
    */
-  streamBusComments(empresaId: number, busId: number): Observable<CommentFirebase[]> {
+  streamBusComments(
+    empresaId: number,
+    busId: number
+  ): Observable<CommentFirebase[]> {
     return new Observable<CommentFirebase[]>((subscriber) => {
       const path = `empresas/${empresaId}/buses/${busId}/calificaciones`;
       const commentsRef = ref(this.db, path);
@@ -73,18 +76,18 @@ export class FirebaseService {
         }
 
         const rawComments = snapshot.val();
-        const commentsArray: CommentFirebase[] = Object.entries(rawComments).map(
-          ([key, value]: [string, any]) => ({
-            id: key,
-            comment: value.comment ?? '',
-            stars: value.stars ?? 0,
-            date_time_str: value.date_time_str ?? '',
-            timestamp: value.timestamp ?? Date.now(),
-            status: value.status ?? 'pendiente', // Estado por defecto
-            category: value.category ?? 'otro',
-            userRole: value.userRole ?? 'Usuario desconocido',
-          })
-        );
+        const commentsArray: CommentFirebase[] = Object.entries(
+          rawComments
+        ).map(([key, value]: [string, any]) => ({
+          id: key,
+          comment: value.comment ?? '',
+          stars: value.stars ?? 0,
+          date_time_str: value.date_time_str ?? '',
+          timestamp: value.timestamp ?? Date.now(),
+          status: value.status ?? 'pendiente', // Estado por defecto
+          category: value.category ?? 'otro',
+          userRole: value.userRole ?? 'Usuario desconocido',
+        }));
 
         console.log(
           `[FirebaseService] ${commentsArray.length} comentarios obtenidos para el bus ${busId}`
@@ -93,7 +96,10 @@ export class FirebaseService {
       };
 
       const errorHandler = (error: any) => {
-        console.error(`[FirebaseService] Error en streamBusComments para bus ${busId}:`, error);
+        console.error(
+          `[FirebaseService] Error en streamBusComments para bus ${busId}:`,
+          error
+        );
         subscriber.error(error);
       };
 
@@ -101,7 +107,9 @@ export class FirebaseService {
 
       // Cleanup function
       return () => {
-        console.log(`[FirebaseService] Desuscribiendo de comentarios del bus ${busId}`);
+        console.log(
+          `[FirebaseService] Desuscribiendo de comentarios del bus ${busId}`
+        );
         off(commentsRef, 'value', handler);
       };
     });
@@ -127,21 +135,23 @@ export class FirebaseService {
         }
 
         const rawBuses = snapshot.val();
-        const busesArray: BusFirebase[] = Object.entries(rawBuses).map(([id, value]) => {
-          const bus = value as any;
-          return {
-            id,
-            placa: bus.placa ?? '',
-            modelo: bus.modelo ?? '',
-            estado: bus.estado ?? 'INACTIVO',
-            activo: bus.activo ?? false,
-            latitud: bus.latitud ?? 0,
-            longitud: bus.longitud ?? 0,
-            velocidad: bus.velocidad ?? 0,
-            ruta: bus.ruta ?? undefined,
-            rutaId: bus.rutaId ?? undefined,
-          };
-        });
+        const busesArray: BusFirebase[] = Object.entries(rawBuses).map(
+          ([id, value]) => {
+            const bus = value as any;
+            return {
+              id,
+              placa: bus.placa ?? '',
+              modelo: bus.modelo ?? '',
+              estado: bus.estado ?? 'INACTIVO',
+              activo: bus.activo ?? false,
+              latitud: bus.latitud ?? 0,
+              longitud: bus.longitud ?? 0,
+              velocidad: bus.velocidad ?? 0,
+              ruta: bus.ruta ?? undefined,
+              rutaId: bus.rutaId ?? undefined,
+            };
+          }
+        );
 
         console.log(
           `[FirebaseService] ${busesArray.length} buses obtenidos para la empresa ${empresaId}`
@@ -150,14 +160,19 @@ export class FirebaseService {
       };
 
       const errorHandler = (error: any) => {
-        console.error(`[FirebaseService] Error en streamBusesByEmpresa:`, error);
+        console.error(
+          `[FirebaseService] Error en streamBusesByEmpresa:`,
+          error
+        );
         subscriber.error(error);
       };
 
       onValue(busesRef, handler, errorHandler);
 
       return () => {
-        console.log(`[FirebaseService] Desuscribiendo de buses de empresa ${empresaId}`);
+        console.log(
+          `[FirebaseService] Desuscribiendo de buses de empresa ${empresaId}`
+        );
         off(busesRef, 'value', handler);
       };
     });
@@ -176,7 +191,9 @@ export class FirebaseService {
 
       const handler = (snapshot: any) => {
         if (!snapshot.exists()) {
-          console.log('[FirebaseService] No se encontraron empresas con buses activos.');
+          console.log(
+            '[FirebaseService] No se encontraron empresas con buses activos.'
+          );
           subscriber.next(null);
           subscriber.complete();
           return;
@@ -188,20 +205,27 @@ export class FirebaseService {
         for (const empresaId of empresaIds) {
           const empresa = empresas[empresaId];
           if (empresa?.buses && Object.keys(empresa.buses).length > 0) {
-            console.log(`[FirebaseService] Empresa encontrada con buses: ${empresaId}`);
+            console.log(
+              `[FirebaseService] Empresa encontrada con buses: ${empresaId}`
+            );
             subscriber.next(Number(empresaId));
             subscriber.complete();
             return;
           }
         }
 
-        console.log('[FirebaseService] No se encontraron empresas con buses activos.');
+        console.log(
+          '[FirebaseService] No se encontraron empresas con buses activos.'
+        );
         subscriber.next(null);
         subscriber.complete();
       };
 
       const errorHandler = (error: any) => {
-        console.error(`[FirebaseService] Error en findFirstEmpresaWithBuses:`, error);
+        console.error(
+          `[FirebaseService] Error en findFirstEmpresaWithBuses:`,
+          error
+        );
         subscriber.error(error);
       };
 
@@ -226,12 +250,10 @@ export class FirebaseService {
     return new Observable((subscriber) => {
       const path = `empresas/${empresaId}/buses`;
       const busesRef = ref(this.db, path);
-
-      console.log(`[FirebaseService] Consultando buses por empresa y ruta en: ${path}`);
-
+      //console.log(`[FirebaseService] Consultando buses por empresa y ruta en: ${path}`);
       const handler = (snapshot: any) => {
         if (!snapshot.exists()) {
-          console.log(`[FirebaseService] No se encontraron buses para empresa: ${empresaId}`);
+          //console.log(`[FirebaseService] No se encontraron buses para empresa: ${empresaId}`);
           subscriber.next([]);
           return;
         }
@@ -269,21 +291,26 @@ export class FirebaseService {
 
         console.log(
           `[FirebaseService] ${arr.length} buses obtenidos para empresa ${empresaId}` +
-          (rutaId ? ` y ruta ${rutaId}` : '') +
-          (soloActivos ? ' (solo activos)' : '')
+            (rutaId ? ` y ruta ${rutaId}` : '') +
+            (soloActivos ? ' (solo activos)' : '')
         );
         subscriber.next(arr);
       };
 
       const errorHandler = (error: any) => {
-        console.error(`[FirebaseService] Error en streamBusesByEmpresaAndRoute:`, error);
+        console.error(
+          `[FirebaseService] Error en streamBusesByEmpresaAndRoute:`,
+          error
+        );
         subscriber.error(error);
       };
 
       onValue(busesRef, handler, errorHandler);
 
       return () => {
-        console.log(`[FirebaseService] Desuscribiendo de buses por empresa y ruta`);
+        console.log(
+          `[FirebaseService] Desuscribiendo de buses por empresa y ruta`
+        );
         off(busesRef, 'value', handler);
       };
     });
@@ -301,12 +328,16 @@ export class FirebaseService {
     newState: string
   ): Promise<void> {
     const busRef = ref(this.db, `empresas/${empresaId}/buses/${busId}`);
-
     try {
       await update(busRef, { estado: newState });
-      console.log(`[FirebaseService] Estado del bus ${busId} actualizado a: ${newState}`);
+      console.log(
+        `[FirebaseService] Estado del bus ${busId} actualizado a: ${newState}`
+      );
     } catch (error) {
-      console.error(`[FirebaseService] Error al actualizar estado del bus ${busId}:`, error);
+      console.error(
+        `[FirebaseService] Error al actualizar estado del bus ${busId}:`,
+        error
+      );
       throw error;
     }
   }
@@ -385,7 +416,9 @@ export class FirebaseService {
       const snapshot = await get(commentRef);
 
       if (!snapshot.exists()) {
-        console.log(`[FirebaseService] Comentario no encontrado: ${commentPath}`);
+        console.log(
+          `[FirebaseService] Comentario no encontrado: ${commentPath}`
+        );
         return null;
       }
 
@@ -442,7 +475,9 @@ export class FirebaseService {
         date_time_str: date.toLocaleString('es-ES'),
       });
 
-      console.log(`[FirebaseService] ✓ Comentario agregado exitosamente con ID: ${newCommentRef.key}`);
+      console.log(
+        `[FirebaseService] ✓ Comentario agregado exitosamente con ID: ${newCommentRef.key}`
+      );
       return newCommentRef.key;
     } catch (error) {
       console.error(`[FirebaseService] ✗ Error al agregar comentario:`, error);
@@ -467,7 +502,9 @@ export class FirebaseService {
 
     try {
       await set(commentRef, null);
-      console.log(`[FirebaseService] ✓ Comentario ${commentId} eliminado exitosamente`);
+      console.log(
+        `[FirebaseService] ✓ Comentario ${commentId} eliminado exitosamente`
+      );
     } catch (error) {
       console.error(`[FirebaseService] ✗ Error al eliminar comentario:`, error);
       throw error;

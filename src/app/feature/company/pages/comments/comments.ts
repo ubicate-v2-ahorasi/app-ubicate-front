@@ -19,6 +19,7 @@ export interface Comment {
 
 @Component({
   selector: 'app-comments',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './comments.html',
   styleUrls: ['./comments.css'],
@@ -323,6 +324,6 @@ export class Comments implements OnInit, OnDestroy {
     }
   }
   clearFilters(): void {
-    
+
   }
 }

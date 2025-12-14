@@ -9,6 +9,7 @@ import { BusCreate } from '../../components/bus/bus-create/bus-create';
 
 @Component({
   selector: 'app-bus',
+  standalone: true,
   imports: [BusHeader, BusFilter, BusList, BusCreate],
   templateUrl: './bus.html',
 })
