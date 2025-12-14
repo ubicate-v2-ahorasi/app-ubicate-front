@@ -75,12 +75,14 @@ export class BusService {
     return this.httpClient.delete<void>(`buses/${id}`);
   }
 
-  asignarRuta(busId: number, rutaId: number): Observable<Bus> {
+  asignarRuta(busId: number, rutaId: number | null): Observable<Bus> {
+    const rutaParam = rutaId !== null ? rutaId : '';
     return this.httpClient.patch<Bus>(
-      `buses/${busId}/asignar-ruta?rutaId=${rutaId}`,
+      `buses/${busId}/asignar-ruta?rutaId=${rutaParam}`,
       null
     );
   }
+<<<<<<< HEAD
 
   removerRuta(busId: number): Observable<Bus> {
     return this.httpClient.delete<Bus>(`buses/${busId}/ruta`);
@@ -95,4 +97,6 @@ export class BusService {
     const token = localStorage.getItem('authToken');
     return token ? `${url}?token=${token}` : url;
   }
+=======
+>>>>>>> a1ec76dd8cafc5fcf808ad2c1d91cae82a5ff9d3
 }

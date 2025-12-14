@@ -180,22 +180,46 @@ export class BusList implements OnInit {
   }
 
   onRutaChange(bus: Bus, rutaId: number | null) {
-    if (this.updatingRutaId() === bus.id) return;
+    console.log('onRutaChange llamado', { busId: bus.id, rutaId, currentRuta: bus.ruta?.id });
+    
+    if (this.updatingRutaId() === bus.id) {
+      console.log('Ya está actualizando');
+      return;
+    }
 
+    // Evitar llamada si es la misma ruta
+    const currentRutaId = bus.ruta?.id || null;
+    if (currentRutaId === rutaId) {
+      console.log('Misma ruta, no hacer nada');
+      return;
+    }
+
+    console.log('Ejecutando operación', rutaId ? 'asignar' : 'remover');
     this.updatingRutaId.set(bus.id);
 
-    const operation = rutaId
-      ? this.busService.asignarRuta(bus.id, rutaId)
-      : this.busService.removerRuta(bus.id);
-
-    operation.subscribe({
+    // Siempre usar asignarRuta, con null cuando se quiere remover
+    this.busService.asignarRuta(bus.id, rutaId).subscribe({
       next: (updatedBus) => {
+<<<<<<< HEAD
         this.buses.update((buses) =>
           buses.map((b) => (b.id === bus.id ? updatedBus : b))
+=======
+        console.log('Ruta actualizada', updatedBus);
+        // Crear nuevo array para que Angular detecte el cambio
+        const currentBuses = this.allBuses();
+        const updatedBuses = currentBuses.map((b) => 
+          b.id === bus.id ? updatedBus : b
+>>>>>>> a1ec76dd8cafc5fcf808ad2c1d91cae82a5ff9d3
         );
+        this.allBuses.set(updatedBuses);
         this.updatingRutaId.set(null);
       },
+<<<<<<< HEAD
       error: () => {
+=======
+      error: (error) => {
+        console.error('Error al actualizar ruta', error);
+>>>>>>> a1ec76dd8cafc5fcf808ad2c1d91cae82a5ff9d3
         this.updatingRutaId.set(null);
       },
     });

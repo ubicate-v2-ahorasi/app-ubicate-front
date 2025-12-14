@@ -14,12 +14,16 @@ import {
 } from '@angular/forms';
 import { ConductorService } from '../../../service/chofer/chofer.service';
 import { CommonModule } from '@angular/common';
+<<<<<<< HEAD
 import { HttpErrorResponse } from '@angular/common/http';
+=======
+import { ErrorNotification } from '../../shared/error-notification';
+>>>>>>> a1ec76dd8cafc5fcf808ad2c1d91cae82a5ff9d3
 
 @Component({
   selector: 'app-conductor-form-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ErrorNotification],
   templateUrl: './conductor-form-modal.html',
 })
 export class ConductorFormModal implements OnInit {
@@ -34,6 +38,7 @@ export class ConductorFormModal implements OnInit {
   conductorForm!: FormGroup;
   isSubmitting = false;
   isEditMode = false;
+  errorMessage = '';
 
   showCredentials = false;
   createdCredentials: any = null;
@@ -154,6 +159,7 @@ export class ConductorFormModal implements OnInit {
       apellido: '',
       categoriaLicencia: '',
     });
+    this.errorMessage = '';
     this.showCredentials = false;
     this.createdCredentials = null;
     this.clearErrors();
@@ -196,6 +202,7 @@ Cambia tu contraseña en el primer acceso.`;
     window.open(whatsappUrl, '_blank');
   }
 
+<<<<<<< HEAD
   private normalizeErrorBody(err: HttpErrorResponse): {
     message: string;
     details: any | null;
@@ -207,6 +214,44 @@ Cambia tu contraseña en el primer acceso.`;
         body = JSON.parse(body);
       } catch {
         return { message: body, details: null };
+=======
+  onSubmit() {
+    if (this.conductorForm.valid && !this.isSubmitting) {
+      this.isSubmitting = true;
+      this.errorMessage = '';
+      const formData = this.conductorForm.value;
+
+      if (this.isEditMode) {
+        this.conductorService
+          .updateConductor(this.conductor.id, formData)
+          .subscribe({
+            next: () => {
+              this.isSubmitting = false;
+              this.resetForm();
+              this.onSave.emit();
+            },
+            error: (error) => {
+              this.isSubmitting = false;
+              this.errorMessage = this.parseErrorMessage(error);
+            },
+          });
+      } else {
+        this.conductorService.createConductor(formData).subscribe({
+          next: (response) => {
+            this.isSubmitting = false;
+            this.createdCredentials = {
+              email: formData.email,
+              telefono: formData.telefono,
+              password: response.temp_password,
+            };
+            this.showCredentials = true;
+          },
+          error: (error) => {
+            this.isSubmitting = false;
+            this.errorMessage = this.parseErrorMessage(error);
+          },
+        });
+>>>>>>> a1ec76dd8cafc5fcf808ad2c1d91cae82a5ff9d3
       }
     }
 
@@ -333,6 +378,49 @@ Cambia tu contraseña en el primer acceso.`;
         }
       },
     });
+  }
+
+  private parseErrorMessage(error: any): string {
+    console.log('Error completo:', error);
+    console.log('error.error:', error.error);
+    
+    // El backend devuelve: { code, message, timestamp }
+    if (error.error?.message) {
+      return error.error.message;
+    }
+    
+    // Errores de validación detallados del backend
+    if (error.error?.details) {
+      if (typeof error.error.details === 'object') {
+        const details = Object.entries(error.error.details)
+          .map(([field, message]) => `${field}: ${message}`)
+          .join('\n');
+        return details;
+      }
+      return String(error.error.details);
+    }
+    
+    // Si error tiene message directo
+    if (error.message) {
+      return error.message;
+    }
+    
+    // Error con status
+    if (error.status) {
+      switch (error.status) {
+        case 400:
+          return 'Datos inválidos. Por favor revise la información ingresada.';
+        case 409:
+          return 'El registro ya existe en el sistema.';
+        case 500:
+          return 'Error del servidor. Por favor intente nuevamente.';
+        default:
+          return `Error ${error.status}: ${error.statusText || 'Error desconocido'}`;
+      }
+    }
+    
+    // Error genérico
+    return 'No se pudo guardar la información. Por favor, intente nuevamente.';
   }
 
   onlyLetters(event: KeyboardEvent): void {

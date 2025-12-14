@@ -10,15 +10,17 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, finalize } from 'rxjs';
 import { RouteMapService } from '../../../service/route/route-map.service';
 import { RouteResponse } from '../../../models/route.model';
 import { IconsModule } from '../../../icons.module';
+import { DeleteRouteModalComponent } from './delete-route-modal';
+import { SuccessModalComponent } from './success-modal';
 
 @Component({
   selector: 'app-route-list',
   standalone: true,
-  imports: [CommonModule, IconsModule],
+  imports: [CommonModule, IconsModule, DeleteRouteModalComponent, SuccessModalComponent],
   templateUrl: './route-list.html',
 })
 export class RouteListComponent implements OnInit, OnDestroy {
@@ -33,6 +35,12 @@ export class RouteListComponent implements OnInit, OnDestroy {
   routes: RouteResponse[] = [];
   loading = false;
   error: string | null = null;
+  
+  showDeleteModal = false;
+  showSuccessModal = false;
+  routeToDelete: RouteResponse | null = null;
+  isDeleting = false;
+  deletedRouteName = '';
 
   ngOnInit() {
     this.routeMapService.routes$
@@ -78,13 +86,55 @@ export class RouteListComponent implements OnInit, OnDestroy {
 
   onDeleteRoute(event: Event, route: RouteResponse) {
     event.stopPropagation();
-    if (
-      confirm(
-        `¿Estás seguro de eliminar la ruta ${route.codigo} - ${route.nombre}?`
+    this.routeToDelete = route;
+    this.showDeleteModal = true;
+    this.cdr.detectChanges();
+  }
+
+  onConfirmDelete() {
+    if (!this.routeToDelete) return;
+
+    this.isDeleting = true;
+    this.cdr.detectChanges();
+
+    this.routeMapService.deleteRoute(this.routeToDelete.id)
+      .pipe(
+        finalize(() => {
+          this.isDeleting = false;
+          this.cdr.detectChanges();
+        })
       )
-    ) {
-      this.routeMapService.deleteRoute(route.id).subscribe();
-    }
+      .subscribe({
+        next: () => {
+          this.deletedRouteName = this.routeToDelete?.nombre || '';
+          this.showDeleteModal = false;
+          this.showSuccessModal = true;
+          
+          // Actualizar la lista eliminando la ruta del BehaviorSubject
+          const updatedRoutes = this.routes.filter(r => r.id !== this.routeToDelete?.id);
+          this.routeMapService.updateRoutesList(updatedRoutes);
+          
+          this.routeToDelete = null;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.showDeleteModal = false;
+          this.routeToDelete = null;
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
+  onCancelDelete() {
+    this.showDeleteModal = false;
+    this.routeToDelete = null;
+    this.cdr.detectChanges();
+  }
+
+  onCloseSuccess() {
+    this.showSuccessModal = false;
+    this.deletedRouteName = '';
+    this.cdr.detectChanges();
   }
 
   onClose() {

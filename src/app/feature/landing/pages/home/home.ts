@@ -52,12 +52,12 @@ export class Home implements OnInit {
     {
       title: 'Dashboard Completo',
       description: 'Monitorea tu flota en tiempo real con estadísticas detalladas',
-      image: 'assets/empresa-dashboard.jpg'
+      image: 'assets/ld1.jpg'
     },
     {
       title: 'Gestión de Rutas',
       description: 'Administra rutas, conductores y buses de forma eficiente',
-      image: 'assets/empresa-rutas.jpg'
+      image: 'assets/ld2.jpg'
     }
   ];
 

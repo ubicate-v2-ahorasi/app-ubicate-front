@@ -18,16 +18,8 @@
         </button>
       </div>
 
-      <!-- Form -->
-      <form [formGroup]="busForm" (ngSubmit)="onSubmit()" class="p-6">
-
-        <!-- Error GLOBAL del formulario -->
-        <div *ngIf="busForm.errors?.['backend']" class="mb-4">
-          <div
-            class="rounded-lg border border-red-200 bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-800 dark:text-red-300">
-            <strong class="font-semibold">{{ busForm.errors?.['backend'] }}</strong>
-          </div>
-        </div>
+    <!-- Form -->
+    <form [formGroup]="busForm" (ngSubmit)="onSubmit()" class="p-6">
 
         <!-- Información del Bus -->
         <div class="space-y-4 mb-6">

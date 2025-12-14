@@ -18,9 +18,9 @@
   </div>
 
   <div class="flex-1 min-h-0" [ngClass]="isVerticalLayout ? 'flex gap-0 relative' : 'flex flex-col'">
-    <div [ngClass]="isVerticalLayout ? 'flex-1 min-w-0' : 'flex-shrink-0 mb-6'">
+    <div [ngClass]="isVerticalLayout ? 'flex-1 min-w-0 h-full' : 'flex-shrink-0 mb-6'">
       <app-stats [isVerticalLayout]="isVerticalLayout" *ngIf="!isVerticalLayout"></app-stats>
-      <app-map-container *ngIf="isVerticalLayout"></app-map-container>
+      <app-map-container class="h-full" *ngIf="isVerticalLayout"></app-map-container>
     </div>
 
     <!-- Divisor redimensionable -->

@@ -61,6 +61,10 @@ export class RouteMapService {
     return this.api.deleteRoute(id);
   }
 
+  updateRoutesList(routes: RouteResponse[]): void {
+    this.routesSubject.next(routes);
+  }
+
   toggleRouteActive(routeId: number): Observable<RouteResponse | null> {
     const current = this.routesSubject.value;
     const found = current.find((r) => r.id === routeId);

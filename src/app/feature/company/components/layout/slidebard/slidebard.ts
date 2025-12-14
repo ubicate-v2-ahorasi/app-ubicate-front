@@ -52,6 +52,13 @@ export class Slidebard implements OnInit {
     // Obtener el nombre de la empresa desde el SessionService
     this.empresaNombre = this.sessionService.getEmpresaNombre();
 
+    // Restaurar el menú activo desde la URL actual
+    const currentPath = this.router.url;
+    const activeMenuItem = this.menuItems.find(item => currentPath.includes(item.path));
+    if (activeMenuItem) {
+      this.activeItem = activeMenuItem.id;
+    }
+
     // Suscribirse al cambio de tema
     this.themeService.isDarkMode$.subscribe(isDark => {
       this.isDarkMode = isDark;
