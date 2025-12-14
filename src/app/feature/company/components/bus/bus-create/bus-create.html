@@ -20,6 +20,12 @@
     <!-- Form -->
     <form [formGroup]="busForm" (ngSubmit)="onSubmit()" class="p-6">
 
+      <!-- Notificación de error -->
+      <app-error-notification 
+        [errorMessage]="errorMessage"
+        errorTitle="No se pudo guardar">
+      </app-error-notification>
+
       <!-- Información del Bus -->
       <div class="space-y-4 mb-6">
         <h4 class="text-sm font-medium text-[#040E1C] dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 flex items-center">

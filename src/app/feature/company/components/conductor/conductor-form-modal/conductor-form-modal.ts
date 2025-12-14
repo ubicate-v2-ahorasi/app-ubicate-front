@@ -14,11 +14,12 @@ import {
 } from '@angular/forms';
 import { ConductorService } from '../../../service/chofer/chofer.service';
 import { CommonModule } from '@angular/common';
+import { ErrorNotification } from '../../shared/error-notification';
 
 @Component({
   selector: 'app-conductor-form-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ErrorNotification],
   templateUrl: './conductor-form-modal.html',
 })
 export class ConductorFormModal implements OnInit {
@@ -33,6 +34,7 @@ export class ConductorFormModal implements OnInit {
   conductorForm!: FormGroup;
   isSubmitting = false;
   isEditMode = false;
+  errorMessage = '';
 
   showCredentials = false;
   createdCredentials: any = null;
@@ -140,6 +142,7 @@ export class ConductorFormModal implements OnInit {
       apellido: '',
       categoriaLicencia: '',
     });
+    this.errorMessage = '';
     this.showCredentials = false;
     this.createdCredentials = null;
   }
@@ -180,6 +183,7 @@ Cambia tu contraseña en el primer acceso.`;
   onSubmit() {
     if (this.conductorForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
+      this.errorMessage = '';
       const formData = this.conductorForm.value;
 
       if (this.isEditMode) {
@@ -193,6 +197,7 @@ Cambia tu contraseña en el primer acceso.`;
             },
             error: (error) => {
               this.isSubmitting = false;
+              this.errorMessage = this.parseErrorMessage(error);
             },
           });
       } else {
@@ -208,6 +213,7 @@ Cambia tu contraseña en el primer acceso.`;
           },
           error: (error) => {
             this.isSubmitting = false;
+            this.errorMessage = this.parseErrorMessage(error);
           },
         });
       }
@@ -216,6 +222,49 @@ Cambia tu contraseña en el primer acceso.`;
         this.conductorForm.get(key)?.markAsTouched();
       });
     }
+  }
+
+  private parseErrorMessage(error: any): string {
+    console.log('Error completo:', error);
+    console.log('error.error:', error.error);
+    
+    // El backend devuelve: { code, message, timestamp }
+    if (error.error?.message) {
+      return error.error.message;
+    }
+    
+    // Errores de validación detallados del backend
+    if (error.error?.details) {
+      if (typeof error.error.details === 'object') {
+        const details = Object.entries(error.error.details)
+          .map(([field, message]) => `${field}: ${message}`)
+          .join('\n');
+        return details;
+      }
+      return String(error.error.details);
+    }
+    
+    // Si error tiene message directo
+    if (error.message) {
+      return error.message;
+    }
+    
+    // Error con status
+    if (error.status) {
+      switch (error.status) {
+        case 400:
+          return 'Datos inválidos. Por favor revise la información ingresada.';
+        case 409:
+          return 'El registro ya existe en el sistema.';
+        case 500:
+          return 'Error del servidor. Por favor intente nuevamente.';
+        default:
+          return `Error ${error.status}: ${error.statusText || 'Error desconocido'}`;
+      }
+    }
+    
+    // Error genérico
+    return 'No se pudo guardar la información. Por favor, intente nuevamente.';
   }
 
   onlyLetters(event: KeyboardEvent): void {

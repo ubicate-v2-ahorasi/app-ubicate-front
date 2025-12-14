@@ -15,11 +15,12 @@ import {
 } from '@angular/forms';
 import { BusService } from '../../../service/bus/bus.service';
 import { Bus } from '../../../models/buses.model';
+import { ErrorNotification } from '../../shared/error-notification';
 
 @Component({
   selector: 'app-bus-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ErrorNotification],
   templateUrl: './bus-create.html',
 })
 export class BusCreate implements OnInit {
@@ -34,6 +35,7 @@ export class BusCreate implements OnInit {
   busForm!: FormGroup;
   loading = false;
   isEdit = false;
+  errorMessage = '';
 
   // Validadores personalizados
   private plateValidator(control: any) {
@@ -108,6 +110,7 @@ export class BusCreate implements OnInit {
   onSubmit() {
     if (this.busForm.valid) {
       this.loading = true;
+      this.errorMessage = '';
       const formData = this.busForm.value;
 
       const operation = this.isEdit
@@ -121,9 +124,52 @@ export class BusCreate implements OnInit {
         },
         error: (error) => {
           this.loading = false;
+          this.errorMessage = this.parseErrorMessage(error);
         },
       });
     }
+  }
+
+  private parseErrorMessage(error: any): string {
+    console.log('Error completo:', error);
+    console.log('error.error:', error.error);
+    
+    // El backend devuelve: { code, message, timestamp }
+    if (error.error?.message) {
+      return error.error.message;
+    }
+    
+    // Errores de validación detallados del backend
+    if (error.error?.details) {
+      if (typeof error.error.details === 'object') {
+        const details = Object.entries(error.error.details)
+          .map(([field, message]) => `${field}: ${message}`)
+          .join('\n');
+        return details;
+      }
+      return String(error.error.details);
+    }
+    
+    // Si error tiene message directo
+    if (error.message) {
+      return error.message;
+    }
+    
+    // Error con status
+    if (error.status) {
+      switch (error.status) {
+        case 400:
+          return 'Datos inválidos. Por favor revise la información ingresada.';
+        case 409:
+          return 'El bus ya existe en el sistema.';
+        case 500:
+          return 'Error del servidor. Por favor intente nuevamente.';
+        default:
+          return `Error ${error.status}: ${error.statusText || 'Error desconocido'}`;
+      }
+    }
+    
+    return 'No se pudo guardar el bus. Por favor, intente nuevamente.';
   }
 
   closeModal() {
