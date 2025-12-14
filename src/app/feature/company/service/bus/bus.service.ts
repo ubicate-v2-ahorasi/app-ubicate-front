@@ -82,7 +82,6 @@ export class BusService {
       null
     );
   }
-<<<<<<< HEAD
 
   removerRuta(busId: number): Observable<Bus> {
     return this.httpClient.delete<Bus>(`buses/${busId}/ruta`);
@@ -97,6 +96,4 @@ export class BusService {
     const token = localStorage.getItem('authToken');
     return token ? `${url}?token=${token}` : url;
   }
-=======
->>>>>>> a1ec76dd8cafc5fcf808ad2c1d91cae82a5ff9d3
 }

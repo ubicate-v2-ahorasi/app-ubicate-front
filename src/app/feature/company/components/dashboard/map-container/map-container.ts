@@ -78,6 +78,11 @@ export class MapContainerComponent implements OnDestroy, OnInit {
 
   isLocating = false;
   isCreatingRoute = false;
+
+  isDarkMapStyle = false;
+  isDarkModeEnabled = this.loadStoredThemePreference();
+  renderMap = true;
+  darkMapStyles = MAP_DARK_STYLES;
   showBusList = false;
   showRouteList = false;
   isLoadingBuses = false;
@@ -123,24 +128,6 @@ export class MapContainerComponent implements OnDestroy, OnInit {
   private readonly lightMapId = environment.googleMaps?.mapId;
   private readonly darkMapId = environment.googleMaps?.darkMapId;
   private googleMapComponent?: GoogleMap;
-
-<<<<<<< HEAD
-  mapOptions: google.maps.MapOptions = {
-    disableDefaultUI: true,
-    zoomControl: true,
-    gestureHandling: 'greedy',
-    mapTypeId: 'roadmap',
-    minZoom: 10,
-    maxZoom: 20,
-    center: this.center,
-    zoom: this.zoom,
-    mapId: undefined,
-    styles: [],
-  };
-=======
-  isDarkModeEnabled = this.loadStoredThemePreference();
-  renderMap = true;
->>>>>>> a1ec76dd8cafc5fcf808ad2c1d91cae82a5ff9d3
 
   mapOptions: google.maps.MapOptions = this.buildMapOptions(
     this.isDarkModeEnabled
@@ -404,6 +391,13 @@ export class MapContainerComponent implements OnDestroy, OnInit {
     this.recreateMap();
   }
 
+  toggleMapStyle(): void {
+    this.isDarkMapStyle = !this.isDarkMapStyle;
+    this.isDarkModeEnabled = this.isDarkMapStyle;
+    this.persistThemePreference(this.isDarkModeEnabled);
+    this.recreateMap();
+  }
+
   private buildMapOptions(useDarkMode: boolean): google.maps.MapOptions {
     const baseOptions: google.maps.MapOptions = {
       disableDefaultUI: true,
@@ -480,34 +474,12 @@ export class MapContainerComponent implements OnDestroy, OnInit {
       return;
     }
 
-<<<<<<< HEAD
-    const mapId = this.isDarkMapStyle
-      ? 'YOUR_DARK_MAP_ID'
-      : 'YOUR_LIGHT_MAP_ID';
-    this.safeGoogleMap.setOptions({
-      styles: this.isDarkMapStyle ? this.darkMapStyles : [],
-      mapId, // <- aquí pasas el Map ID
-    });
-  }
-
-  private syncMapOptionsWithMapTheme() {
-    this.mapOptions = {
-      ...this.mapOptions,
-      styles: this.isDarkMapStyle ? this.darkMapStyles : [],
-    };
-  }
-
-  private restoreMapThemePreference() {
-    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
-      return;
-=======
     if (this.showBuses && this.buses.length > 0) {
       this.busMarkerService.upsertBusMarkers(this.buses, this.safeGoogleMap);
       this.fitBoundsToBuses(this.buses);
->>>>>>> a1ec76dd8cafc5fcf808ad2c1d91cae82a5ff9d3
     }
 
-    if (this.selectedRouteId) {
+    if (this.selectedRouteId && this.safeGoogleMap) {
       const cachedRoute = this.routes.find(
         (route) => route.id === this.selectedRouteId
       );
@@ -518,7 +490,9 @@ export class MapContainerComponent implements OnDestroy, OnInit {
         this.routeMapService
           .getById(this.selectedRouteId)
           .subscribe((route) => {
-            this.routeMapService.showRouteOnMap(route, this.safeGoogleMap!);
+            if (this.safeGoogleMap) {
+              this.routeMapService.showRouteOnMap(route, this.safeGoogleMap);
+            }
           });
       }
     }

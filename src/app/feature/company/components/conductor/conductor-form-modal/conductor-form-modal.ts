@@ -14,16 +14,12 @@ import {
 } from '@angular/forms';
 import { ConductorService } from '../../../service/chofer/chofer.service';
 import { CommonModule } from '@angular/common';
-<<<<<<< HEAD
 import { HttpErrorResponse } from '@angular/common/http';
-=======
-import { ErrorNotification } from '../../shared/error-notification';
->>>>>>> a1ec76dd8cafc5fcf808ad2c1d91cae82a5ff9d3
 
 @Component({
   selector: 'app-conductor-form-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ErrorNotification],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './conductor-form-modal.html',
 })
 export class ConductorFormModal implements OnInit {
@@ -202,19 +198,6 @@ Cambia tu contraseña en el primer acceso.`;
     window.open(whatsappUrl, '_blank');
   }
 
-<<<<<<< HEAD
-  private normalizeErrorBody(err: HttpErrorResponse): {
-    message: string;
-    details: any | null;
-  } {
-    let body = err.error;
-
-    if (typeof body === 'string') {
-      try {
-        body = JSON.parse(body);
-      } catch {
-        return { message: body, details: null };
-=======
   onSubmit() {
     if (this.conductorForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
@@ -251,7 +234,21 @@ Cambia tu contraseña en el primer acceso.`;
             this.errorMessage = this.parseErrorMessage(error);
           },
         });
->>>>>>> a1ec76dd8cafc5fcf808ad2c1d91cae82a5ff9d3
+      }
+    }
+  }
+
+  private normalizeErrorBody(err: HttpErrorResponse): {
+    message: string;
+    details: any | null;
+  } {
+    let body = err.error;
+
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch {
+        return { message: body, details: null };
       }
     }
 
@@ -333,62 +330,16 @@ Cambia tu contraseña en el primer acceso.`;
       }
     });
   }
-  onSubmit() {
-    if (this.conductorForm.invalid || this.isSubmitting) return;
-
-    this.isSubmitting = true;
-    this.clearErrors();
-
-    const formData = this.conductorForm.value;
-
-    const request$: any = this.isEditMode
-      ? this.conductorService.updateConductor(this.conductor.id, formData)
-      : this.conductorService.createConductor(formData);
-
-    request$.subscribe({
-      next: (response: any) => {
-        this.isSubmitting = false;
-
-        if (this.isEditMode) {
-          this.resetForm();
-          this.onSave.emit();
-          return;
-        }
-
-        this.createdCredentials = {
-          email: formData.email,
-          telefono: formData.telefono,
-          password: response.temp_password,
-        };
-
-        this.showCredentials = true;
-      },
-
-      error: (error: any) => {
-        this.isSubmitting = false;
-
-        const normalized = this.normalizeErrorBody(error);
-        this.formErrorMessage = normalized.message;
-        this.formErrorDetails = normalized.details;
-
-        if (normalized.details) {
-          this.markServerErrorsOnForm(normalized.details);
-        } else {
-          this.conductorForm.setErrors({ backend: normalized.message });
-        }
-      },
-    });
-  }
 
   private parseErrorMessage(error: any): string {
     console.log('Error completo:', error);
     console.log('error.error:', error.error);
-    
+
     // El backend devuelve: { code, message, timestamp }
     if (error.error?.message) {
       return error.error.message;
     }
-    
+
     // Errores de validación detallados del backend
     if (error.error?.details) {
       if (typeof error.error.details === 'object') {
@@ -399,12 +350,12 @@ Cambia tu contraseña en el primer acceso.`;
       }
       return String(error.error.details);
     }
-    
+
     // Si error tiene message directo
     if (error.message) {
       return error.message;
     }
-    
+
     // Error con status
     if (error.status) {
       switch (error.status) {
@@ -418,7 +369,7 @@ Cambia tu contraseña en el primer acceso.`;
           return `Error ${error.status}: ${error.statusText || 'Error desconocido'}`;
       }
     }
-    
+
     // Error genérico
     return 'No se pudo guardar la información. Por favor, intente nuevamente.';
   }

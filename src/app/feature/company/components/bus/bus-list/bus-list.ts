@@ -181,7 +181,7 @@ export class BusList implements OnInit {
 
   onRutaChange(bus: Bus, rutaId: number | null) {
     console.log('onRutaChange llamado', { busId: bus.id, rutaId, currentRuta: bus.ruta?.id });
-    
+
     if (this.updatingRutaId() === bus.id) {
       console.log('Ya está actualizando');
       return;
@@ -200,26 +200,14 @@ export class BusList implements OnInit {
     // Siempre usar asignarRuta, con null cuando se quiere remover
     this.busService.asignarRuta(bus.id, rutaId).subscribe({
       next: (updatedBus) => {
-<<<<<<< HEAD
+        console.log('Ruta actualizada', updatedBus);
         this.buses.update((buses) =>
           buses.map((b) => (b.id === bus.id ? updatedBus : b))
-=======
-        console.log('Ruta actualizada', updatedBus);
-        // Crear nuevo array para que Angular detecte el cambio
-        const currentBuses = this.allBuses();
-        const updatedBuses = currentBuses.map((b) => 
-          b.id === bus.id ? updatedBus : b
->>>>>>> a1ec76dd8cafc5fcf808ad2c1d91cae82a5ff9d3
         );
-        this.allBuses.set(updatedBuses);
         this.updatingRutaId.set(null);
       },
-<<<<<<< HEAD
-      error: () => {
-=======
       error: (error) => {
         console.error('Error al actualizar ruta', error);
->>>>>>> a1ec76dd8cafc5fcf808ad2c1d91cae82a5ff9d3
         this.updatingRutaId.set(null);
       },
     });

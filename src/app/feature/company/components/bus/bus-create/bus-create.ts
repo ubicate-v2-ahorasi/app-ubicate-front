@@ -7,6 +7,7 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   FormBuilder,
   FormGroup,
@@ -19,7 +20,7 @@ import { Bus } from '../../../models/buses.model';
 @Component({
   selector: 'app-bus-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ErrorNotification],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './bus-create.html',
 })
 export class BusCreate implements OnInit {
@@ -34,6 +35,8 @@ export class BusCreate implements OnInit {
   busForm!: FormGroup;
   loading = false;
   isEdit = false;
+  formErrorMessage: string | null = null;
+  formErrorDetails: any | null = null;
 
   // Validadores personalizados
   private plateValidator(control: any) {

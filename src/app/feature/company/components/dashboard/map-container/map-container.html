@@ -33,8 +33,7 @@
           <lucide-icon name="crosshair" class="w-4 h-4"></lucide-icon>
         </button>
 
-<<<<<<< HEAD
-      <button (click)="toggleMapStyle()"
+        <button (click)="toggleMapStyle()"
           class="px-2 py-1 rounded text-xs transition-colors flex items-center gap-1"
           [class.bg-gray-800]="isDarkMapStyle"
           [class.bg-gray-700]="!isDarkMapStyle"
@@ -44,13 +43,6 @@
           [title]="isDarkMapStyle ? 'Modo claro' : 'Modo oscuro'">
           <lucide-icon [name]="isDarkMapStyle ? 'sun' : 'moon'" class="w-4 h-4"></lucide-icon>
         </button>
-=======
-        <!-- <app-map-dark-mode
-          [disabled]="!isMapReady"
-          [isDarkMode]="isDarkModeEnabled"
-          (toggled)="onMapThemeToggle()"
-        ></app-map-dark-mode> -->
->>>>>>> a1ec76dd8cafc5fcf808ad2c1d91cae82a5ff9d3
 
         <button (click)="toggleRouteList()"
           class="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-xs transition-colors flex items-center gap-1"

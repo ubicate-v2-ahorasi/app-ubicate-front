@@ -63,22 +63,13 @@
 
     <form [formGroup]="conductorForm" (ngSubmit)="onSubmit()" class="px-6 py-5 space-y-5">
 
-<<<<<<< HEAD
-
       <!-- Error GLOBAL -->
-      <div *ngIf="conductorForm.errors?.['backend']" class="mb-3">
+      <div *ngIf="errorMessage" class="mb-3">
         <div
           class="rounded-lg border border-red-200 bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-800 dark:text-red-300">
-          <strong class="font-semibold">{{ conductorForm.errors?.['backend'] }}</strong>
+          <strong class="font-semibold">{{ errorMessage }}</strong>
         </div>
       </div>
-=======
-      <!-- Notificación de error -->
-      <app-error-notification 
-        [errorMessage]="errorMessage"
-        errorTitle="No se pudo guardar">
-      </app-error-notification>
->>>>>>> a1ec76dd8cafc5fcf808ad2c1d91cae82a5ff9d3
 
       <div class="mb-6">
         <h4 class="text-base font-medium text-[#040E1C] dark:text-white mb-4 flex items-center">
