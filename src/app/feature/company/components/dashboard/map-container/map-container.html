@@ -33,17 +33,6 @@
           <lucide-icon name="crosshair" class="w-4 h-4"></lucide-icon>
         </button>
 
-        <button (click)="toggleMapStyle()"
-          class="px-2 py-1 rounded text-xs transition-colors flex items-center gap-1"
-          [class.bg-gray-800]="isDarkMapStyle"
-          [class.bg-gray-700]="!isDarkMapStyle"
-          [class.hover:bg-gray-900]="isDarkMapStyle"
-          [class.hover:bg-gray-600]="!isDarkMapStyle"
-          [disabled]="!isMapReady"
-          [title]="isDarkMapStyle ? 'Modo claro' : 'Modo oscuro'">
-          <lucide-icon [name]="isDarkMapStyle ? 'sun' : 'moon'" class="w-4 h-4"></lucide-icon>
-        </button>
-
         <button (click)="toggleRouteList()"
           class="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-xs transition-colors flex items-center gap-1"
           [class.bg-purple-800]="showRouteList" [disabled]="!isMapReady" title="Rutas">
@@ -67,7 +56,6 @@
     (cancel)="onCancelRouteCreation()" class="z-40"></app-route-creator>
 
   <google-map
-    *ngIf="renderMap"
     [center]="center"
     [zoom]="zoom"
     [options]="mapOptions"

@@ -79,10 +79,6 @@ export class MapContainerComponent implements OnDestroy, OnInit {
   isLocating = false;
   isCreatingRoute = false;
 
-  isDarkMapStyle = false;
-  isDarkModeEnabled = this.loadStoredThemePreference();
-  renderMap = true;
-  darkMapStyles = MAP_DARK_STYLES;
   showBusList = false;
   showRouteList = false;
   isLoadingBuses = false;
@@ -383,19 +379,6 @@ export class MapContainerComponent implements OnDestroy, OnInit {
 
   getActiveRoutesCount(): number {
     return this.routes.filter((r) => r.estado === 'ACTIVA').length;
-  }
-
-  onMapThemeToggle(): void {
-    this.isDarkModeEnabled = !this.isDarkModeEnabled;
-    this.persistThemePreference(this.isDarkModeEnabled);
-    this.recreateMap();
-  }
-
-  toggleMapStyle(): void {
-    this.isDarkMapStyle = !this.isDarkMapStyle;
-    this.isDarkModeEnabled = this.isDarkMapStyle;
-    this.persistThemePreference(this.isDarkModeEnabled);
-    this.recreateMap();
   }
 
   private buildMapOptions(useDarkMode: boolean): google.maps.MapOptions {
