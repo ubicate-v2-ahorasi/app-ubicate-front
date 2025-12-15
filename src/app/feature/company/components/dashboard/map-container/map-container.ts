@@ -125,9 +125,7 @@ export class MapContainerComponent implements OnDestroy, OnInit {
   private readonly darkMapId = environment.googleMaps?.darkMapId;
   private googleMapComponent?: GoogleMap;
 
-  mapOptions: google.maps.MapOptions = this.buildMapOptions(
-    this.isDarkModeEnabled
-  );
+  mapOptions: google.maps.MapOptions = this.buildMapOptions(false);
 
   private async initializeGoogleMap(): Promise<void> {
     let attempts = 0;
@@ -434,16 +432,10 @@ export class MapContainerComponent implements OnDestroy, OnInit {
 
   private recreateMap(): void {
     this.teardownActiveMapArtifacts();
-    this.renderMap = false;
     this.googleMapReady = false;
     this.mapInitialized = false;
-    this.mapOptions = this.buildMapOptions(this.isDarkModeEnabled);
+    this.mapOptions = this.buildMapOptions(false);
     this.cdr.markForCheck();
-
-    setTimeout(() => {
-      this.renderMap = true;
-      this.cdr.markForCheck();
-    });
   }
 
   private teardownActiveMapArtifacts(): void {
