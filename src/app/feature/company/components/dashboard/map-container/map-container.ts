@@ -400,7 +400,6 @@ export class MapContainerComponent implements OnDestroy, OnInit {
 
   private getLightThemeOptions(): google.maps.MapOptions {
     return {
-      mapId: undefined,
       styles: []
     };
   }
