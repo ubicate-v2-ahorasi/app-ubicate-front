@@ -399,11 +399,10 @@ export class MapContainerComponent implements OnDestroy, OnInit {
   }
 
   private getLightThemeOptions(): google.maps.MapOptions {
-    if (this.lightMapId) {
-      return { mapId: this.lightMapId, styles: [] };
-    }
-
-    return { styles: [] };
+    return {
+      mapId: undefined,
+      styles: []
+    };
   }
 
   private getDarkThemeOptions(): google.maps.MapOptions {
