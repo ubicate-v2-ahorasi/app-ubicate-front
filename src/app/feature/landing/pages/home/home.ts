@@ -200,9 +200,9 @@ export class Home implements OnInit {
       rootMargin: '0px 0px -50px 0px'
     });
 
-    // Observar todos los elementos con la clase 'scroll-animate'
+    // Observar todos los elementos con clases de animación
     setTimeout(() => {
-      const animatedElements = document.querySelectorAll('.scroll-animate');
+      const animatedElements = document.querySelectorAll('.scroll-animate, .scroll-animate-left, .scroll-animate-right, .scroll-animate-scale');
       animatedElements.forEach(el => observer.observe(el));
     }, 100);
   }
