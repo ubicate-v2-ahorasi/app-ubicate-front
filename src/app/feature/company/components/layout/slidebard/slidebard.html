@@ -129,6 +129,7 @@
         @for (item of menuItems; track item.id; let i = $index) {
         <div class="animate-slide-in" [style.animation-delay]="i * 50 + 'ms'">
           <button (click)="onItemClick(item.id)"
+            [@menuItemAnimation]="activeItem === item.id ? 'active' : 'inactive'"
             class="w-full flex items-center py-3 text-sm font-medium rounded-lg transition-all duration-300 transform hover:scale-105"
             [ngClass]="{
               'bg-white/10 text-slate-100 shadow-inner ring-1 ring-white/10': activeItem === item.id,

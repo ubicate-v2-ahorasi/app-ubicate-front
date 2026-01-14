@@ -15,11 +15,13 @@ import {
   GreenTip,
 } from '../../../service/green-education.service';
 import { GreenNotificationComponent } from '../../green-notification/green-notification';
+import { menuItemAnimation } from '../../../../../core/utils/route-animations';
 
 @Component({
   selector: 'app-slidebard',
   imports: [CommonModule, GreenNotificationComponent],
   templateUrl: './slidebard.html',
+  animations: [menuItemAnimation]
 })
 export class Slidebard implements OnInit {
   @Input() isOpen = true;
