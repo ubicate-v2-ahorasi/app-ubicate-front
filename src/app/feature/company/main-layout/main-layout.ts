@@ -4,12 +4,13 @@ import { RouterOutlet, ChildrenOutletContexts } from '@angular/router';
 import { Slidebard } from '../components/layout/slidebard/slidebard';
 import { fadeAnimation } from '../../../core/utils/route-animations';
 import { OnboardingTourComponent, TourStep } from '../components/shared/onboarding-tour/onboarding-tour';
+import { AccessibilityControlsComponent } from '../components/shared/accessibility-controls/accessibility-controls';
 
 
 @Component({
   selector: 'app-main-layout',
   standalone:true,
-  imports: [CommonModule, RouterOutlet, Slidebard, OnboardingTourComponent],
+  imports: [CommonModule, RouterOutlet, Slidebard, OnboardingTourComponent, AccessibilityControlsComponent],
   templateUrl: './main-layout.html',
   animations: [fadeAnimation]
 })

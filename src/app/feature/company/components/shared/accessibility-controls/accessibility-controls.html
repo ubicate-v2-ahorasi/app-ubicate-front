@@ -1,0 +1,45 @@
+<div class="accessibility-panel" [class.expanded]="isExpanded">
+  <!-- Botón flotante -->
+  <button 
+    class="accessibility-toggle"
+    (click)="togglePanel()"
+    [title]="isExpanded ? 'Cerrar panel de accesibilidad' : 'Abrir panel de accesibilidad'">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+    </svg>
+  </button>
+
+  <!-- Panel expandido -->
+  <div class="accessibility-content" *ngIf="isExpanded">
+    <h3 class="accessibility-title">Accesibilidad</h3>
+    
+    <!-- Control de voz -->
+    <div class="accessibility-option">
+      <div class="option-info">
+        <svg class="option-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+            d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+        </svg>
+        <div>
+          <p class="option-label">Asistente de Voz</p>
+          <p class="option-description">Lee el contenido en voz alta</p>
+        </div>
+      </div>
+      <button 
+        class="toggle-button"
+        [class.active]="isVoiceEnabled"
+        (click)="toggleVoice()">
+        <span class="toggle-slider"></span>
+      </button>
+    </div>
+
+    <div class="accessibility-info">
+      <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <p>El asistente leerá información importante mientras navegas</p>
+    </div>
+  </div>
+</div>
