@@ -1,5 +1,13 @@
-<app-slidebard [isOpen]="sidebarOpen" (logout)="onLogout()" (toggleChange)="onSidebarToggle($event)">
+<app-slidebard [isOpen]="sidebarOpen" (logout)="onLogout()" (toggleChange)="onSidebarToggle($event)" (showTourRequest)="startTour()">
 </app-slidebard>
+
+<!-- Onboarding Tour -->
+<app-onboarding-tour 
+  *ngIf="showTour"
+  [steps]="tourSteps"
+  (tourComplete)="onTourComplete()"
+  (tourSkipped)="onTourSkipped()">
+</app-onboarding-tour>
 
 <div class="h-screen overflow-hidden" 
      [ngClass]="sidebarOpen ? 'ml-64' : 'ml-16'"

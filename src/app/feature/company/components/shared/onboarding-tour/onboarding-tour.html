@@ -1,0 +1,74 @@
+@if (showTour && currentStep) {
+<div class="tour-container">
+  <!-- Overlay oscuro con 4 partes que rodean el highlight -->
+  <div class="tour-overlay-top" [style.height]="highlightPosition.top"></div>
+  <div class="tour-overlay-bottom" 
+       [style.top]="'calc(' + highlightPosition.top + ' + ' + highlightPosition.height + ')'"></div>
+  <div class="tour-overlay-left" 
+       [style.top]="highlightPosition.top"
+       [style.height]="highlightPosition.height"
+       [style.width]="highlightPosition.left"></div>
+  <div class="tour-overlay-right"
+       [style.top]="highlightPosition.top"
+       [style.height]="highlightPosition.height"
+       [style.left]="'calc(' + highlightPosition.left + ' + ' + highlightPosition.width + ')'"></div>
+
+  <!-- Highlight del elemento (solo borde) -->
+  <div 
+    class="tour-highlight"
+    [style.top]="highlightPosition.top"
+    [style.left]="highlightPosition.left"
+    [style.width]="highlightPosition.width"
+    [style.height]="highlightPosition.height">
+  </div>
+
+  <!-- Tooltip con información -->
+  <div 
+    class="tour-tooltip"
+    [style.top]="tooltipPosition.top"
+    [style.left]="tooltipPosition.left">
+    
+    <!-- Progress Bar -->
+    <div class="tour-progress">
+      <div 
+        class="tour-progress-bar"
+        [style.width.%]="((currentStepIndex + 1) / steps.length) * 100">
+      </div>
+    </div>
+
+    <!-- Header -->
+    <div class="tour-header">
+      <span class="tour-step-counter">
+        Paso {{ currentStepIndex + 1 }} de {{ steps.length }}
+      </span>
+      <button 
+        (click)="skipTour()"
+        class="tour-skip-btn">
+        ✕
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="tour-content">
+      <h3 class="tour-title">{{ currentStep.title }}</h3>
+      <p class="tour-description">{{ currentStep.description }}</p>
+    </div>
+
+    <!-- Navigation -->
+    <div class="tour-navigation">
+      <button
+        *ngIf="!isFirstStep"
+        (click)="previousStep()"
+        class="tour-btn tour-btn-secondary">
+        ← Anterior
+      </button>
+      <button
+        (click)="nextStep()"
+        class="tour-btn tour-btn-primary"
+        [ngClass]="{'tour-btn-full': isFirstStep}">
+        {{ isLastStep ? '¡Finalizar!' : 'Siguiente →' }}
+      </button>
+    </div>
+  </div>
+</div>
+}

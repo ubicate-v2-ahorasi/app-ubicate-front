@@ -27,6 +27,7 @@ export class Slidebard implements OnInit {
   @Input() isOpen = true;
   @Output() logout = new EventEmitter<void>();
   @Output() toggleChange = new EventEmitter<boolean>();
+  @Output() showTourRequest = new EventEmitter<void>();
   private router = inject(Router);
   private sessionService = inject(SessionService);
   private greenEducationService = inject(GreenEducationService);
@@ -121,6 +122,10 @@ export class Slidebard implements OnInit {
 
   toggleTheme(): void {
     this.themeService.toggleTheme();
+  }
+
+  requestTour(): void {
+    this.showTourRequest.emit();
   }
 
   trackByFn(index: number, item: any): any {
