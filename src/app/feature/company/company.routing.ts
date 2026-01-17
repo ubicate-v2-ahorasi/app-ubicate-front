@@ -18,29 +18,34 @@ export const COMPANY_ROUTES: Routes = [
         loadComponent: () =>
           import('./pages/dashboard/dashboard').then((m) => m.Dashboard),
         title: 'Dashboard',
+        data: { animation: 'DashboardPage' }
       },
       {
         path: 'buses',
         loadComponent: () =>
           import('./pages/bus/bus').then((m) => m.Bus),
         title: 'Dashboard',
+        data: { animation: 'BusesPage' }
       },
       {
         path: 'comments',
         loadComponent: () =>
           import('./pages/comments/comments').then((m) => m.Comments),
         title: 'Comentarios',
+        data: { animation: 'CommentsPage' }
       },
       {
         path: 'users',
         loadComponent: () => import('./pages/users/users').then((m) => m.Users),
         title: 'Gestión de Usuarios',
+        data: { animation: 'UsersPage' }
       },
       {
         path: 'settings',
         loadComponent: () =>
           import('./pages/settings/settings').then((m) => m.Settings),
         title: 'Configuración',
+        data: { animation: 'SettingsPage' }
       },
     ],
   },

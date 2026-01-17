@@ -1,5 +1,16 @@
-<app-slidebard [isOpen]="sidebarOpen" (logout)="onLogout()" (toggleChange)="onSidebarToggle($event)">
+<app-slidebard [isOpen]="sidebarOpen" (logout)="onLogout()" (toggleChange)="onSidebarToggle($event)" (showTourRequest)="startTour()">
 </app-slidebard>
+
+<!-- Onboarding Tour -->
+<app-onboarding-tour 
+  *ngIf="showTour"
+  [steps]="tourSteps"
+  (tourComplete)="onTourComplete()"
+  (tourSkipped)="onTourSkipped()">
+</app-onboarding-tour>
+
+<!-- Accessibility Controls -->
+<app-accessibility-controls></app-accessibility-controls>
 
 <div class="h-screen overflow-hidden" 
      [ngClass]="sidebarOpen ? 'ml-64' : 'ml-16'"
@@ -8,6 +19,8 @@
   <!-- <app-navbard (menuToggle)="toggleSidebar()"></app-navbard> -->
 
   <main class="p-6 bg-gray-50 dark:bg-gray-900 h-full overflow-y-auto transition-colors duration-300">
-    <router-outlet></router-outlet>
+    <div [@fadeAnimation]="getRouteAnimationData()" class="h-full">
+      <router-outlet></router-outlet>
+    </div>
   </main>
 </div>

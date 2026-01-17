@@ -15,20 +15,25 @@ import {
   GreenTip,
 } from '../../../service/green-education.service';
 import { GreenNotificationComponent } from '../../green-notification/green-notification';
+import { menuItemAnimation } from '../../../../../core/utils/route-animations';
+import { VoiceAssistantService } from '../../../../../core/service/voice-assistant.service';
 
 @Component({
   selector: 'app-slidebard',
   imports: [CommonModule, GreenNotificationComponent],
   templateUrl: './slidebard.html',
+  animations: [menuItemAnimation]
 })
 export class Slidebard implements OnInit {
   @Input() isOpen = true;
   @Output() logout = new EventEmitter<void>();
   @Output() toggleChange = new EventEmitter<boolean>();
+  @Output() showTourRequest = new EventEmitter<void>();
   private router = inject(Router);
   private sessionService = inject(SessionService);
   private greenEducationService = inject(GreenEducationService);
   themeService = inject(ThemeService);
+  private voiceService = inject(VoiceAssistantService);
 
   menuItems = [
     {
@@ -88,6 +93,7 @@ export class Slidebard implements OnInit {
         window.open(item.path, '_blank');
       } else {
         this.activeItem = itemId;
+        this.voiceService.announceNavigation(item.name);
         this.router.navigate([item.path]);
       }
     }
@@ -119,6 +125,10 @@ export class Slidebard implements OnInit {
 
   toggleTheme(): void {
     this.themeService.toggleTheme();
+  }
+
+  requestTour(): void {
+    this.showTourRequest.emit();
   }
 
   trackByFn(index: number, item: any): any {
