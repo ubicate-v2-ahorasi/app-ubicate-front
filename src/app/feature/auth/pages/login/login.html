@@ -65,16 +65,7 @@
           </button>
         </form>
 
-        <div class="text-center mt-4">
-          <p class="text-xs text-gray-600">
-            ¿No tienes cuenta?
-            <a routerLink="/auth/register"
-              class="ml-1 text-[#132137] hover:text-[#040E1C] font-medium transition-colors duration-200 hover:underline cursor-pointer">
-              Regístrate
-            </a>
-          </p>
-        </div>
-
+  
         <div class="text-center mt-2">
           <p class="text-xs text-gray-600">
             ¿Necesitas ayuda?
@@ -99,7 +90,7 @@
 <div *ngIf="showTrialModal" class="fixed inset-0 z-50 overflow-y-auto">
   <!-- Fondo oscuro -->
   <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
-  
+
   <!-- Contenedor del modal -->
   <div class="flex min-h-screen items-center justify-center p-4">
     <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full transform transition-all animate-fade-in">
