@@ -61,11 +61,21 @@
               ? 'bg-gray-400 border-gray-400 text-gray-200 cursor-not-allowed'
               : 'bg-[#132137] border border-[#040E1C] text-white hover:bg-[#040E1C] hover:border-[#132137] transform hover:scale-[1.02] active:scale-95')">
             <span *ngIf="!isLoading">Iniciar sesión</span>
-            <span *ngIf="isLoading">Cargando...</span>
+            <span *ngIf="isLoading">CargVUando...</span>
           </button>
         </form>
 
         <div class="text-center mt-4">
+          <p class="text-xs text-gray-600">
+            ¿No tienes cuenta?
+            <a routerLink="/auth/register"
+              class="ml-1 text-[#132137] hover:text-[#040E1C] font-medium transition-colors duration-200 hover:underline cursor-pointer">
+              Regístrate
+            </a>
+          </p>
+        </div>
+
+        <div class="text-center mt-2">
           <p class="text-xs text-gray-600">
             ¿Necesitas ayuda?
             <a href="#"
@@ -84,3 +94,109 @@
     </footer>
   </section>
 </div>
+
+<!-- Modal de Aviso de Prueba -->
+<div *ngIf="showTrialModal" class="fixed inset-0 z-50 overflow-y-auto">
+  <!-- Fondo oscuro -->
+  <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
+  
+  <!-- Contenedor del modal -->
+  <div class="flex min-h-screen items-center justify-center p-4">
+    <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full transform transition-all animate-fade-in">
+      <!-- Header del modal -->
+      <div class="rounded-t-2xl p-6" style="background: linear-gradient(135deg, #132137 0%, #040E1C 100%);">
+        <div class="flex items-center justify-center mb-2">
+          <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold text-white text-center">Sistema en Modo Prueba</h3>
+        <p class="text-gray-200 text-sm text-center mt-2">Información importante</p>
+      </div>
+
+      <!-- Contenido del modal -->
+      <div class="p-6 space-y-4">
+        <div class="flex items-start gap-3 p-4 bg-blue-50 dark:bg-slate-700/50 rounded-xl border-l-4" style="border-color: #132137;">
+          <svg class="w-6 h-6 flex-shrink-0 mt-0.5" style="color: #132137;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white mb-2">Acceso Restringido</h4>
+            <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+              Este sistema está actualmente en <strong>modo de prueba</strong>. El registro público está deshabilitado para proteger los recursos del servidor.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3 p-4 bg-green-50 dark:bg-slate-700/50 rounded-xl border-l-4 border-green-600">
+          <svg class="w-6 h-6 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white mb-2">¿Quieres Probar el Sistema?</h4>
+            <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-3">
+              Si deseas acceder y probar todas las funcionalidades de <strong>Ubicate</strong>, por favor contáctanos y te proporcionaremos credenciales de acceso.
+            </p>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <span>Envíanos un correo</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+                <span>Contáctanos por WhatsApp</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3 p-4 bg-amber-50 dark:bg-slate-700/50 rounded-xl border-l-4 border-amber-500">
+          <svg class="w-6 h-6 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+          </svg>
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white mb-2">¿Ya Tienes Credenciales?</h4>
+            <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+              Si ya te proporcionamos acceso, puedes iniciar sesión normalmente con tu correo y contraseña.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer del modal -->
+      <div class="px-6 pb-6">
+        <button (click)="closeTrialModal()"
+          class="w-full px-6 py-3 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-95"
+          style="background: linear-gradient(135deg, #132137 0%, #040E1C 100%);">
+          Entendido, Continuar
+        </button>
+        <p class="text-center text-xs text-gray-500 mt-3">
+          Gracias por tu comprensión
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+</style>

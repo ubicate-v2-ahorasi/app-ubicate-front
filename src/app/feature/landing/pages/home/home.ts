@@ -24,6 +24,7 @@ export class Home implements OnInit {
   isNavbarScrolled = false;
   activeSection = 'inicio';
   isDarkMode$ = this.themeService.isDarkMode$;
+  showCompanyModal = false;
 
   // Estadísticas de impacto
   stats = [
@@ -273,6 +274,15 @@ export class Home implements OnInit {
   }
 
   goToCompany() {
+    this.showCompanyModal = true;
+  }
+
+  closeCompanyModal() {
+    this.showCompanyModal = false;
+  }
+
+  proceedToLogin() {
+    this.showCompanyModal = false;
     this.router.navigate(['/auth/login']);
   }
 

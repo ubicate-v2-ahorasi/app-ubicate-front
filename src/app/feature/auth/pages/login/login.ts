@@ -25,6 +25,7 @@ export class Login {
   isLoading = false;
   errorMessage = '';
   showPassword = false;
+  showTrialModal = true;
 
   constructor() {
     this.loginForm = this.fb.group({
@@ -64,5 +65,9 @@ export class Login {
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
+  }
+
+  closeTrialModal(): void {
+    this.showTrialModal = false;
   }
 }

@@ -693,6 +693,106 @@
   </div>
 </footer>
 
+<!-- Modal de Información para Empresas -->
+<div *ngIf="showCompanyModal" class="fixed inset-0 z-50 overflow-y-auto">
+  <!-- Fondo oscuro -->
+  <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" (click)="closeCompanyModal()"></div>
+  
+  <!-- Contenedor del modal -->
+  <div class="flex min-h-screen items-center justify-center p-4">
+    <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full transform transition-all">
+      <!-- Header del modal -->
+      <div class="bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-700 dark:to-teal-700 rounded-t-2xl p-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-white">¡Bienvenida Empresa!</h3>
+              <p class="text-emerald-100 text-sm">Panel de Gestión</p>
+            </div>
+          </div>
+          <button (click)="closeCompanyModal()" class="text-white/80 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Contenido del modal -->
+      <div class="p-6 space-y-4">
+        <div class="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+          <svg class="w-6 h-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <div>
+            <h4 class="font-semibold text-slate-900 dark:text-white mb-1">Acceso al Sistema</h4>
+            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              Para acceder al panel de gestión empresarial necesitas una cuenta registrada. 
+              Si aún no tienes una cuenta, puedes registrarte fácilmente.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3 p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl">
+          <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <div>
+            <h4 class="font-semibold text-slate-900 dark:text-white mb-2">Funcionalidades Incluidas</h4>
+            <ul class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                Monitoreo en tiempo real de tu flota
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                Gestión de rutas y conductores
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                Estadísticas y reportes detallados
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                Panel de control intuitivo
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
+          <svg class="w-6 h-6 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+          <div>
+            <h4 class="font-semibold text-slate-900 dark:text-white mb-1">¿Necesitas Ayuda?</h4>
+            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              Si tienes dudas o quieres probar el sistema, contáctanos y te ayudaremos a comenzar.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer del modal con botones -->
+      <div class="px-6 pb-6 flex gap-3">
+        <button (click)="closeCompanyModal()" 
+          class="flex-1 px-4 py-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
+          Cancelar
+        </button>
+        <button (click)="proceedToLogin()"
+          class="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02]">
+          Ir al Login
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <style>
 @keyframes fade-in {
   from {
