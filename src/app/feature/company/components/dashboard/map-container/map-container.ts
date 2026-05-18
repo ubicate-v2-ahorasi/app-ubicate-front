@@ -25,6 +25,7 @@ import { RouteResponse } from '../../../models/route.model';
 import { IconsModule } from '../../../icons.module';
 import { FirebaseService } from '../../../../../core/service/firebase.service';
 import { SessionService } from '../../../../../core/service/session.service';
+import { RealtimeBusService } from '../../../../../core/service/realtime-bus.service';
 import { environment } from '../../../../../core/config/environment';
 import { MapDarkModeComponent } from '../map-dark-mode/map-dark-mode';
 import { MAP_DARK_STYLES } from '../map-dark-mode/map-dark-mode.styles';
@@ -65,6 +66,7 @@ export class MapContainerComponent implements OnDestroy, OnInit {
   private locationService = inject(LocationService);
   private routeMapService = inject(RouteMapService);
   private cdr = inject(ChangeDetectorRef);
+  private realtimeBusService = inject(RealtimeBusService);
   private servicesSubscribed = false;
   private initialDataLoaded = false;
 
@@ -159,11 +161,11 @@ export class MapContainerComponent implements OnDestroy, OnInit {
 
   private subscribeBusesStream(empresaId: number, rutaId?: number) {
     this.busesSub?.unsubscribe();
-    this.busesSub = this.firebaseService
-      .streamBusesByEmpresaAndRoute(empresaId, rutaId)
+    this.busesSub = this.realtimeBusService
+      .streamBuses(empresaId, rutaId)
       .subscribe((buses) => {
         this.buses = buses;
-
+        // Resto de la lógica igual...
         if (!this.isMapReady) {
           this.cdr.markForCheck();
           return;

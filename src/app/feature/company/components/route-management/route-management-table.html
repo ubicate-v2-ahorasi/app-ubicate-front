@@ -1,0 +1,79 @@
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+  <div class="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
+    <div>
+      <h2 class="text-lg font-bold text-gray-900">Listado de Rutas</h2>
+      <p class="text-xs text-gray-500 mt-1">Gestiona los recorridos y estados de tu flota</p>
+    </div>
+    <button (click)="loadRoutes()" class="p-2 hover:bg-white rounded-lg transition-colors border border-transparent hover:border-gray-200" title="Refrescar">
+      <lucide-icon name="rotate-cw" [class.animate-spin]="loading" class="w-5 h-5 text-gray-600"></lucide-icon>
+    </button>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-gray-50/80 text-[11px] uppercase tracking-wider text-gray-500 font-semibold">
+          <th class="px-6 py-4">Ruta</th>
+          <th class="px-6 py-4">Código</th>
+          <th class="px-6 py-4">Buses</th>
+          <th class="px-6 py-4">Estado</th>
+          <th class="px-6 py-4 text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        <tr *ngFor="let route of routes" class="hover:bg-blue-50/30 transition-colors group">
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-3">
+              <div [style.background-color]="route.color_hex" class="w-3 h-3 rounded-full shadow-sm"></div>
+              <span class="text-sm font-medium text-gray-900">{{ route.nombre }}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <span class="text-xs font-mono bg-gray-100 text-gray-600 px-2 py-1 rounded">
+              {{ route.codigo }}
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-1.5 text-gray-600">
+              <lucide-icon name="bus" class="w-4 h-4"></lucide-icon>
+              <span class="text-sm font-medium">{{ getBusCount(route) }}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <button (click)="onToggleStatus(route)" 
+              [class]="route.estado === 'ACTIVA' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
+              class="text-[10px] font-bold px-2.5 py-1 rounded-full transition-all hover:ring-2 ring-offset-1 ring-current">
+              {{ route.estado === 'ACTIVA' ? 'ACTIVA' : 'INACTIVA' }}
+            </button>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button class="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors" title="Editar">
+                <lucide-icon name="edit-3" class="w-4 h-4"></lucide-icon>
+              </button>
+              <button (click)="onDelete(route)" class="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors" title="Eliminar">
+                <lucide-icon name="trash-2" class="w-4 h-4"></lucide-icon>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="routes.length === 0 && !loading">
+          <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+            <div class="flex flex-col items-center gap-2">
+              <lucide-icon name="map" class="w-10 h-10 opacity-20"></lucide-icon>
+              <p class="text-sm">No se encontraron rutas registradas</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="loading" class="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center z-10">
+    <div class="flex flex-col items-center gap-3">
+      <div class="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      <span class="text-xs font-medium text-blue-600">Actualizando rutas...</span>
+    </div>
+  </div>
+</div>

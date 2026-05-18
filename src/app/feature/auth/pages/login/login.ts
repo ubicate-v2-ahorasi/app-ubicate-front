@@ -25,7 +25,7 @@ export class Login {
   isLoading = false;
   errorMessage = '';
   showPassword = false;
-  showTrialModal = true;
+  showTrialModal = false;
 
   constructor() {
     this.loginForm = this.fb.group({
@@ -46,7 +46,9 @@ export class Login {
 
       this.authService.login(credentials).subscribe({
         next: (response) => {
-          this.router.navigate(['/company']);
+          setTimeout(() => {
+            this.router.navigate(['/company/dashboard']);
+          }, 100);
         },
         error: (error) => {
           this.isLoading = false;
@@ -60,7 +62,7 @@ export class Login {
   }
 
   goToRegister(): void {
-    this.router.navigate(['/register']);
+    this.router.navigate(['/auth/register']);
   }
 
   togglePasswordVisibility(): void {

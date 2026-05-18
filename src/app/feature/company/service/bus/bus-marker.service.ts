@@ -70,26 +70,33 @@ export class BusMarkerService {
     }
 
     const distance = this.calculateDistance(currentPos, newPosition);
-    if (distance < 0.0001) return;
+    if (distance < 0.00001) return; // Umbral más pequeño para mayor precisión
 
-    const steps = 20;
-    const stepLat = (newPosition.lat - currentPos.lat) / steps;
-    const stepLng = (newPosition.lng - currentPos.lng) / steps;
-    let step = 0;
+    const duration = 1500; // Duración de la transición en ms
+    const start = performance.now();
+    const startLat = currentPos.lat;
+    const startLng = currentPos.lng;
 
-    const animate = () => {
-      if (step <= steps) {
-        const interpolatedPos = {
-          lat: currentPos.lat + stepLat * step,
-          lng: currentPos.lng + stepLng * step,
-        };
-        marker.position = interpolatedPos;
-        step++;
-        setTimeout(animate, 50);
+    const animate = (time: number) => {
+      let timeFraction = (time - start) / duration;
+      if (timeFraction > 1) timeFraction = 1;
+
+      // Función de easing (suavizado) para que el inicio y fin sean naturales
+      const progress = timeFraction < 0.5 
+        ? 2 * timeFraction * timeFraction 
+        : 1 - Math.pow(-2 * timeFraction + 2, 2) / 2;
+
+      marker.position = {
+        lat: startLat + (newPosition.lat - startLat) * progress,
+        lng: startLng + (newPosition.lng - startLng) * progress,
+      };
+
+      if (timeFraction < 1) {
+        requestAnimationFrame(animate);
       }
     };
 
-    animate();
+    requestAnimationFrame(animate);
   }
 
   private calculateDistance(
@@ -116,37 +123,69 @@ export class BusMarkerService {
       flex-direction: column;
       align-items: center;
       cursor: pointer;
-      transition: transform 0.2s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     `;
 
-    container.innerHTML = `
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" style="filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));">
-        <rect x="6" y="7" width="12" height="11" rx="1.5" fill="${color}" stroke="white" stroke-width="2"/>
-        <rect x="8" y="9" width="8" height="4" rx="0.5" fill="white" fill-opacity="0.9"/>
-        <circle cx="9" cy="18" r="1.2" fill="#000" stroke="white" stroke-width="1"/>
-        <circle cx="15" cy="18" r="1.2" fill="#000" stroke="white" stroke-width="1"/>
+    // Estilo para el efecto de pulso si está activo
+    const pulseStyle = bus.activo ? `
+      @keyframes pulse-ring {
+        0% { transform: scale(.33); opacity: 0.8; }
+        80%, 100% { opacity: 0; }
+      }
+      .pulse::before {
+        content: '';
+        position: absolute;
+        width: 300%;
+        height: 300%;
+        border-radius: 50%;
+        background-color: ${color};
+        animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        z-index: -1;
+      }
+    ` : '';
+
+    const styleTag = document.createElement('style');
+    styleTag.textContent = pulseStyle;
+    container.appendChild(styleTag);
+
+    const iconWrapper = document.createElement('div');
+    iconWrapper.className = bus.activo ? 'pulse' : '';
+    iconWrapper.style.cssText = 'position: relative; display: flex; justify-content: center; align-items: center;';
+
+    iconWrapper.innerHTML = `
+      <svg width="40" height="40" viewBox="0 0 24 24" style="filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3));">
+        <circle cx="12" cy="12" r="10" fill="white" stroke="${color}" stroke-width="1.5"/>
+        <path d="M17 11V16M17 16H7M7 16V11M17 11L15.5 7H8.5L7 11M17 11H7" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="9" y="12" width="2" height="2" rx="0.5" fill="${color}"/>
+        <rect x="13" y="12" width="2" height="2" rx="0.5" fill="${color}"/>
       </svg>
-      <div style="
-        background: white;
-        color: ${color};
-        padding: 2px 8px;
-        border-radius: 4px;
-        font-size: 10px;
-        font-weight: bold;
-        margin-top: -2px;
-        border: 2px solid ${color};
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      ">
-        ${bus.placa}
-      </div>
     `;
+
+    const label = document.createElement('div');
+    label.style.cssText = `
+      background: ${color};
+      color: white;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-size: 9px;
+      font-weight: 800;
+      margin-top: -8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      border: 1px solid white;
+      z-index: 10;
+      letter-spacing: 0.5px;
+    `;
+    label.textContent = bus.placa;
+
+    container.appendChild(iconWrapper);
+    container.appendChild(label);
 
     container.addEventListener('mouseenter', () => {
-      container.style.transform = 'scale(1.1)';
+      container.style.transform = 'scale(1.2) translateY(-4px)';
     });
 
     container.addEventListener('mouseleave', () => {
-      container.style.transform = 'scale(1)';
+      container.style.transform = 'scale(1) translateY(0)';
     });
 
     return container;

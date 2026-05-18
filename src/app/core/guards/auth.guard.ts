@@ -13,7 +13,7 @@ export class AuthGuard implements CanActivate {
     if (this.sessionService.isAuthenticated()) {
       return true;
     } else {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/auth/login']);
       return false;
     }
   }
@@ -28,7 +28,7 @@ export class NoAuthGuard implements CanActivate {
 
   canActivate(): boolean {
     if (this.sessionService.isAuthenticated()) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/company/dashboard']);
       return false;
     }
     return true;

@@ -44,6 +44,7 @@ export class Slidebard implements OnInit {
     },
     { id: 'users', name: 'Conductores', icon: 'user', path: '/company/users' },
     { id: 'buses', name: 'Buses', icon: 'bus', path: '/company/buses' },
+    { id: 'routes', name: 'Rutas', icon: 'route', path: '/company/routes' },
     { id: 'comments', name: 'Comentarios', icon: 'message', path: '/company/comments' },
   ];
 

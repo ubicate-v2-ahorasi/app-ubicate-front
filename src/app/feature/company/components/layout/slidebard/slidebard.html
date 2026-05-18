@@ -189,6 +189,12 @@
                 d="M3 12h18M8 6v6M16 6v6" />
               }
 
+              <!-- Route -->
+              @if (item.icon === 'route') {
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 20l-5-2V4l5 2m0 14l5-2m-5 2v-14m5 14l5 2V6l-5-2m0 14V4" />
+              }
+
               <!-- Message/Comments -->
               @if (item.icon === 'message') {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

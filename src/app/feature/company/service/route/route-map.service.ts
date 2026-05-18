@@ -27,8 +27,15 @@ export class RouteMapService {
 
   private rendered = new Map<
     number,
-    { polyline?: google.maps.Polyline; origin?: AnyMarker; dest?: AnyMarker }
+    { 
+      polyline?: google.maps.Polyline; 
+      animatedPolyline?: google.maps.Polyline;
+      origin?: AnyMarker; 
+      dest?: AnyMarker 
+    }
   >();
+
+  private animations = new Map<number, any>();
 
   private infoWindow: google.maps.InfoWindow | null = null;
   private geocoder: google.maps.Geocoder | null = null;
@@ -95,6 +102,7 @@ export class RouteMapService {
     let start: google.maps.LatLng | null = null;
     let end: google.maps.LatLng | null = null;
     let polyline: google.maps.Polyline | undefined;
+    let animatedPolyline: google.maps.Polyline | undefined;
 
     if (route.polyline) {
       if (!this.geometryLoaded) {
@@ -107,13 +115,51 @@ export class RouteMapService {
       const path =
         google.maps.geometry.encoding.decodePath(route.polyline) || [];
       if (path.length > 0) {
+        const routeColor = route.color_hex || '#3367d6';
+
+        // 1. Línea de fondo (sombra/brillo)
         polyline = new google.maps.Polyline({
           path,
-          strokeColor: route.color_hex || '#3367d6',
-          strokeOpacity: 0.9,
-          strokeWeight: 5,
+          strokeColor: routeColor,
+          strokeOpacity: 0.3,
+          strokeWeight: 8,
           map,
         });
+
+        // 2. Línea principal animada (puntos moviéndose)
+        const lineSymbol = {
+          path: google.maps.SymbolPath.CIRCLE,
+          fillOpacity: 1,
+          scale: 3,
+          fillColor: routeColor,
+          strokeWeight: 0
+        };
+
+        animatedPolyline = new google.maps.Polyline({
+          path,
+          strokeColor: routeColor,
+          strokeOpacity: 0, // Ocultar la línea base, solo ver los puntos
+          icons: [{
+            icon: lineSymbol,
+            offset: '0',
+            repeat: '20px'
+          }],
+          map,
+        });
+
+        // 3. Animación del flujo
+        let count = 0;
+        const interval = setInterval(() => {
+          count = (count + 1) % 200;
+          const icons = animatedPolyline?.get('icons');
+          if (icons && icons[0]) {
+            icons[0].offset = (count / 2) + '%';
+            animatedPolyline?.set('icons', icons);
+          }
+        }, 30);
+
+        this.animations.set(route.id, interval);
+
         start = path[0];
         end = path[path.length - 1];
         path.forEach((p) => bounds.extend(p));
@@ -147,13 +193,21 @@ export class RouteMapService {
 
     if (!bounds.isEmpty()) map.fitBounds(bounds);
 
-    this.rendered.set(route.id, { polyline, origin, dest });
+    this.rendered.set(route.id, { polyline, animatedPolyline, origin, dest });
   }
 
   clearRouteFromMap(routeId: number): void {
     const r = this.rendered.get(routeId);
     if (r) {
       r.polyline?.setMap(null);
+      r.animatedPolyline?.setMap(null);
+      
+      const interval = this.animations.get(routeId);
+      if (interval) {
+        clearInterval(interval);
+        this.animations.delete(routeId);
+      }
+
       if ((r.origin as any)?.map !== undefined) (r.origin as any).map = null;
       else (r.origin as google.maps.Marker | undefined)?.setMap(null);
       if ((r.dest as any)?.map !== undefined) (r.dest as any).map = null;

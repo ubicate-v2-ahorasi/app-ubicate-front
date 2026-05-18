@@ -24,8 +24,15 @@ export const COMPANY_ROUTES: Routes = [
         path: 'buses',
         loadComponent: () =>
           import('./pages/bus/bus').then((m) => m.Bus),
-        title: 'Dashboard',
+        title: 'Buses',
         data: { animation: 'BusesPage' }
+      },
+      {
+        path: 'routes',
+        loadComponent: () =>
+          import('./pages/routes/routes').then((m) => m.RoutesPage),
+        title: 'Gestión de Rutas',
+        data: { animation: 'RoutesPage' }
       },
       {
         path: 'comments',

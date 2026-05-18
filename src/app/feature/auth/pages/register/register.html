@@ -122,13 +122,13 @@
                   class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
                   placeholder="••••••••">
                 <div *ngIf="registerForm.get('password')?.errors && registerForm.get('password')?.touched"
-                  class="text-red-500 text-xs mt-1">Mín. 8 caracteres, mayús, minús, número, especial</div>
+                  class="text-red-500 text-xs mt-1">Mín. 6 caracteres</div>
               </div>
             </div>
           </div>
 
-          <button type="submit" [disabled]="isLoading || registerForm.invalid" [class]="'w-full py-3 rounded-lg font-semibold text-sm transition-all duration-300 ' +
-            (isLoading || registerForm.invalid
+          <button type="submit" [disabled]="isLoading" [class]="'w-full py-3 rounded-lg font-semibold text-sm transition-all duration-300 ' +
+            (isLoading
               ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
               : 'bg-[#132137] text-white hover:bg-[#040E1C] transform hover:scale-[1.02] active:scale-95')">
             <span *ngIf="!isLoading">Registrar Empresa</span>
@@ -148,7 +148,7 @@
         <div class="text-center">
           <p class="text-xs text-gray-600">
             ¿Ya tienes cuenta?
-            <a routerLink="/login" class="text-[#132137] font-medium hover:underline cursor-pointer">Iniciar sesión</a>
+            <a routerLink="/auth/login" class="text-[#132137] font-medium hover:underline cursor-pointer">Iniciar sesión</a>
           </p>
         </div>
       </div>

@@ -1,6 +1,7 @@
 interface EnvironmentConfig {
   production: boolean;
   apiCore: string;
+  wsUrl: string;
   googleMaps: {
     mapId?: string;
     darkMapId?: string;
@@ -10,8 +11,9 @@ interface EnvironmentConfig {
 export const environment: EnvironmentConfig = {
   production: false,
 
-  apiCore: 'https://jcvjorge-transport-api-4b70ae842c45.herokuapp.com/api',
-  //apiCore: 'http://localhost:8080/api',
+  apiCore: 'http://localhost:8080/api',
+  wsUrl: 'http://localhost:8080/ws-tracking',
+  //apiCore: 'https://jcvjorge-transport-api-4b70ae842c45.herokuapp.com/api',
   googleMaps: {
     mapId: undefined,
     darkMapId: undefined,
