@@ -44,6 +44,12 @@
             {{route.estado === 'ACTIVA' ? 'Activa' : 'Inactiva'}}
           </button>
           
+          <button (click)="onEditRoute($event, route)"
+            class="text-blue-500 hover:bg-blue-50 p-1 rounded-full transition-colors self-center mt-1"
+            title="Editar ruta en mapa">
+            <lucide-icon name="edit" class="w-3.5 h-3.5"></lucide-icon>
+          </button>
+
           <button (click)="onDeleteRoute($event, route)"
             class="text-red-500 hover:bg-red-50 p-1 rounded-full transition-colors self-center mt-1"
             title="Eliminar ruta">

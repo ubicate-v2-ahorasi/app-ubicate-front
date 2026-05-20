@@ -12,6 +12,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil, finalize } from 'rxjs';
 import { RouteMapService } from '../../../service/route/route-map.service';
+import { RouteEditorService } from '../../../service/route/route-editor.service';
 import { RouteResponse } from '../../../models/route.model';
 import { IconsModule } from '../../../icons.module';
 import { DeleteRouteModalComponent } from './delete-route-modal';
@@ -25,11 +26,14 @@ import { SuccessModalComponent } from './success-modal';
 })
 export class RouteListComponent implements OnInit, OnDestroy {
   @Input() isVisible = false;
+  @Input() map: google.maps.Map | null = null;
   @Output() selectRouteId = new EventEmitter<number>();
   @Output() close = new EventEmitter<void>();
+  @Output() routeSaved = new EventEmitter<void>();
 
   private destroy$ = new Subject<void>();
   private routeMapService = inject(RouteMapService);
+  private routeEditorService = inject(RouteEditorService);
   private cdr = inject(ChangeDetectorRef);
 
   routes: RouteResponse[] = [];
@@ -89,6 +93,24 @@ export class RouteListComponent implements OnInit, OnDestroy {
     this.routeToDelete = route;
     this.showDeleteModal = true;
     this.cdr.detectChanges();
+  }
+
+  onEditRoute(event: Event, route: RouteResponse) {
+    event.stopPropagation();
+    if (this.map) {
+      this.routeMapService.getById(route.id).subscribe({
+        next: (freshRoute) => {
+          if (this.map) {
+            this.routeEditorService.startEditing(freshRoute, this.map).catch(err => {
+              console.error('Error starting route edit:', err);
+            });
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching route for edit:', err);
+        }
+      });
+    }
   }
 
   onConfirmDelete() {

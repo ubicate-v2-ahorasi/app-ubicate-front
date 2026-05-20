@@ -17,6 +17,11 @@ import {
   Moon,
   AlertTriangle,
   CheckCircle,
+  Plus,
+  Pencil,
+  RotateCw,
+  Edit3,
+  Check,
 } from 'lucide-angular';
 
 const icons = {
@@ -35,6 +40,11 @@ const icons = {
   Moon,
   AlertTriangle,
   CheckCircle,
+  Plus,
+  Pencil,
+  RotateCw,
+  Edit3,
+  Check,
 };
 
 @NgModule({

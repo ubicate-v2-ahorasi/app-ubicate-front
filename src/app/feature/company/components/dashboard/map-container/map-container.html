@@ -46,8 +46,10 @@
   <app-bus-list [isVisible]="showBusList && !isCreatingRoute" (selectBus)="onSelectBus($event)"
     (close)="onCloseBusList()" class="z-25"></app-bus-list>
 
-  <app-route-list [isVisible]="showRouteList && !isCreatingRoute" (selectRouteId)="onSelectRouteId($event)"
-    (close)="onCloseRouteList()" class="z-25"></app-route-list>
+  <app-route-list [isVisible]="showRouteList && !isCreatingRoute" [map]="safeGoogleMap"
+    (selectRouteId)="onSelectRouteId($event)" (close)="onCloseRouteList()" class="z-25"></app-route-list>
+
+  <app-route-edit-control (changesSaved)="onRouteSaved()" class="z-40"></app-route-edit-control>
 
   <app-map-controls [isLocating]="isLocating" [isCreatingRoute]="isCreatingRoute"
     (startRoute)="startCreatingRoute()" class="z-20"></app-map-controls>

@@ -8,6 +8,9 @@ let activeRequests = 0;
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   activeRequests++;
 
+  const isExternalApi = req.url.includes('router.project-osrm.org') ||
+                        req.url.includes('maps.googleapis.com');
+
   let modifiedRequest = req.clone({
     setHeaders: {
       'Content-Type': 'application/json',
@@ -15,13 +18,15 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
     },
   });
 
-  const token = getAuthToken();
-  if (token) {
-    modifiedRequest = modifiedRequest.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  if (!isExternalApi) {
+    const token = getAuthToken();
+    if (token) {
+      modifiedRequest = modifiedRequest.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    }
   }
 
   return next(modifiedRequest).pipe(
