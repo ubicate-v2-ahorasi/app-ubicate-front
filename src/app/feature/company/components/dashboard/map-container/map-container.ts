@@ -15,6 +15,7 @@ import { BusListComponent } from '../../bus-mapa/bus-list/bus-list';
 import { RouteListComponent } from '../route-list/route-list';
 import { LocationService } from '../../../service/location/location.service';
 import { RouteMapService } from '../../../service/route/route-map.service';
+import { RouteEditorService } from '../../../service/route/route-editor.service';
 import {
   BusMarkerService,
   BusWithPosition,
@@ -29,6 +30,7 @@ import { RealtimeBusService } from '../../../../../core/service/realtime-bus.ser
 import { environment } from '../../../../../core/config/environment';
 import { MapDarkModeComponent } from '../map-dark-mode/map-dark-mode';
 import { MAP_DARK_STYLES } from '../map-dark-mode/map-dark-mode.styles';
+import { RouteEditControlComponent } from '../route-edit-control/route-edit-control';
 
 @Component({
   selector: 'app-map-container',
@@ -40,6 +42,7 @@ import { MAP_DARK_STYLES } from '../map-dark-mode/map-dark-mode.styles';
     MapControlsComponent,
     BusListComponent,
     RouteListComponent,
+    RouteEditControlComponent,
     IconsModule,
   ],
   templateUrl: './map-container.html',
@@ -65,6 +68,7 @@ export class MapContainerComponent implements OnDestroy, OnInit {
   private busMarkerService = inject(BusMarkerService);
   private locationService = inject(LocationService);
   private routeMapService = inject(RouteMapService);
+  private routeEditorService = inject(RouteEditorService);
   private cdr = inject(ChangeDetectorRef);
   private realtimeBusService = inject(RealtimeBusService);
   private servicesSubscribed = false;
@@ -157,6 +161,7 @@ export class MapContainerComponent implements OnDestroy, OnInit {
     this.busMarkerService.clearMarkers();
     this.locationService.clearLocationMarker();
     this.routeMapService.clearAllRoutesFromMap();
+    this.routeEditorService.stopEditing();
   }
 
   private subscribeBusesStream(empresaId: number, rutaId?: number) {
@@ -338,6 +343,12 @@ export class MapContainerComponent implements OnDestroy, OnInit {
 
   onCancelRouteCreation() {
     this.isCreatingRoute = false;
+    this.cdr.markForCheck();
+  }
+
+  onRouteSaved() {
+    this.routeMapService.loadRoutes().subscribe();
+    this.routeEditorService.stopEditing();
     this.cdr.markForCheck();
   }
 
