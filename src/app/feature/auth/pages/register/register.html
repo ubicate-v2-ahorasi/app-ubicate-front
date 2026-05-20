@@ -1,6 +1,6 @@
 <div class="min-h-screen flex flex-col lg:flex-row" style="background-color: #132137;">
   <section class="relative w-full lg:w-1/2 h-48 sm:h-64 lg:h-screen flex-shrink-0 order-2 lg:order-1 overflow-hidden">
-    <div class="absolute inset-0 bg-center" style="background-image:url('/banner/banner.png'); background-size: 95%;">
+    <div class="absolute inset-0 bg-center bg-no-repeat" style="background-image:url('/banner/banner.png'); background-size: contain;">
     </div>
   </section>
 
@@ -15,6 +15,19 @@
     <div class="w-full max-w-lg">
       <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-lg">
 
+        <div class="mb-4">
+          <div class="flex items-center justify-between text-xs font-medium">
+            <span [class]="currentStep >= 1 ? 'text-[#132137]' : 'text-gray-400'">Empresa</span>
+            <span [class]="currentStep >= 2 ? 'text-[#132137]' : 'text-gray-400'">Representante</span>
+            <span [class]="currentStep >= 3 ? 'text-[#132137]' : 'text-gray-400'">Credenciales</span>
+          </div>
+          <div class="mt-2 h-1 w-full rounded-full bg-gray-100">
+            <div class="h-1 rounded-full bg-[#132137] transition-all duration-300"
+              [style.width.%]="currentStep === 1 ? 33 : currentStep === 2 ? 66 : 100"></div>
+          </div>
+          <p class="mt-2 text-xs text-gray-500">Paso {{ currentStep }} de {{ totalSteps }}</p>
+        </div>
+
         <div *ngIf="errorMessage" class="mb-3 p-2 bg-red-50 border border-red-200 rounded text-red-700 text-xs">
           {{ errorMessage }}
         </div>
@@ -25,7 +38,7 @@
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
 
           <!-- Company Info -->
-          <div>
+          <div *ngIf="currentStep === 1" class="animate-step-in">
             <h3 class="text-sm font-semibold text-[#040E1C] mb-3">Información de la Empresa</h3>
 
             <div class="space-y-3">
@@ -41,7 +54,7 @@
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-medium text-[#040E1C] mb-1">RUC *</label>
-                  <input formControlName="ruc"
+                  <input formControlName="ruc" maxlength="11" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                     class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
                     placeholder="20123456789">
                   <div *ngIf="registerForm.get('ruc')?.errors && registerForm.get('ruc')?.touched"
@@ -58,7 +71,7 @@
           </div>
 
           <!-- Representative -->
-          <div>
+          <div *ngIf="currentStep === 2" class="animate-step-in">
             <h3 class="text-sm font-semibold text-[#040E1C] mb-3">Representante Legal</h3>
 
             <div class="space-y-3">
@@ -84,7 +97,7 @@
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-medium text-[#040E1C] mb-1">DNI *</label>
-                  <input formControlName="dni"
+                  <input formControlName="dni" maxlength="8" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                     class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
                     placeholder="12345678">
                   <div *ngIf="registerForm.get('dni')?.errors && registerForm.get('dni')?.touched"
@@ -92,7 +105,7 @@
                 </div>
                 <div>
                   <label class="block text-xs font-medium text-[#040E1C] mb-1">Teléfono *</label>
-                  <input formControlName="telefono"
+                  <input formControlName="telefono" maxlength="15" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                     class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
                     placeholder="+51987654321">
                   <div *ngIf="registerForm.get('telefono')?.errors && registerForm.get('telefono')?.touched"
@@ -103,7 +116,7 @@
           </div>
 
           <!-- Credentials -->
-          <div>
+          <div *ngIf="currentStep === 3" class="animate-step-in">
             <h3 class="text-sm font-semibold text-[#040E1C] mb-3">Credenciales</h3>
 
             <div class="space-y-3">
@@ -118,22 +131,105 @@
 
               <div>
                 <label class="block text-xs font-medium text-[#040E1C] mb-1">Contraseña *</label>
-                <input type="password" formControlName="password"
-                  class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
-                  placeholder="••••••••">
+                <div class="relative">
+                  <input [type]="showPassword ? 'text' : 'password'" formControlName="password"
+                    class="w-full px-3 py-2 pr-10 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
+                    placeholder="••••••••">
+                  <button type="button" (click)="togglePasswordVisibility()"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#132137] transition-colors duration-200 focus:outline-none">
+                    <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                    </svg>
+                  </button>
+                </div>
                 <div *ngIf="registerForm.get('password')?.errors && registerForm.get('password')?.touched"
-                  class="text-red-500 text-xs mt-1">Mín. 6 caracteres</div>
+                  class="text-red-500 text-xs mt-1">Debe cumplir los requisitos</div>
+                <div class="mt-2 text-[11px] space-y-1">
+                  <p class="text-gray-600">La contraseña debe tener:</p>
+                  <ul class="space-y-1">
+                    <li [class]="hasMinLength ? 'text-green-600' : 'text-gray-600'" class="flex items-center gap-2">
+                      <span class="inline-flex h-4 w-4 items-center justify-center rounded-full border" [class]="hasMinLength ? 'border-green-600 text-green-600' : 'border-gray-300 text-gray-400'">
+                        <svg *ngIf="hasMinLength" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-3 w-3">
+                          <path fill-rule="evenodd" d="M16.704 5.29a1 1 0 010 1.415l-7.071 7.07a1 1 0 01-1.415 0L3.296 8.854a1 1 0 111.414-1.414l4.096 4.095 6.364-6.364a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                      Minimo 8 caracteres
+                    </li>
+                    <li [class]="hasNumber ? 'text-green-600' : 'text-gray-600'" class="flex items-center gap-2">
+                      <span class="inline-flex h-4 w-4 items-center justify-center rounded-full border" [class]="hasNumber ? 'border-green-600 text-green-600' : 'border-gray-300 text-gray-400'">
+                        <svg *ngIf="hasNumber" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-3 w-3">
+                          <path fill-rule="evenodd" d="M16.704 5.29a1 1 0 010 1.415l-7.071 7.07a1 1 0 01-1.415 0L3.296 8.854a1 1 0 111.414-1.414l4.096 4.095 6.364-6.364a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                      1 numero
+                    </li>
+                    <li [class]="hasSymbol ? 'text-green-600' : 'text-gray-600'" class="flex items-center gap-2">
+                      <span class="inline-flex h-4 w-4 items-center justify-center rounded-full border" [class]="hasSymbol ? 'border-green-600 text-green-600' : 'border-gray-300 text-gray-400'">
+                        <svg *ngIf="hasSymbol" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-3 w-3">
+                          <path fill-rule="evenodd" d="M16.704 5.29a1 1 0 010 1.415l-7.071 7.07a1 1 0 01-1.415 0L3.296 8.854a1 1 0 111.414-1.414l4.096 4.095 6.364-6.364a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                      1 simbolo
+                    </li>
+                    <li [class]="hasUppercase ? 'text-green-600' : 'text-gray-600'" class="flex items-center gap-2">
+                      <span class="inline-flex h-4 w-4 items-center justify-center rounded-full border" [class]="hasUppercase ? 'border-green-600 text-green-600' : 'border-gray-300 text-gray-400'">
+                        <svg *ngIf="hasUppercase" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-3 w-3">
+                          <path fill-rule="evenodd" d="M16.704 5.29a1 1 0 010 1.415l-7.071 7.07a1 1 0 01-1.415 0L3.296 8.854a1 1 0 111.414-1.414l4.096 4.095 6.364-6.364a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                      1 mayuscula
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-[#040E1C] mb-1">Confirmar contraseña *</label>
+                <div class="relative">
+                  <input [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword"
+                    class="w-full px-3 py-2 pr-10 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
+                    placeholder="••••••••">
+                  <button type="button" (click)="showConfirmPassword = !showConfirmPassword"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#132137] transition-colors duration-200 focus:outline-none">
+                    <svg *ngIf="!showConfirmPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <svg *ngIf="showConfirmPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                    </svg>
+                  </button>
+                </div>
+                <div *ngIf="registerForm.errors?.['passwordsMismatch'] && registerForm.get('confirmPassword')?.touched"
+                  class="text-red-500 text-xs mt-1">Las contrasenas no coinciden</div>
               </div>
             </div>
           </div>
 
-          <button type="submit" [disabled]="isLoading" [class]="'w-full py-3 rounded-lg font-semibold text-sm transition-all duration-300 ' +
-            (isLoading
-              ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-              : 'bg-[#132137] text-white hover:bg-[#040E1C] transform hover:scale-[1.02] active:scale-95')">
-            <span *ngIf="!isLoading">Registrar Empresa</span>
-            <span *ngIf="isLoading">Registrando...</span>
-          </button>
+          <div class="flex items-center justify-between gap-3">
+            <button type="button" (click)="prevStep()" [disabled]="currentStep === 1"
+              class="w-full py-3 rounded-lg font-semibold text-sm transition-all duration-300 border border-gray-200 text-gray-600 hover:text-[#132137] hover:border-[#132137] disabled:opacity-50 disabled:cursor-not-allowed">
+              Anterior
+            </button>
+
+            <button *ngIf="currentStep < totalSteps" type="button" (click)="nextStep()"
+              class="w-full py-3 rounded-lg font-semibold text-sm transition-all duration-300 bg-[#132137] text-white hover:bg-[#040E1C] transform hover:scale-[1.02] active:scale-95">
+              Siguiente
+            </button>
+
+            <button *ngIf="currentStep === totalSteps" type="submit" [disabled]="isLoading"
+              [class]="'w-full py-3 rounded-lg font-semibold text-sm transition-all duration-300 ' +
+              (isLoading
+                ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                : 'bg-[#132137] text-white hover:bg-[#040E1C] transform hover:scale-[1.02] active:scale-95')">
+              <span *ngIf="!isLoading">Registrar Empresa</span>
+              <span *ngIf="isLoading">Registrando...</span>
+            </button>
+          </div>
         </form>
 
         <div class="relative my-4">
@@ -161,3 +257,20 @@
     </footer>
   </section>
 </div>
+
+<style>
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-step-in {
+  animation: step-in 0.25s ease-out;
+}
+</style>
