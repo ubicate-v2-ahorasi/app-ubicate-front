@@ -56,9 +56,15 @@ importers:
       firebase:
         specifier: ^11.10.0
         version: 11.10.0
+      intl-tel-input:
+        specifier: ^28.1.0
+        version: 28.1.0
       lucide-angular:
         specifier: ^0.542.0
         version: 0.542.0(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))
+      ngx-intl-tel-input:
+        specifier: ^17.0.0
+        version: 17.0.0(641762fd4417d498e0713cc8350bef0c)
       postcss:
         specifier: ^8.5.6
         version: 8.5.14
@@ -2325,6 +2331,10 @@ packages:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
     deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
+  google-libphonenumber@3.2.44:
+    resolution: {integrity: sha512-9p2TghluF2LTChFMLWsDRD5N78SZDsILdUk4gyqYxBXluCyxoPiOq+Fqt7DKM+LUd33+OgRkdrc+cPR93AypCQ==}
+    engines: {node: '>=0.10'}
+
   gopd@1.2.0:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
     engines: {node: '>= 0.4'}
@@ -2420,6 +2430,9 @@ packages:
   ini@6.0.0:
     resolution: {integrity: sha512-IBTdIkzZNOpqm7q3dRqJvMaldXjDHWkEDfrwGEQTs5eaQMWV+djAhR+wahyNNMAa+qpbDUhBMVt4ZKNwpPm7xQ==}
     engines: {node: ^20.17.0 || >=22.9.0}
+
+  intl-tel-input@28.1.0:
+    resolution: {integrity: sha512-Tx3S1L3pRFvrcXhWXQIbYhMxPhCE4TbNN2Yk5w43BZ8ib2q3lfeUzSoAqVNB45F9JCoAcH1bUQvx9Bu7F3fSIA==}
 
   ip-address@10.2.0:
     resolution: {integrity: sha512-/+S6j4E9AHvW9SWMSEY9Xfy66O5PWvVEJ08O0y5JGyEKQpojb0K0GKpz/v5HJ/G0vi3D2sjGK78119oXZeE0qA==}
@@ -2845,6 +2858,25 @@ packages:
   negotiator@1.0.0:
     resolution: {integrity: sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg==}
     engines: {node: '>= 0.6'}
+
+  ngx-bootstrap@21.2.0:
+    resolution: {integrity: sha512-JQucz35YZaLlza1osz1cZWWXCGxqWmJTdEfju7F/tNkv6esfAzcwvUe3AMwz6oasZ/NfBMNlxNj7woIlYObR+A==}
+    peerDependencies:
+      '@angular/animations': ^21.2.0
+      '@angular/common': ^21.2.0
+      '@angular/core': ^21.2.0
+      '@angular/forms': ^21.2.0
+      rxjs: ^6.5.3 || ^7.4.0
+
+  ngx-intl-tel-input@17.0.0:
+    resolution: {integrity: sha512-yfxZ3N2h4w71I0w/OxEPaHwFMrrgnK9dG0HzRFfIL1uNELU5t3Fmp09Zr7YlclOfkHPzukwItKzerUWh4vlEBA==}
+    peerDependencies:
+      '@angular/common': '>= 17.0.0'
+      '@angular/core': '>= 17.0.0'
+      '@angular/forms': '>= 17.0.0'
+      google-libphonenumber: ^3.0.0
+      intl-tel-input: ^19.0.0
+      ngx-bootstrap: '>= 12.0.0'
 
   node-addon-api@6.1.0:
     resolution: {integrity: sha512-+eawOlIgy680F0kBzPUNFhMZGtJ1YmqM6l4+Crf4IkImjYrO/mqPwRMh352g23uIaQKFItcQ64I7KMaJxHgAVA==}
@@ -5876,6 +5908,8 @@ snapshots:
       once: 1.4.0
       path-is-absolute: 1.0.1
 
+  google-libphonenumber@3.2.44: {}
+
   gopd@1.2.0: {}
 
   graceful-fs@4.2.11: {}
@@ -5975,6 +6009,8 @@ snapshots:
   ini@5.0.0: {}
 
   ini@6.0.0: {}
+
+  intl-tel-input@28.1.0: {}
 
   ip-address@10.2.0: {}
 
@@ -6405,6 +6441,25 @@ snapshots:
   negotiator@0.6.3: {}
 
   negotiator@1.0.0: {}
+
+  ngx-bootstrap@21.2.0(@angular/animations@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1)))(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/forms@20.3.21(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@20.3.21(@angular/animations@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1)))(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1)))(rxjs@7.8.2))(rxjs@7.8.2):
+    dependencies:
+      '@angular/animations': 20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))
+      '@angular/common': 20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2)
+      '@angular/core': 20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1)
+      '@angular/forms': 20.3.21(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@20.3.21(@angular/animations@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1)))(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1)))(rxjs@7.8.2)
+      rxjs: 7.8.2
+      tslib: 2.8.1
+
+  ngx-intl-tel-input@17.0.0(641762fd4417d498e0713cc8350bef0c):
+    dependencies:
+      '@angular/common': 20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2)
+      '@angular/core': 20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1)
+      '@angular/forms': 20.3.21(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@20.3.21(@angular/animations@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1)))(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1)))(rxjs@7.8.2)
+      google-libphonenumber: 3.2.44
+      intl-tel-input: 28.1.0
+      ngx-bootstrap: 21.2.0(@angular/animations@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1)))(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/forms@20.3.21(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@20.3.21(@angular/animations@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1)))(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)(zone.js@0.15.1)))(rxjs@7.8.2))(rxjs@7.8.2)
+      tslib: 2.8.1
 
   node-addon-api@6.1.0:
     optional: true

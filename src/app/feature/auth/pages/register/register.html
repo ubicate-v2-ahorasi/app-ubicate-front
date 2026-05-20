@@ -105,9 +105,9 @@
                 </div>
                 <div>
                   <label class="block text-xs font-medium text-[#040E1C] mb-1">Teléfono *</label>
-                  <input formControlName="telefono" maxlength="15" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                  <input #phoneInput type="tel" formControlName="telefono" inputmode="tel"
                     class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
-                    placeholder="+51987654321">
+                    placeholder="987654321">
                   <div *ngIf="registerForm.get('telefono')?.errors && registerForm.get('telefono')?.touched"
                     class="text-red-500 text-xs mt-1">Inválido</div>
                 </div>

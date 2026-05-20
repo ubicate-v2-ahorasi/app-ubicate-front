@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "intl-tel-input/styles";
 
 /* Configuración de modo oscuro para Tailwind v4 */
 @custom-variant dark (.dark &);

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -10,6 +10,7 @@ import {
   ValidatorFn,
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import intlTelInput from 'intl-tel-input';
 import { RegisterRequest } from '../../models/auth.model';
 import { AuthService } from '../../service/auth.service';
 
@@ -19,7 +20,7 @@ import { AuthService } from '../../service/auth.service';
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './register.html',
 })
-export class Register {
+export class Register implements AfterViewInit, OnDestroy {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -32,6 +33,8 @@ export class Register {
   readonly totalSteps = 3;
   showPassword = false;
   showConfirmPassword = false;
+  @ViewChild('phoneInput') phoneInput?: ElementRef<HTMLInputElement>;
+  private telInputInstance: ReturnType<typeof intlTelInput> | null = null;
   private readonly stepControls: Record<number, string[]> = {
     1: ['nombreEmpresa', 'ruc', 'direccion'],
     2: ['nombre', 'apellido', 'dni', 'telefono'],
@@ -71,10 +74,7 @@ export class Register {
         ],
       ],
       dni: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
-      telefono: [
-        '',
-        [Validators.required, Validators.pattern(/^[+]?[0-9]{9,15}$/)],
-      ],
+      telefono: ['', [Validators.required]],
 
       // Credenciales
       email: [
@@ -96,15 +96,32 @@ export class Register {
     });
   }
 
+  ngAfterViewInit(): void {
+    this.initPhoneInput();
+  }
+
+  ngOnDestroy(): void {
+    if (this.telInputInstance) {
+      this.telInputInstance.destroy();
+      this.telInputInstance = null;
+    }
+  }
+
   nextStep(): void {
     if (this.currentStep < this.totalSteps && this.isStepValid(this.currentStep)) {
       this.currentStep += 1;
+      if (this.currentStep === 2) {
+        this.initPhoneInput();
+      }
     }
   }
 
   prevStep(): void {
     if (this.currentStep > 1) {
       this.currentStep -= 1;
+      if (this.currentStep === 2) {
+        this.initPhoneInput();
+      }
     }
   }
 
@@ -118,11 +135,13 @@ export class Register {
       this.errorMessage = '';
       this.successMessage = '';
 
+      const telefonoValue = this.registerForm.value.telefono;
+      const telefonoParsed = this.telInputInstance?.getNumber() || telefonoValue;
       const registerData: RegisterRequest = {
         email: this.registerForm.value.email,
         nombre: this.registerForm.value.nombre,
         apellido: this.registerForm.value.apellido,
-        telefono: this.registerForm.value.telefono,
+        telefono: telefonoParsed || '',
         password: this.registerForm.value.password,
         dni: this.registerForm.value.dni,
         nombreEmpresa: this.registerForm.value.nombreEmpresa,
@@ -218,5 +237,25 @@ export class Register {
 
   get hasUppercase(): boolean {
     return /[A-Z]/.test(this.passwordValue);
+  }
+
+  private initPhoneInput(): void {
+    if (this.telInputInstance) {
+      return;
+    }
+
+    setTimeout(() => {
+      if (this.telInputInstance || !this.phoneInput?.nativeElement) {
+        return;
+      }
+
+      this.telInputInstance = intlTelInput(this.phoneInput.nativeElement, {
+        initialCountry: 'pe',
+        countryOrder: ['pe', 'us'],
+        allowDropdown: true,
+        showFlags: true,
+        separateDialCode: true,
+      });
+    });
   }
 }
