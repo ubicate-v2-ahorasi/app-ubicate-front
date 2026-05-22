@@ -285,3 +285,61 @@ body {
 .delay-400 { transition-delay: 400ms; }
 .delay-500 { transition-delay: 500ms; }
 .delay-600 { transition-delay: 600ms; }
+
+/* InfoWindow de Google Maps - evitar conflictos con estilos globales */
+.gm-style-iw,
+.gm-style-iw-c,
+.gm-style-iw-d,
+.gm-style-iw-tc,
+.gm-style .gm-style-iw {
+  overflow: visible !important;
+  box-shadow: none !important;
+}
+
+.gm-style-iw {
+  border-radius: 16px !important;
+}
+
+.gm-style-iw-c {
+  border-radius: 16px !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
+}
+
+.gm-style-iw-d {
+  overflow: hidden !important;
+  border-radius: 16px !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.gm-style .gm-style-iw-tc {
+  display: none !important;
+}
+
+/* Eliminar el botón de cierre nativo de Google Maps si lo hay */
+.gm-style-iw button[aria-label="Cerrar"] {
+  display: none !important;
+}
+
+/* Remover el borde superior/chrome que Google agrega */
+.gm-style .gm-iv-container {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Evitar que el InfoWindow tenga scrollbars feas */
+.gm-style-iw ::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.gm-style-iw ::-webkit-scrollbar-thumb {
+  display: none !important;
+}
+
+.gm-style-iw ::-webkit-scrollbar-track {
+  display: none !important;
+}

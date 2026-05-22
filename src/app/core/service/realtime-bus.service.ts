@@ -8,48 +8,59 @@ import { BusWithPosition } from '../../feature/company/service/bus/bus-marker.se
 })
 export class RealtimeBusService {
   private realtimeService = inject(RealtimeService);
-  private busesMap = new Map<number, BusWithPosition>();
   private busesSubject = new BehaviorSubject<BusWithPosition[]>([]);
 
-  /**
-   * Escuchar buses de una empresa y mantener una lista actualizada (State Management)
-   */
   streamBuses(empresaId: number, rutaId?: number): Observable<BusWithPosition[]> {
-    // Limpiar estado previo
-    this.busesMap.clear();
-    this.busesSubject.next([]);
+    console.log('[RealtimeBusService] Suscribiendo a buses - empresaId:', empresaId, 'rutaId:', rutaId);
 
-    this.realtimeService.watchBusesByEmpresa(empresaId).subscribe((update: BusLocation) => {
-      // Filtrar por empresa (seguridad extra)
-      if (update.empresaId !== empresaId) return;
-      
-      // Filtrar por ruta si es necesario
-      if (rutaId && update.rutaId !== rutaId) {
-          // Si el bus cambió a otra ruta, lo eliminamos de la vista actual
-          if (this.busesMap.has(update.busId)) {
-              this.busesMap.delete(update.busId);
-              this.busesSubject.next(Array.from(this.busesMap.values()));
-          }
+    this.realtimeService.watchBusesByEmpresa(empresaId).subscribe({
+      next: (update: BusLocation) => {
+        console.log('[RealtimeBusService] Mensaje recibido:', update);
+
+        const busId = (update as any).bus_id ?? update.busId;
+        const placa = (update as any).placa ?? update.placa;
+        const latitud = (update as any).latitud ?? update.latitud;
+        const longitud = (update as any).longitud ?? update.longitud;
+        const velocidad = (update as any).velocidad ?? update.velocidad;
+        const estado = (update as any).estado ?? update.estado;
+        const rutaId = (update as any).ruta_id ?? update.rutaId;
+
+        if (!busId) {
+          console.warn('[RealtimeBusService] Mensaje sin busId, ignorando');
           return;
+        }
+
+        const busIdStr = String(busId);
+        const currentBuses = this.busesSubject.getValue();
+        const existingIndex = currentBuses.findIndex(b => b.id === busIdStr);
+
+        const busWithPos: BusWithPosition = {
+          id: busIdStr,
+          placa: placa || '',
+          modelo: '',
+          latitud: latitud || 0,
+          longitud: longitud || 0,
+          velocidad: velocidad,
+          estado: estado || 'DESCONOCIDO',
+          activo: true,
+          ruta: rutaId ? { id: rutaId, nombre: '', codigo: '', color_hex: '' } : undefined,
+          position: { lat: latitud || 0, lng: longitud || 0 }
+        };
+
+        let updatedBuses: BusWithPosition[];
+        if (existingIndex >= 0) {
+          updatedBuses = [...currentBuses];
+          updatedBuses[existingIndex] = busWithPos;
+        } else {
+          updatedBuses = [...currentBuses, busWithPos];
+        }
+
+        console.log('[RealtimeBusService] Total buses:', updatedBuses.length);
+        this.busesSubject.next(updatedBuses);
+      },
+      error: (err) => {
+        console.error('[RealtimeBusService] Error:', err);
       }
-      
-      const busIdNum = typeof update.busId === 'string' ? parseInt(update.busId) : update.busId;
-
-      const busWithPos: BusWithPosition = {
-        id: update.busId.toString(),
-        placa: update.placa,
-        modelo: '', // Añadido para cumplir con la interfaz
-        latitud: update.latitud,
-        longitud: update.longitud,
-        velocidad: update.velocidad,
-        estado: update.estado,
-        activo: true,
-        ruta: update.rutaId ? { id: update.rutaId, nombre: '', codigo: '', color_hex: '' } : undefined,
-        position: { lat: update.latitud, lng: update.longitud }
-      };
-
-      this.busesMap.set(busIdNum, busWithPos);
-      this.busesSubject.next(Array.from(this.busesMap.values()));
     });
 
     return this.busesSubject.asObservable();
