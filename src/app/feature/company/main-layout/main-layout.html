@@ -1,6 +1,14 @@
 <app-slidebard [isOpen]="sidebarOpen" (logout)="onLogout()" (toggleChange)="onSidebarToggle($event)" (showTourRequest)="startTour()">
 </app-slidebard>
 
+<!-- Senal Notification Toast -->
+<app-senal-notification
+  *ngIf="showNotification && currentNotification"
+  [notification]="currentNotification"
+  [show]="showNotification"
+  (closed)="onNotificationClosed()">
+</app-senal-notification>
+
 <!-- Onboarding Tour -->
 <app-onboarding-tour 
   *ngIf="showTour"

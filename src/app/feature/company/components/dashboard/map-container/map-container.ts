@@ -170,20 +170,22 @@ export class MapContainerComponent implements OnDestroy, OnInit {
       .streamBuses(empresaId, rutaId)
       .subscribe((buses) => {
         this.buses = buses;
-        // Resto de la lógica igual...
+        console.log('[MapContainer] Buses recibidos:', buses.length, 'isMapReady:', this.isMapReady, 'showBuses:', this.showBuses);
+
         if (!this.isMapReady) {
+          console.log('[MapContainer] Mapa no listo');
           this.cdr.markForCheck();
           return;
         }
 
-        if (this.showBuses && this.buses.length > 0) {
-          this.busMarkerService.upsertBusMarkers(
-            this.buses,
-            this.safeGoogleMap!
-          );
-          this.fitBoundsToBuses(this.buses);
-        } else {
-          this.busMarkerService.clearMarkers();
+        if (this.showBuses) {
+          if (buses.length > 0) {
+            console.log('[MapContainer] Mostrando', buses.length, 'buses');
+            this.busMarkerService.upsertBusMarkers(buses, this.safeGoogleMap!);
+          } else {
+            console.log('[MapContainer] Sin buses');
+            this.busMarkerService.clearMarkers();
+          }
         }
 
         this.cdr.markForCheck();
@@ -412,6 +414,9 @@ export class MapContainerComponent implements OnDestroy, OnInit {
   }
 
   private getLightThemeOptions(): google.maps.MapOptions {
+    if (this.lightMapId) {
+      return { mapId: this.lightMapId, styles: [] };
+    }
     return {
       styles: []
     };

@@ -1,21 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, ChildrenOutletContexts } from '@angular/router';
 import { Slidebard } from '../components/layout/slidebard/slidebard';
 import { fadeAnimation } from '../../../core/utils/route-animations';
 import { OnboardingTourComponent, TourStep } from '../components/shared/onboarding-tour/onboarding-tour';
 import { AccessibilityControlsComponent } from '../components/shared/accessibility-controls/accessibility-controls';
+import { SenalNotificationComponent } from '../components/shared/senal-notification/senal-notification';
+import { RealtimeService, SenalNotification } from '../../../core/service/realtime.service';
+import { Subscription } from 'rxjs';
 
 
 @Component({
   selector: 'app-main-layout',
   standalone:true,
-  imports: [CommonModule, RouterOutlet, Slidebard, OnboardingTourComponent, AccessibilityControlsComponent],
+  imports: [CommonModule, RouterOutlet, Slidebard, OnboardingTourComponent, AccessibilityControlsComponent, SenalNotificationComponent],
   templateUrl: './main-layout.html',
   animations: [fadeAnimation]
 })
-export class MainLayout implements OnInit {
+export class MainLayout implements OnInit, OnDestroy {
   showTour = false;
+  showNotification = false;
+  currentNotification!: SenalNotification;
+  
+  private notificationSubscription?: Subscription;
+  private empresaId?: number;
+
   tourSteps: TourStep[] = [
     {
       title: '¡Bienvenido a Ubicate!',
@@ -49,16 +58,47 @@ export class MainLayout implements OnInit {
     }
   ];
 
-  constructor(private contexts: ChildrenOutletContexts) {}
+  constructor(
+    private contexts: ChildrenOutletContexts,
+    private realtimeService: RealtimeService
+  ) {}
 
   ngOnInit(): void {
-    // Verificar si es la primera vez que el usuario accede
+    const storedEmpresaId = localStorage.getItem('empresaId');
+    if (storedEmpresaId) {
+      this.empresaId = parseInt(storedEmpresaId, 10);
+      this.subscribeToNotifications();
+    }
+
     const hasSeenTour = localStorage.getItem('ubicate_tour_completed');
     if (!hasSeenTour) {
       setTimeout(() => {
         this.showTour = true;
       }, 500);
     }
+  }
+
+  ngOnDestroy(): void {
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
+    }
+  }
+
+  private subscribeToNotifications(): void {
+    if (!this.empresaId) return;
+
+    this.notificationSubscription = this.realtimeService
+      .watchNotificacionesEmpresa(this.empresaId)
+      .subscribe({
+        next: (notification: SenalNotification) => {
+          console.log('[MainLayout] Notificación recibida:', notification);
+          this.currentNotification = notification;
+          this.showNotification = true;
+        },
+        error: (err) => {
+          console.error('[MainLayout] Error en suscripción de notificaciones:', err);
+        }
+      });
   }
 
   onTourComplete(): void {
@@ -86,5 +126,9 @@ export class MainLayout implements OnInit {
 
   onLogout(): void {
     // El logout se maneja en el SessionService del Slidebard
+  }
+
+  onNotificationClosed(): void {
+    this.showNotification = false;
   }
 }
