@@ -1,14 +1,4 @@
-[providers]
-npm = true
-
-[phases.setup]
-nixpkgs = ["nodejs_20"]
-
-[phases.install]
-cmds = ["npm install"]
-
-[phases.build]
-cmds = ["npm run build"]
+nodejs_20
 
 [start]
 cmd = ["npm", "run", "start"]
