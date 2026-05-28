@@ -30,6 +30,7 @@
               { "glob": "**/*", "input": "public" }
             ],
             "styles": [
+              "node_modules/intl-tel-input/dist/css/intlTelInput.css",
               "src/styles.css"
             ]
           },
@@ -64,6 +65,7 @@
             "tsConfig": "tsconfig.spec.json",
             "assets": [ { "glob": "**/*", "input": "public" } ],
             "styles": [
+              "node_modules/intl-tel-input/dist/css/intlTelInput.css",
               "src/styles.css"
             ]
           }
