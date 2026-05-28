@@ -10,7 +10,6 @@ COPY angular.json ./
 COPY tsconfig*.json ./
 COPY src ./src
 COPY public ./public
-COPY process-css.js ./
 
 RUN NODE_ENV=production node generate-env.js
 RUN NODE_ENV=production npm run build
