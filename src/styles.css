@@ -1,6 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --animate-fade-in: fade-in 0.3s ease-in-out;
+  --animate-slide-in: slide-in 0.4s ease-out;
+  --animate-pulse-slow: pulse-slow 3s ease-in-out infinite;
+  --animate-slide-open: slide-open 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  --animate-slide-close: slide-close 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
 
 @layer base {
   button,
