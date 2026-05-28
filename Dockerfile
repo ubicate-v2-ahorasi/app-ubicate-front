@@ -7,10 +7,11 @@ COPY package*.json ./
 COPY generate-env.js ./
 RUN npm i
 
-# Copia código fuente ANTES de generar environment
+# Copia código fuente INCLUYENDO public/
 COPY angular.json ./
 COPY tsconfig*.json ./
 COPY src ./src
+COPY public ./public
 
 # Genera environment en producción
 RUN NODE_ENV=production node generate-env.js
