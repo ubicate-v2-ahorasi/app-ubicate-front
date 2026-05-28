@@ -1,63 +1,128 @@
-@import "tailwindcss";
-@import "intl-tel-input/styles";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Configuración de modo oscuro para Tailwind v4 */
-@custom-variant dark (.dark &);
+@layer base {
+  button,
+  select,
+  input[type="checkbox"],
+  input[type="radio"],
+  a,
+  [role="button"],
+  .cursor-pointer {
+    cursor: pointer;
+  }
 
-/* Cursor pointer para elementos interactivos */
-button,
-select,
-input[type="checkbox"],
-input[type="radio"],
-a,
-[role="button"],
-.cursor-pointer {
-  cursor: pointer;
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="date"],
+  textarea {
+    cursor: text;
+  }
+
+  button:disabled,
+  select:disabled,
+  input:disabled,
+  .cursor-not-allowed {
+    cursor: not-allowed;
+  }
 }
 
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="tel"],
-input[type="number"],
-input[type="date"],
-textarea {
-  cursor: text;
+@layer components {
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-in-out;
+  }
+
+  .animate-slide-in {
+    animation: slide-in 0.4s ease-out;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 3s ease-in-out infinite;
+  }
+
+  .animate-slide-open {
+    animation: slide-open 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .animate-slide-close {
+    animation: slide-close 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .scroll-animate {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .scroll-animate.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scroll-animate-left {
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .scroll-animate-left.animate-in {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .scroll-animate-right {
+    opacity: 0;
+    transform: translateX(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .scroll-animate-right.animate-in {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .scroll-animate-scale {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .scroll-animate-scale.animate-in {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .delay-100 { transition-delay: 100ms; }
+  .delay-200 { transition-delay: 200ms; }
+  .delay-300 { transition-delay: 300ms; }
+  .delay-400 { transition-delay: 400ms; }
+  .delay-500 { transition-delay: 500ms; }
+  .delay-600 { transition-delay: 600ms; }
 }
 
-button:disabled,
-select:disabled,
-input:disabled,
-.cursor-not-allowed {
-  cursor: not-allowed;
-}
-
-/* Estilos personalizados para scrollbar */
-/* Permitir scroll vertical; evitar doble scrollbar manejando el contenedor principal */
 html,
 body {
-  /* Permitimos desplazamiento vertical en la página principal */
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 100vh;
   width: 100%;
-  /* Scroll suave para navegación anchor */
   scroll-behavior: smooth;
 }
 
-/* Transiciones suaves para el cambio de tema */
 * {
   transition-property: background-color, border-color, color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 200ms;
 }
 
-/* Asegurar que el scrollbar del main sea estable */
 main {
   scrollbar-gutter: stable;
 }
 
-/* Scrollbar - Modo Claro */
 ::-webkit-scrollbar {
   width: 12px;
   height: 12px;
@@ -78,13 +143,11 @@ main {
   background: linear-gradient(180deg, #021133 0%, #040E1C 100%);
 }
 
-/* Para Firefox - Modo Claro */
 * {
   scrollbar-width: thin;
   scrollbar-color: #040E1C #f1f5f9;
 }
 
-/* Scrollbar - Modo Oscuro */
 .dark ::-webkit-scrollbar-track {
   background: #1e293b;
 }
@@ -98,58 +161,10 @@ main {
   background: linear-gradient(180deg, #475569 0%, #334155 100%);
 }
 
-/* Para Firefox - Modo Oscuro */
 .dark * {
   scrollbar-color: #334155 #1e293b;
 }
 
-/* Scrollbar - Modo Claro */
-::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #040E1C 0%, #021133 100%);
-  border-radius: 10px;
-  border: 2px solid #f1f5f9;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #021133 0%, #040E1C 100%);
-}
-
-/* Para Firefox - Modo Claro */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #040E1C #f1f5f9;
-}
-
-/* Scrollbar - Modo Oscuro */
-.dark ::-webkit-scrollbar-track {
-  background: #1e293b;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
-  border: 2px solid #1e293b;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #475569 0%, #334155 100%);
-}
-
-/* Para Firefox - Modo Oscuro */
-.dark * {
-  scrollbar-color: #334155 #1e293b;
-}
-
-/* Transiciones suaves para el cambio de tema */
 html {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -158,15 +173,9 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Animaciones personalizadas */
 @keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slide-in {
@@ -174,7 +183,6 @@ body {
     transform: translateX(-10px);
     opacity: 0;
   }
-
   to {
     transform: translateX(0);
     opacity: 1;
@@ -182,111 +190,20 @@ body {
 }
 
 @keyframes pulse-slow {
-
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.7;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 
 @keyframes slide-open {
-  from {
-    width: 4rem;
-  }
-
-  to {
-    width: 16rem;
-  }
+  from { width: 4rem; }
+  to { width: 16rem; }
 }
 
 @keyframes slide-close {
-  from {
-    width: 16rem;
-  }
-
-  to {
-    width: 4rem;
-  }
+  from { width: 16rem; }
+  to { width: 4rem; }
 }
 
-.animate-fade-in {
-  animation: fade-in 0.3s ease-in-out;
-}
-
-.animate-slide-in {
-  animation: slide-in 0.4s ease-out;
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 3s ease-in-out infinite;
-}
-
-.animate-slide-open {
-  animation: slide-open 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.animate-slide-close {
-  animation: slide-close 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-/* Animaciones de scroll */
-.scroll-animate {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-}
-
-.scroll-animate.animate-in {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.scroll-animate-left {
-  opacity: 0;
-  transform: translateX(-30px);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-}
-
-.scroll-animate-left.animate-in {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.scroll-animate-right {
-  opacity: 0;
-  transform: translateX(30px);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-}
-
-.scroll-animate-right.animate-in {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.scroll-animate-scale {
-  opacity: 0;
-  transform: scale(0.9);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-}
-
-.scroll-animate-scale.animate-in {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* Delays escalonados para múltiples elementos */
-.delay-100 { transition-delay: 100ms; }
-.delay-200 { transition-delay: 200ms; }
-.delay-300 { transition-delay: 300ms; }
-.delay-400 { transition-delay: 400ms; }
-.delay-500 { transition-delay: 500ms; }
-.delay-600 { transition-delay: 600ms; }
-
-/* InfoWindow de Google Maps - evitar conflictos con estilos globales */
 .gm-style-iw,
 .gm-style-iw-c,
 .gm-style-iw-d,
@@ -314,22 +231,16 @@ body {
   padding: 0 !important;
 }
 
-.gm-style .gm-style-iw-tc {
-  display: none !important;
-}
-
-/* Eliminar el botón de cierre nativo de Google Maps si lo hay */
+.gm-style .gm-style-iw-tc,
 .gm-style-iw button[aria-label="Cerrar"] {
   display: none !important;
 }
 
-/* Remover el borde superior/chrome que Google agrega */
 .gm-style .gm-iv-container {
   border: none !important;
   box-shadow: none !important;
 }
 
-/* Evitar que el InfoWindow tenga scrollbars feas */
 .gm-style-iw ::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
