@@ -9,11 +9,9 @@ interface EnvironmentConfig {
 }
 
 export const environment: EnvironmentConfig = {
-  production: false,
-
+  production: true,
   apiCore: 'https://ubicate.codlyp.website/api',
   wsUrl: 'https://ubicate.codlyp.website/ws-tracking',
-  //apiCore: 'https://jcvjorge-transport-api-4b70ae842c45.herokuapp.com/api',
   googleMaps: {
     mapId: undefined,
     darkMapId: undefined,

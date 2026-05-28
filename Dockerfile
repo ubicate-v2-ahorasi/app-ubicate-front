@@ -12,11 +12,11 @@ COPY angular.json ./
 COPY tsconfig*.json ./
 COPY src ./src
 
-# Genera environment basado en NODE_ENV
-RUN node generate-env.js
+# Genera environment en producción
+RUN NODE_ENV=production node generate-env.js
 
 # Build Angular en producción
-RUN npm run build -- --configuration=production
+RUN NODE_ENV=production npm run build
 
 # Etapa 2: Nginx estático
 FROM nginx:alpine
