@@ -4,7 +4,11 @@ WORKDIR /app
 
 # Instala deps (si tienes package-lock.json usa npm ci)
 COPY package*.json ./
+COPY generate-env.js ./
 RUN npm i
+
+# Genera environment antes del build
+RUN NODE_ENV=production node generate-env.js
 
 # Copia código y compila (forzamos modo prod)
 COPY angular.json ./
