@@ -24,11 +24,15 @@
         <div class="min-w-0 flex-1 h-full">
           <app-map-container class="h-full"></app-map-container>
         </div>
-        <app-bus-detail-panel
-          *ngIf="selectedBus"
-          [bus]="selectedBus"
-          (closed)="closeSelectedBus()"
-        ></app-bus-detail-panel>
+        <div *ngIf="selectedBus" class="w-[280px] max-w-[280px] shrink-0">
+          <app-bus-detail-panel
+            [bus]="selectedBus"
+            (closed)="closeSelectedBus()"
+          ></app-bus-detail-panel>
+          <app-bus-stop-events-panel
+            [bus]="selectedBus"
+          ></app-bus-stop-events-panel>
+        </div>
       </div>
     </div>
 
@@ -47,17 +51,21 @@
       [ngClass]="isVerticalLayout ? 'flex-shrink-0 overflow-hidden' : 'flex-1 min-h-0'"
       [style.width.px]="isVerticalLayout ? sidebarWidth : null"
     >
-      <div class="h-full overflow-y-auto px-4">
+      <div class="h-full px-4">
         <app-stats [isVerticalLayout]="isVerticalLayout" *ngIf="isVerticalLayout"></app-stats>
         <div *ngIf="!isVerticalLayout" class="flex h-full min-h-[540px] gap-4">
           <div class="min-w-0 flex-1">
             <app-map-container class="h-full"></app-map-container>
           </div>
-          <app-bus-detail-panel
-            *ngIf="selectedBus"
-            [bus]="selectedBus"
-            (closed)="closeSelectedBus()"
-          ></app-bus-detail-panel>
+          <div *ngIf="selectedBus" class="w-[280px] max-w-[280px] shrink-0">
+            <app-bus-detail-panel
+              [bus]="selectedBus"
+              (closed)="closeSelectedBus()"
+            ></app-bus-detail-panel>
+            <app-bus-stop-events-panel
+              [bus]="selectedBus"
+            ></app-bus-stop-events-panel>
+          </div>
         </div>
       </div>
     </div>
