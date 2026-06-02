@@ -1,10 +1,12 @@
-import { Component, Output, EventEmitter, inject, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   GreenEducationService,
   GreenTip,
 } from '../../../service/green-education.service';
 import { GreenNotificationComponent } from '../../green-notification/green-notification';
+import { ThemeService } from '../../../../../core/service/theme.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navbard',
@@ -12,11 +14,13 @@ import { GreenNotificationComponent } from '../../green-notification/green-notif
   imports: [CommonModule, GreenNotificationComponent],
   templateUrl: './navbard.html',
 })
-export class Navbard implements OnInit {
+export class Navbard implements OnInit, OnDestroy {
   @Output() menuToggle = new EventEmitter<void>();
   @Output() themeToggle = new EventEmitter<void>();
 
   private greenEducationService = inject(GreenEducationService);
+  private themeService = inject(ThemeService);
+  private themeSubscription?: Subscription;
 
   notifications = 3;
   isDarkMode = false;
@@ -24,6 +28,9 @@ export class Navbard implements OnInit {
   currentGreenTip?: GreenTip;
 
   ngOnInit() {
+    this.themeSubscription = this.themeService.isDarkMode$.subscribe((isDark) => {
+      this.isDarkMode = isDark;
+    });
 
     setTimeout(() => {
       this.showGreenTip();
@@ -35,19 +42,17 @@ export class Navbard implements OnInit {
     }, 300000);
   }
 
+  ngOnDestroy(): void {
+    this.themeSubscription?.unsubscribe();
+  }
+
   onMenuClick(): void {
     this.menuToggle.emit();
   }
 
   toggleTheme(): void {
-    this.isDarkMode = !this.isDarkMode;
+    this.themeService.toggleTheme();
     this.themeToggle.emit();
-
-    if (this.isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
   }
 
   showGreenTip(): void {
