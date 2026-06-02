@@ -6,6 +6,7 @@ type Estado = 'ACTIVO' | 'INACTIVO' | 'VACACIONES' | 'SUSPENDIDO';
 type EstadoTodos = Estado | 'Todos';
 type Turno = 'MANANA' | 'TARDE' | 'NOCHE';
 type TurnoTodos = Turno | 'Todos';
+export type SortDirection = 'asc' | 'desc';
 
 @Component({
   selector: 'app-conductor-filters',
@@ -18,6 +19,7 @@ export class ConductorFilters {
   selectedEstado: EstadoTodos = 'Todos';
   selectedCategoria = 'Todas';
   selectedTurno: TurnoTodos = 'Todos';
+  sortDirection: SortDirection = 'desc';
 
   estados: EstadoTodos[] = ['Todos', 'ACTIVO', 'INACTIVO', 'VACACIONES', 'SUSPENDIDO'];
   categorias = ['Todas', 'A1', 'A2a', 'A2b', 'A3a', 'A3b', 'A3c'];
@@ -27,6 +29,7 @@ export class ConductorFilters {
   @Output() onEstadoChange = new EventEmitter<EstadoTodos>();
   @Output() onCategoriaChange = new EventEmitter<string>();
   @Output() onTurnoChange = new EventEmitter<TurnoTodos>();
+  @Output() onSortDirectionChange = new EventEmitter<SortDirection>();
   @Output() onClearFilters = new EventEmitter<void>();
   @Output() onCreateNew = new EventEmitter<void>();
 
@@ -44,6 +47,11 @@ export class ConductorFilters {
 
   onTurnoSelect() {
     this.onTurnoChange.emit(this.selectedTurno);
+  }
+
+  toggleSortDirection() {
+    this.sortDirection = this.sortDirection === 'desc' ? 'asc' : 'desc';
+    this.onSortDirectionChange.emit(this.sortDirection);
   }
 
   clearAllFilters() {

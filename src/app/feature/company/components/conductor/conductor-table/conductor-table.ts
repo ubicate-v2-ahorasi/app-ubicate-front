@@ -3,7 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConductorDeleteModal } from '../conductor-delete-modal/conductor-delete-modal';
 import { ConductorEditModal } from '../conductor-edit-modal/conductor-edit-modal';
-import { ConductorFilters } from '../conductor-filters/conductor-filters';
+import {
+  ConductorFilters,
+  SortDirection,
+} from '../conductor-filters/conductor-filters';
 import { ConductorService } from '../../../service/chofer/chofer.service';
 import { BusService } from '../../../service/bus/bus.service';
 
@@ -61,6 +64,7 @@ export class ConductorTable implements OnInit {
   currentSearchTerm = '';
   currentEstado: 'Todos' | Estado = 'Todos';
   currentCategoria = 'Todas';
+  currentSortDirection: SortDirection = 'desc';
   showDeleteModal = false;
   showEditModal = false;
   selectedConductor: ConductorVM | null = null;
@@ -99,8 +103,9 @@ export class ConductorTable implements OnInit {
       b.conductorAsignadoId ?? b.conductor_asignado_id ?? null,
   });
 
-  private sortConductoresByNewest(conductores: ConductorVM[]): ConductorVM[] {
-    return [...conductores].sort((a, b) => b.id - a.id);
+  private sortConductores(conductores: ConductorVM[]): ConductorVM[] {
+    const direction = this.currentSortDirection === 'desc' ? -1 : 1;
+    return [...conductores].sort((a, b) => (a.id - b.id) * direction);
   }
 
   private reconcileSelectedBus() {
@@ -147,9 +152,7 @@ export class ConductorTable implements OnInit {
       .subscribe({
         next: (response: any) => {
           const content = response?.content ?? [];
-          this.conductores = this.sortConductoresByNewest(
-            content.map(this.toConductorVM)
-          );
+          this.conductores = this.sortConductores(content.map(this.toConductorVM));
 
           this.totalElements =
             response?.total_elements ?? response?.totalElements ?? 0;
@@ -194,6 +197,12 @@ export class ConductorTable implements OnInit {
 
   onCategoriaChange(categoria: string) {
     this.currentCategoria = categoria;
+    this.currentPage = 1;
+    this.loadConductores();
+  }
+
+  onSortDirectionChange(direction: SortDirection) {
+    this.currentSortDirection = direction;
     this.currentPage = 1;
     this.loadConductores();
   }
