@@ -99,6 +99,10 @@ export class ConductorTable implements OnInit {
       b.conductorAsignadoId ?? b.conductor_asignado_id ?? null,
   });
 
+  private sortConductoresByNewest(conductores: ConductorVM[]): ConductorVM[] {
+    return [...conductores].sort((a, b) => b.id - a.id);
+  }
+
   private reconcileSelectedBus() {
     for (const c of this.conductores) {
       let selectedId: number | null = c.busAsignadoId ?? null;
@@ -143,7 +147,9 @@ export class ConductorTable implements OnInit {
       .subscribe({
         next: (response: any) => {
           const content = response?.content ?? [];
-          this.conductores = content.map(this.toConductorVM);
+          this.conductores = this.sortConductoresByNewest(
+            content.map(this.toConductorVM)
+          );
 
           this.totalElements =
             response?.total_elements ?? response?.totalElements ?? 0;
