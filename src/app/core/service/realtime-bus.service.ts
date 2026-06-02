@@ -24,6 +24,7 @@ export class RealtimeBusService {
         const velocidad = (update as any).velocidad ?? update.velocidad;
         const estado = (update as any).estado ?? update.estado;
         const rutaId = (update as any).ruta_id ?? update.rutaId;
+        const timestamp = (update as any).timestamp ?? update.timestamp;
 
         if (!busId) {
           console.warn('[RealtimeBusService] Mensaje sin busId, ignorando');
@@ -44,7 +45,9 @@ export class RealtimeBusService {
           estado: estado || 'DESCONOCIDO',
           activo: true,
           ruta: rutaId ? { id: rutaId, nombre: '', codigo: '', color_hex: '' } : undefined,
-          position: { lat: latitud || 0, lng: longitud || 0 }
+          position: { lat: latitud || 0, lng: longitud || 0 },
+          timestamp: timestamp ? Date.parse(timestamp) : Date.now(),
+          lastUpdate: timestamp ? Date.parse(timestamp) : Date.now()
         };
 
         let updatedBuses: BusWithPosition[];

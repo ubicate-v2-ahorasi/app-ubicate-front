@@ -49,6 +49,27 @@ import { RouteEditControlComponent } from '../route-edit-control/route-edit-cont
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapContainerComponent implements OnDestroy, OnInit {
+  private readonly demoBus: BusWithPosition = {
+    id: '__demo-bus__',
+    placa: 'VHC-001',
+    modelo: 'Mercedes Sprinter',
+    estado: 'EN_RUTA',
+    activo: true,
+    latitud: -8.1112,
+    longitud: -79.0281,
+    velocidad: 60,
+    conductor: 'Juan Perez',
+    position: { lat: -8.1112, lng: -79.0281 },
+    timestamp: Date.now() - 10000,
+    lastUpdate: Date.now() - 10000,
+    ruta: {
+      id: 999,
+      nombre: 'Ruta de prueba',
+      codigo: 'TEST-01',
+      color_hex: '#3B82F6',
+    },
+  };
+
   @ViewChild(GoogleMap) set googleMap(component: GoogleMap | undefined) {
     if (!component) {
       this.googleMapComponent = undefined;
@@ -150,6 +171,7 @@ export class MapContainerComponent implements OnDestroy, OnInit {
     this.subscribeToServices();
     this.loadInitialData();
     this.restoreRenderedState();
+    this.renderMapBuses();
 
     this.cdr.detectChanges();
   }
@@ -178,23 +200,35 @@ export class MapContainerComponent implements OnDestroy, OnInit {
           return;
         }
 
-        if (this.showBuses) {
-          if (buses.length > 0) {
-            console.log('[MapContainer] Mostrando', buses.length, 'buses');
-            this.busMarkerService.upsertBusMarkers(buses, this.safeGoogleMap!);
-          } else {
-            console.log('[MapContainer] Sin buses');
-            this.busMarkerService.clearMarkers();
-          }
-        }
+        this.renderMapBuses();
 
         this.cdr.markForCheck();
       });
   }
 
+  private getRenderableBuses(): BusWithPosition[] {
+    const realtimeBuses = this.showBuses ? this.buses : [];
+    const filteredRealtimeBuses = realtimeBuses.filter(
+      (bus) => String(bus.id) !== String(this.demoBus.id)
+    );
+
+    return [this.demoBus, ...filteredRealtimeBuses];
+  }
+
+  private renderMapBuses(): void {
+    if (!this.isMapReady || !this.safeGoogleMap) {
+      return;
+    }
+
+    const busesToRender = this.getRenderableBuses();
+    console.log('[MapContainer] Renderizando buses en mapa:', busesToRender.length);
+    void this.busMarkerService.upsertBusMarkers(busesToRender, this.safeGoogleMap);
+  }
+
   private setupBasicListeners() {
     if (!this.safeGoogleMap) return;
     this.safeGoogleMap.addListener('click', () => {
+      this.busMarkerService.clearSelectedBus();
       if (!this.isCreatingRoute && (this.showBusList || this.showRouteList)) {
         this.showBusList = false;
         this.showRouteList = false;
@@ -223,6 +257,7 @@ export class MapContainerComponent implements OnDestroy, OnInit {
       this.isLoadingRoutes = loading;
       this.cdr.markForCheck();
     });
+
   }
 
   private loadInitialData() {
@@ -274,8 +309,13 @@ export class MapContainerComponent implements OnDestroy, OnInit {
     this.cdr.markForCheck();
   }
 
-  onSelectBus(_: Bus) {
+  onSelectBus(bus: Bus) {
     this.showBusList = false;
+    const selectedBus = this.buses.find((item) => String(item.id) === String(bus.id));
+    if (selectedBus) {
+      this.busMarkerService.focusBus(selectedBus.id);
+      void this.busMarkerService.selectBus(selectedBus);
+    }
     this.cdr.markForCheck();
   }
 
@@ -317,6 +357,7 @@ export class MapContainerComponent implements OnDestroy, OnInit {
     this.rutaId = undefined;
     this.showBuses = true; // ✅ Mostrar todos los buses
     this.subscribeBusesStream(this.empresaId, undefined);
+    this.renderMapBuses();
     this.cdr.markForCheck();
   }
 
@@ -383,6 +424,7 @@ export class MapContainerComponent implements OnDestroy, OnInit {
       this.safeGoogleMap.setZoom(this.zoom);
     }
 
+    this.renderMapBuses();
     this.cdr.markForCheck();
   }
 
@@ -465,8 +507,9 @@ export class MapContainerComponent implements OnDestroy, OnInit {
       return;
     }
 
+    this.renderMapBuses();
+
     if (this.showBuses && this.buses.length > 0) {
-      this.busMarkerService.upsertBusMarkers(this.buses, this.safeGoogleMap);
       this.fitBoundsToBuses(this.buses);
     }
 
