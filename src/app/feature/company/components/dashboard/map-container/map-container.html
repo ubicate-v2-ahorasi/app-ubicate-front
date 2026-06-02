@@ -47,15 +47,32 @@
     (close)="onCloseBusList()" class="z-25"></app-bus-list>
 
   <app-route-list [isVisible]="showRouteList && !isCreatingRoute" [map]="safeGoogleMap"
-    (selectRouteId)="onSelectRouteId($event)" (close)="onCloseRouteList()" class="z-25"></app-route-list>
+    (selectRouteId)="onSelectRouteId($event)" (close)="onCloseRouteList()" (createRoute)="startCreatingRoute()" class="z-25"></app-route-list>
 
   <app-route-edit-control (changesSaved)="onRouteSaved()" class="z-40"></app-route-edit-control>
 
-  <app-map-controls [isLocating]="isLocating" [isCreatingRoute]="isCreatingRoute"
-    (startRoute)="startCreatingRoute()" class="z-20"></app-map-controls>
+  <app-map-controls
+    [isLocating]="isLocating"
+    [isFullscreen]="isFullscreen"
+    (toggleFullscreen)="toggleFullscreen()"
+    class="z-20"
+  ></app-map-controls>
 
   <app-route-creator *ngIf="isCreatingRoute && isMapReady" [map]="safeGoogleMap" (routeCreated)="onRouteCreated()"
     (cancel)="onCancelRouteCreation()" class="z-40"></app-route-creator>
+
+  <div
+    *ngIf="isFullscreen && selectedBus"
+    class="absolute right-4 top-16 z-40 w-[280px] max-w-[calc(100vw-2rem)]"
+  >
+    <app-bus-detail-panel
+      [bus]="selectedBus"
+      (closed)="closeSelectedBus()"
+    ></app-bus-detail-panel>
+    <app-bus-stop-events-panel
+      [bus]="selectedBus"
+    ></app-bus-stop-events-panel>
+  </div>
 
   <google-map
     [center]="center"

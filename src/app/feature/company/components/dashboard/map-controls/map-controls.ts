@@ -9,11 +9,11 @@ import { CommonModule } from '@angular/common';
 })
 export class MapControlsComponent {
   @Input() isLocating = false;
-  @Input() isCreatingRoute = false;
+  @Input() isFullscreen = false;
 
-  @Output() startRoute = new EventEmitter<void>();
+  @Output() toggleFullscreen = new EventEmitter<void>();
 
-  onStartRoute() {
-    this.startRoute.emit();
+  onToggleFullscreen() {
+    this.toggleFullscreen.emit();
   }
 }

@@ -1,9 +1,40 @@
-<button *ngIf="!isCreatingRoute" (click)="onStartRoute()"
-  class="absolute top-16 right-4 z-20 bg-white hover:bg-gray-50 disabled:bg-gray-100 text-gray-700 p-3 rounded-lg shadow-lg border border-gray-200 disabled:cursor-not-allowed">
-  <div class="flex items-center gap-2">
-    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+<div class="absolute right-3 top-[4.75rem] z-20 flex flex-col gap-2">
+  <button
+    type="button"
+    (click)="onToggleFullscreen()"
+    class="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-700 shadow-md transition-colors hover:bg-gray-50"
+    [attr.aria-label]="isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'"
+    [title]="isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'"
+  >
+    <svg *ngIf="!isFullscreen" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M8 3H5v3M16 3h3v3M8 21H5v-3M19 18v3h-3"
+      ></path>
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M9 9 5 5M15 9l4-4M9 15l-4 4M15 15l4 4"
+      ></path>
     </svg>
-    <span class="text-xs font-medium">Crear Ruta</span>
-  </div>
-</button>
+    <svg *ngIf="isFullscreen" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M9 5H5v4M15 5h4v4M9 19H5v-4M19 15v4h-4"
+      ></path>
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M9 9 5 5M15 9l4-4M9 15l-4 4M15 15l4 4"
+        transform="rotate(180 12 12)"
+      ></path>
+    </svg>
+  </button>
+
+</div>

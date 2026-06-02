@@ -29,6 +29,7 @@ export class RouteListComponent implements OnInit, OnDestroy {
   @Input() map: google.maps.Map | null = null;
   @Output() selectRouteId = new EventEmitter<number>();
   @Output() close = new EventEmitter<void>();
+  @Output() createRoute = new EventEmitter<void>();
   @Output() routeSaved = new EventEmitter<void>();
 
   private destroy$ = new Subject<void>();
@@ -161,6 +162,10 @@ export class RouteListComponent implements OnInit, OnDestroy {
 
   onClose() {
     this.close.emit();
+  }
+
+  onCreateRoute() {
+    this.createRoute.emit();
   }
 
   trackByRoute(_: number, route: RouteResponse): number {

@@ -6,6 +6,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   OnInit,
+  ElementRef,
 } from '@angular/core';
 import { GoogleMapsModule, GoogleMap } from '@angular/google-maps';
 import { CommonModule } from '@angular/common';
@@ -31,6 +32,9 @@ import { environment } from '../../../../../core/config/environment';
 import { MapDarkModeComponent } from '../map-dark-mode/map-dark-mode';
 import { MAP_DARK_STYLES } from '../map-dark-mode/map-dark-mode.styles';
 import { RouteEditControlComponent } from '../route-edit-control/route-edit-control';
+import { BusDetailPanelComponent } from '../bus-detail-panel/bus-detail-panel';
+import { BusStopEventsPanelComponent } from '../bus-stop-events-panel/bus-stop-events-panel';
+import { SelectedBusDetails } from '../../../service/bus/bus-marker.service';
 
 @Component({
   selector: 'app-map-container',
@@ -43,6 +47,8 @@ import { RouteEditControlComponent } from '../route-edit-control/route-edit-cont
     BusListComponent,
     RouteListComponent,
     RouteEditControlComponent,
+    BusDetailPanelComponent,
+    BusStopEventsPanelComponent,
     IconsModule,
   ],
   templateUrl: './map-container.html',
@@ -80,6 +86,8 @@ export class MapContainerComponent implements OnDestroy, OnInit {
     void this.initializeGoogleMap();
   }
 
+  @ViewChild('mapContainer') mapContainerRef?: ElementRef<HTMLDivElement>;
+
   empresaId!: number;
   rutaId?: number;
 
@@ -105,6 +113,8 @@ export class MapContainerComponent implements OnDestroy, OnInit {
 
   isLocating = false;
   isCreatingRoute = false;
+  isFullscreen = false;
+  selectedBus: SelectedBusDetails | null = null;
 
   showBusList = false;
   showRouteList = false;
@@ -121,6 +131,9 @@ export class MapContainerComponent implements OnDestroy, OnInit {
   ) {}
 
   ngOnInit() {
+    if (typeof document !== 'undefined') {
+      document.addEventListener('fullscreenchange', this.onFullscreenChange);
+    }
 
     const sessionEmpresaId = this.sessionService.getEmpresaId();
 
@@ -177,6 +190,9 @@ export class MapContainerComponent implements OnDestroy, OnInit {
   }
 
   ngOnDestroy() {
+    if (typeof document !== 'undefined') {
+      document.removeEventListener('fullscreenchange', this.onFullscreenChange);
+    }
     this.destroy$.next();
     this.destroy$.complete();
     this.busesSub?.unsubscribe();
@@ -255,6 +271,11 @@ export class MapContainerComponent implements OnDestroy, OnInit {
 
     this.routeMapService.loading$.subscribe((loading) => {
       this.isLoadingRoutes = loading;
+      this.cdr.markForCheck();
+    });
+
+    this.busMarkerService.selectedBus$.subscribe((bus) => {
+      this.selectedBus = bus;
       this.cdr.markForCheck();
     });
 
@@ -378,6 +399,10 @@ export class MapContainerComponent implements OnDestroy, OnInit {
     this.cdr.markForCheck();
   }
 
+  closeSelectedBus(): void {
+    this.busMarkerService.clearSelectedBus();
+  }
+
   onRouteCreated() {
     this.isCreatingRoute = false;
     this.routeMapService.loadRoutes().subscribe();
@@ -426,6 +451,23 @@ export class MapContainerComponent implements OnDestroy, OnInit {
 
     this.renderMapBuses();
     this.cdr.markForCheck();
+  }
+
+  async toggleFullscreen(): Promise<void> {
+    const container = this.mapContainerRef?.nativeElement;
+    if (!container || typeof document === 'undefined') {
+      return;
+    }
+
+    try {
+      if (document.fullscreenElement === container) {
+        await document.exitFullscreen();
+      } else {
+        await container.requestFullscreen();
+      }
+    } catch (error) {
+      console.error('[MapContainer] No se pudo cambiar a pantalla completa', error);
+    }
   }
 
   getBusCount(): number {
@@ -531,5 +573,14 @@ export class MapContainerComponent implements OnDestroy, OnInit {
       }
     }
   }
+
+  private readonly onFullscreenChange = (): void => {
+    const container = this.mapContainerRef?.nativeElement;
+    this.isFullscreen =
+      !!container &&
+      typeof document !== 'undefined' &&
+      document.fullscreenElement === container;
+    this.cdr.markForCheck();
+  };
 
 }
