@@ -1,5 +1,8 @@
 <!-- src/app/feature/company/components/dashboard/route-creator/route-creator.html -->
-<div class="absolute left-4 top-[4.75rem] z-30 w-80 rounded-lg bg-white shadow-xl">
+<div
+  class="absolute left-4 z-20 w-80 overflow-hidden rounded-lg bg-white shadow-xl"
+  [ngClass]="showBelowBusSearch ? 'top-[7.5rem]' : 'top-14'"
+>
   <div class="flex items-center justify-between bg-[#021133] p-2.5 text-white">
     <div class="flex items-center gap-2">
       <h4 class="text-xs font-semibold">Nueva Ruta</h4>

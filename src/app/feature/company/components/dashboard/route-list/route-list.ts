@@ -27,6 +27,7 @@ import { SuccessModalComponent } from './success-modal';
 export class RouteListComponent implements OnInit, OnDestroy {
   @Input() isVisible = false;
   @Input() map: google.maps.Map | null = null;
+  @Input() showBelowBusSearch = false;
   @Output() selectRouteId = new EventEmitter<number>();
   @Output() close = new EventEmitter<void>();
   @Output() createRoute = new EventEmitter<void>();

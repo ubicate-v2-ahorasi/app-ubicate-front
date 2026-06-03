@@ -27,6 +27,7 @@ export class BusMarkerService {
   private geocoder: google.maps.Geocoder | null = null;
   private addressCache = new Map<string, string>();
   private selectedBusSubject = new BehaviorSubject<SelectedBusDetails | null>(null);
+  private tooltipWindow: google.maps.InfoWindow | null = null;
 
   selectedBus$ = this.selectedBusSubject.asObservable();
 
@@ -66,6 +67,17 @@ export class BusMarkerService {
           if (currentBus) {
             void this.selectBus(currentBus);
           }
+        });
+
+        marker.addListener('mouseover', () => {
+          const currentBus = marker.get('busData') as BusWithPosition | undefined;
+          if (currentBus) {
+            this.showBusTooltip(marker, currentBus, map);
+          }
+        });
+
+        marker.addListener('mouseout', () => {
+          this.hideBusTooltip();
         });
 
         this.busMarkers.set(key, marker);
@@ -151,7 +163,81 @@ export class BusMarkerService {
     marker: google.maps.Marker,
     bus: BusWithPosition
   ) {
-    marker.setTitle(`${bus.placa} - ${bus.modelo} - ${bus.estado}`);
+    marker.setTitle(`${bus.placa} - ${this.getDriverName(bus)}`);
+  }
+
+  private getDriverName(bus: BusWithPosition): string {
+    return bus.conductor?.trim() || 'Sin conductor asignado';
+  }
+
+  private showBusTooltip(
+    marker: google.maps.Marker,
+    bus: BusWithPosition,
+    map: google.maps.Map
+  ): void {
+    if (!this.tooltipWindow) {
+      this.tooltipWindow = new google.maps.InfoWindow({
+        disableAutoPan: true,
+      });
+    }
+
+    this.tooltipWindow.setContent(`
+      <div style="
+        width: 220px;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+        line-height: 1.25;
+        color: #111827;
+      ">
+        <div style="
+          display: inline-flex;
+          align-items: center;
+          border-radius: 999px;
+          background: #E0F2FE;
+          color: #0369A1;
+          font-size: 10px;
+          font-weight: 800;
+          letter-spacing: .05em;
+          padding: 2px 7px;
+          text-transform: uppercase;
+          white-space: nowrap;
+        ">Bus en ruta</div>
+        <div style="
+          margin-top: 7px;
+          font-size: 16px;
+          font-weight: 800;
+          white-space: nowrap;
+        ">${this.escapeHtml(bus.placa || 'Sin placa')}</div>
+        <div style="
+          margin-top: 5px;
+          color: #4B5563;
+          font-size: 13px;
+          white-space: normal;
+          word-break: break-word;
+        ">
+          <span style="font-weight: 700; color: #374151;">Conductor:</span>
+          ${this.escapeHtml(this.getDriverName(bus))}
+        </div>
+      </div>
+    `);
+    this.tooltipWindow.open({ map, anchor: marker });
+  }
+
+  private hideBusTooltip(): void {
+    this.tooltipWindow?.close();
+  }
+
+  private escapeHtml(value: string): string {
+    return value.replace(/[&<>"']/g, (char) => {
+      const entities: Record<string, string> = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      };
+      return entities[char];
+    });
   }
 
   private ensureGeocoder(): void {

@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { GoogleMapsModule, GoogleMap } from '@angular/google-maps';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Subject, Subscription, finalize } from 'rxjs';
 import { MapControlsComponent } from '../map-controls/map-controls';
 import { BusListComponent } from '../../bus-mapa/bus-list/bus-list';
@@ -42,6 +43,7 @@ import { SelectedBusDetails } from '../../../service/bus/bus-marker.service';
   imports: [
     GoogleMapsModule,
     CommonModule,
+    FormsModule,
     RouteCreator,
     MapControlsComponent,
     BusListComponent,
@@ -123,6 +125,7 @@ export class MapContainerComponent implements OnDestroy, OnInit {
   showBuses = false; // ✅ CAMBIAR A FALSE - No mostrar buses por defecto
 
   buses: BusWithPosition[] = [];
+  busSearchTerm = '';
   routes: RouteResponse[] = [];
   selectedRouteId: number | null = null;
   constructor(
@@ -239,6 +242,65 @@ export class MapContainerComponent implements OnDestroy, OnInit {
     const busesToRender = this.getRenderableBuses();
     console.log('[MapContainer] Renderizando buses en mapa:', busesToRender.length);
     void this.busMarkerService.upsertBusMarkers(busesToRender, this.safeGoogleMap);
+  }
+
+  get routeBuses(): BusWithPosition[] {
+    if (!this.selectedRouteId || !this.showBuses) {
+      return [];
+    }
+
+    return this.buses.filter((bus) => String(bus.id) !== String(this.demoBus.id));
+  }
+
+  get filteredRouteBuses(): BusWithPosition[] {
+    const term = this.normalizeSearch(this.busSearchTerm);
+    const buses = this.routeBuses;
+
+    if (!term) {
+      return buses.slice(0, 6);
+    }
+
+    return buses
+      .filter((bus) => {
+        const searchable = [
+          bus.placa,
+          bus.conductor,
+          bus.modelo,
+          bus.estado,
+        ]
+          .filter(Boolean)
+          .join(' ');
+
+        return this.normalizeSearch(searchable).includes(term);
+      })
+      .slice(0, 6);
+  }
+
+  get hasBusSearchResults(): boolean {
+    return this.filteredRouteBuses.length > 0;
+  }
+
+  onBusSearchChange(term: string): void {
+    this.busSearchTerm = term;
+  }
+
+  clearBusSearch(): void {
+    this.busSearchTerm = '';
+  }
+
+  selectBusFromSearch(bus: BusWithPosition): void {
+    this.busSearchTerm = bus.placa;
+    this.busMarkerService.focusBus(bus.id);
+    void this.busMarkerService.selectBus(bus);
+    this.cdr.markForCheck();
+  }
+
+  private normalizeSearch(value: string | undefined): string {
+    return (value ?? '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
   }
 
   private setupBasicListeners() {

@@ -47,9 +47,76 @@
     (close)="onCloseBusList()" class="z-25"></app-bus-list>
 
   <app-route-list [isVisible]="showRouteList && !isCreatingRoute" [map]="safeGoogleMap"
+    [showBelowBusSearch]="!!selectedRouteId"
     (selectRouteId)="onSelectRouteId($event)" (close)="onCloseRouteList()" (createRoute)="startCreatingRoute()" class="z-25"></app-route-list>
 
   <app-route-edit-control (changesSaved)="onRouteSaved()" class="z-40"></app-route-edit-control>
+
+  <div
+    *ngIf="selectedRouteId"
+    class="absolute left-4 top-16 z-30 w-[320px] max-w-[calc(100%-2rem)]"
+  >
+    <div class="rounded-xl border border-white/20 bg-white/95 dark:bg-gray-900/95 shadow-xl backdrop-blur">
+      <div class="relative">
+        <svg
+          class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="m20 20-3.5-3.5"></path>
+        </svg>
+        <input
+          type="text"
+          [(ngModel)]="busSearchTerm"
+          (ngModelChange)="onBusSearchChange($event)"
+          placeholder="Buscar bus de esta ruta..."
+          class="w-full rounded-xl border-0 bg-transparent py-2.5 pl-10 pr-10 text-sm text-gray-900 outline-none placeholder:text-gray-400 dark:text-white"
+        />
+        <button
+          *ngIf="busSearchTerm"
+          type="button"
+          (click)="clearBusSearch()"
+          class="absolute right-2 top-1/2 inline-flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-white"
+          title="Limpiar busqueda"
+          aria-label="Limpiar busqueda"
+        >
+          <lucide-icon name="x" class="h-4 w-4"></lucide-icon>
+        </button>
+      </div>
+
+      <div *ngIf="busSearchTerm" class="max-h-56 overflow-y-auto border-t border-gray-200 dark:border-gray-700">
+        <button
+          *ngFor="let bus of filteredRouteBuses"
+          type="button"
+          (click)="selectBusFromSearch(bus)"
+          class="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+        >
+          <span class="min-w-0">
+            <span class="block truncate font-semibold text-gray-900 dark:text-white">{{ bus.placa }}</span>
+            <span class="block truncate text-xs text-gray-500 dark:text-gray-400">
+              {{ bus.conductor || 'Sin conductor asignado' }}
+            </span>
+          </span>
+          <span class="shrink-0 rounded-full bg-[#021133] px-2 py-0.5 text-[11px] font-semibold text-white">
+            Ver
+          </span>
+        </button>
+
+        <div
+          *ngIf="!hasBusSearchResults"
+          class="px-3 py-3 text-sm text-gray-500 dark:text-gray-400"
+        >
+          No hay buses que coincidan en esta ruta.
+        </div>
+      </div>
+    </div>
+  </div>
 
   <app-map-controls
     [isLocating]="isLocating"
@@ -58,7 +125,8 @@
     class="z-20"
   ></app-map-controls>
 
-  <app-route-creator *ngIf="isCreatingRoute && isMapReady" [map]="safeGoogleMap" (routeCreated)="onRouteCreated()"
+  <app-route-creator *ngIf="isCreatingRoute && isMapReady" [map]="safeGoogleMap" [showBelowBusSearch]="!!selectedRouteId"
+    (routeCreated)="onRouteCreated()"
     (cancel)="onCancelRouteCreation()" class="z-40"></app-route-creator>
 
   <div

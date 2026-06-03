@@ -35,7 +35,7 @@ export class RouteMapService {
     }
   >();
 
-  private animations = new Map<number, any>();
+  private animations = new Map<number, number>();
 
   private infoWindow: google.maps.InfoWindow | null = null;
   private geocoder: google.maps.Geocoder | null = null;
@@ -148,17 +148,7 @@ export class RouteMapService {
         });
 
         // 3. Animación del flujo
-        let count = 0;
-        const interval = setInterval(() => {
-          count = (count + 1) % 200;
-          const icons = animatedPolyline?.get('icons');
-          if (icons && icons[0]) {
-            icons[0].offset = (count / 2) + '%';
-            animatedPolyline?.set('icons', icons);
-          }
-        }, 30);
-
-        this.animations.set(route.id, interval);
+        this.animateRouteFlow(route.id, animatedPolyline);
 
         start = path[0];
         end = path[path.length - 1];
@@ -202,9 +192,9 @@ export class RouteMapService {
       r.polyline?.setMap(null);
       r.animatedPolyline?.setMap(null);
       
-      const interval = this.animations.get(routeId);
-      if (interval) {
-        clearInterval(interval);
+      const animationFrame = this.animations.get(routeId);
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
         this.animations.delete(routeId);
       }
 
@@ -229,6 +219,32 @@ export class RouteMapService {
   private ensureInfoHelpers() {
     if (!this.infoWindow) this.infoWindow = new google.maps.InfoWindow();
     if (!this.geocoder) this.geocoder = new google.maps.Geocoder();
+  }
+
+  private animateRouteFlow(
+    routeId: number,
+    animatedPolyline: google.maps.Polyline
+  ): void {
+    const pixelsPerSecond = 48;
+    const repeatPixels = 20;
+    const startedAt = performance.now();
+
+    const tick = (now: number) => {
+      const icons = animatedPolyline.get('icons');
+
+      if (icons && icons[0]) {
+        const elapsedSeconds = (now - startedAt) / 1000;
+        const offset = (elapsedSeconds * pixelsPerSecond) % repeatPixels;
+        icons[0].offset = `${offset}px`;
+        animatedPolyline.set('icons', icons);
+      }
+
+      const frame = requestAnimationFrame(tick);
+      this.animations.set(routeId, frame);
+    };
+
+    const frame = requestAnimationFrame(tick);
+    this.animations.set(routeId, frame);
   }
 
   private getMarkerLatLng(m: AnyMarker): google.maps.LatLng {

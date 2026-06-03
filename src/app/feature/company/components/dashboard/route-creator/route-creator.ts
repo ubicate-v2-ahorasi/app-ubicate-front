@@ -28,6 +28,7 @@ interface RouteFormData {
 })
 export class RouteCreator implements OnInit, OnDestroy {
   @Input() map: google.maps.Map | null = null;
+  @Input() showBelowBusSearch = false;
   @Output() routeCreated = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
