@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "primeicons/primeicons.css";
 @custom-variant dark (&:where(.dark, .dark *));
 
 @source "./app";
@@ -124,6 +125,180 @@
   .delay-400 { transition-delay: 400ms; }
   .delay-500 { transition-delay: 500ms; }
   .delay-600 { transition-delay: 600ms; }
+
+  .ubicate-datepicker {
+    display: block;
+    width: 100%;
+    position: relative;
+  }
+
+  .ubicate-datepicker .p-datepicker-input {
+    width: 100%;
+  }
+
+  .ubicate-datepicker .p-datepicker-input-icon-container {
+    position: absolute;
+    inset-inline-end: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    z-index: 1;
+    color: #64748b;
+    cursor: pointer;
+  }
+
+  .ubicate-datepicker .p-datepicker-input-icon {
+    font-size: 0.95rem;
+    line-height: 1;
+  }
+
+  .ubicate-datepicker-panel {
+    border: 1px solid #dbe3ef;
+    border-radius: 1rem;
+    background: #ffffff;
+    box-shadow: 0 22px 48px rgba(15, 23, 42, 0.18);
+    padding: 0.85rem;
+  }
+
+  .ubicate-datepicker-panel .p-datepicker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .ubicate-datepicker-panel .p-datepicker-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #040e1c;
+  }
+
+  .ubicate-datepicker-panel .p-datepicker-select-month,
+  .ubicate-datepicker-panel .p-datepicker-select-year {
+    border: 1px solid #dbe3ef;
+    border-radius: 0.6rem;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.85rem;
+    color: #040e1c;
+    background: #ffffff;
+  }
+
+  .ubicate-datepicker-panel .p-datepicker-prev-button,
+  .ubicate-datepicker-panel .p-datepicker-next-button {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    color: #475569;
+  }
+
+  .ubicate-datepicker-panel .p-datepicker-prev-button:hover,
+  .ubicate-datepicker-panel .p-datepicker-next-button:hover {
+    background: #eff6ff;
+    color: #1d4ed8;
+  }
+
+  .ubicate-datepicker-panel .p-datepicker-weekday {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #64748b;
+  }
+
+  .ubicate-datepicker-panel .p-datepicker-day,
+  .ubicate-datepicker-panel .p-datepicker-month,
+  .ubicate-datepicker-panel .p-datepicker-year {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.2rem;
+    min-height: 2.2rem;
+    border-radius: 0.75rem;
+    color: #0f172a;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .ubicate-datepicker-panel .p-datepicker-day:hover,
+  .ubicate-datepicker-panel .p-datepicker-month:hover,
+  .ubicate-datepicker-panel .p-datepicker-year:hover {
+    background: #e0f2fe;
+    color: #0f172a;
+  }
+
+  .ubicate-datepicker-panel .p-datepicker-day-selected,
+  .ubicate-datepicker-panel .p-datepicker-month-selected,
+  .ubicate-datepicker-panel .p-datepicker-year-selected {
+    background: #0f766e;
+    color: #ffffff;
+  }
+
+  .ubicate-datepicker-panel .p-datepicker-today {
+    box-shadow: inset 0 0 0 1px #14b8a6;
+  }
+
+  html.dark .ubicate-datepicker .p-datepicker-input-icon-container {
+    color: #cbd5e1;
+  }
+
+  html.dark .ubicate-datepicker-panel {
+    border-color: #334155;
+    background: #0f172a;
+    box-shadow: 0 22px 48px rgba(2, 6, 23, 0.4);
+  }
+
+  html.dark .ubicate-datepicker-panel .p-datepicker-header {
+    border-bottom-color: #334155;
+  }
+
+  html.dark .ubicate-datepicker-panel .p-datepicker-title,
+  html.dark .ubicate-datepicker-panel .p-datepicker-day,
+  html.dark .ubicate-datepicker-panel .p-datepicker-month,
+  html.dark .ubicate-datepicker-panel .p-datepicker-year {
+    color: #e2e8f0;
+  }
+
+  html.dark .ubicate-datepicker-panel .p-datepicker-weekday {
+    color: #94a3b8;
+  }
+
+  html.dark .ubicate-datepicker-panel .p-datepicker-select-month,
+  html.dark .ubicate-datepicker-panel .p-datepicker-select-year {
+    border-color: #475569;
+    background: #1e293b;
+    color: #e2e8f0;
+  }
+
+  html.dark .ubicate-datepicker-panel .p-datepicker-prev-button,
+  html.dark .ubicate-datepicker-panel .p-datepicker-next-button {
+    color: #cbd5e1;
+  }
+
+  html.dark .ubicate-datepicker-panel .p-datepicker-prev-button:hover,
+  html.dark .ubicate-datepicker-panel .p-datepicker-next-button:hover,
+  html.dark .ubicate-datepicker-panel .p-datepicker-day:hover,
+  html.dark .ubicate-datepicker-panel .p-datepicker-month:hover,
+  html.dark .ubicate-datepicker-panel .p-datepicker-year:hover {
+    background: #1e3a8a;
+    color: #ffffff;
+  }
+
+  html.dark .ubicate-datepicker-panel .p-datepicker-day-selected,
+  html.dark .ubicate-datepicker-panel .p-datepicker-month-selected,
+  html.dark .ubicate-datepicker-panel .p-datepicker-year-selected {
+    background: #14b8a6;
+    color: #042f2e;
+  }
+
+  html.dark .ubicate-datepicker-panel .p-datepicker-today {
+    box-shadow: inset 0 0 0 1px #2dd4bf;
+  }
 }
 
 html,

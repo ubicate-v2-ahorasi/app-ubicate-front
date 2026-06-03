@@ -15,11 +15,12 @@ import {
 import { ConductorService } from '../../../service/chofer/chofer.service';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
+import { DatePickerModule } from 'primeng/datepicker';
 
 @Component({
   selector: 'app-conductor-form-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, DatePickerModule],
   templateUrl: './conductor-form-modal.html',
 })
 export class ConductorFormModal implements OnInit {
