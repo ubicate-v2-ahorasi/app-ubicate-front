@@ -323,7 +323,22 @@ export class Comments implements OnInit, OnDestroy {
         return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
     }
   }
-  clearFilters(): void {
 
+  hasActiveFilters(): boolean {
+    return !!(
+      this.searchTerm.trim() ||
+      this.selectedStatus !== 'todos' ||
+      this.selectedRating !== 'todas' ||
+      this.selectedCategory !== 'todas'
+    );
+  }
+
+  clearFilters(): void {
+    this.searchTerm = '';
+    this.selectedCategory = 'todas';
+    this.selectedStatus = 'todos';
+    this.selectedRating = 'todas';
+    this.currentPage = 0;
+    this.applyFilters();
   }
 }

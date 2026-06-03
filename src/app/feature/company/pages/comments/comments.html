@@ -101,7 +101,7 @@
 
  <!-- Filtros y Búsqueda -->
 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 mb-4 border border-gray-200 dark:border-gray-700">
-  <div class="flex flex-wrap items-center gap-3">
+  <div class="flex flex-wrap items-end gap-3">
 
     <!-- Búsqueda -->
     <div class="flex-1 min-w-[200px]">
@@ -136,14 +136,13 @@
     </div>
 
     <!-- Botón Limpiar -->
-    <div class="flex justify-center min-w-[120px]">
-      <button (click)="clearFilters()"
-        class="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center w-full">
-        <svg class="w-3.5 h-3.5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div *ngIf="hasActiveFilters()" class="w-full sm:w-auto flex items-end">
+      <button type="button" (click)="clearFilters()" title="Limpiar filtros" aria-label="Limpiar filtros"
+        class="h-9 w-9 inline-flex items-center justify-center text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg>
-        Limpiar
       </button>
     </div>
 
