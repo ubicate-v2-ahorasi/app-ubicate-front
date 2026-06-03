@@ -183,41 +183,32 @@ export class BusMarkerService {
 
     this.tooltipWindow.setContent(`
       <div style="
-        width: 220px;
+        min-width: 180px;
+        max-width: 220px;
         box-sizing: border-box;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(15, 23, 42, 0.96);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.28);
         font-family: Arial, sans-serif;
-        line-height: 1.25;
-        color: #111827;
+        line-height: 1.3;
+        color: #F8FAFC;
       ">
         <div style="
-          display: inline-flex;
-          align-items: center;
-          border-radius: 999px;
-          background: #E0F2FE;
-          color: #0369A1;
-          font-size: 10px;
-          font-weight: 800;
-          letter-spacing: .05em;
-          padding: 2px 7px;
-          text-transform: uppercase;
-          white-space: nowrap;
-        ">Bus en ruta</div>
-        <div style="
-          margin-top: 7px;
-          font-size: 16px;
+          font-size: 15px;
           font-weight: 800;
           white-space: nowrap;
+          letter-spacing: .02em;
         ">${this.escapeHtml(bus.placa || 'Sin placa')}</div>
         <div style="
-          margin-top: 5px;
-          color: #4B5563;
-          font-size: 13px;
+          margin-top: 4px;
+          color: #CBD5E1;
+          font-size: 12px;
+          font-weight: 500;
           white-space: normal;
           word-break: break-word;
-        ">
-          <span style="font-weight: 700; color: #374151;">Conductor:</span>
-          ${this.escapeHtml(this.getDriverName(bus))}
-        </div>
+        ">${this.escapeHtml(this.getDriverName(bus))}</div>
       </div>
     `);
     this.tooltipWindow.open({ map, anchor: marker });
