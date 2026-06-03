@@ -22,6 +22,22 @@
 
   <div class="max-h-[260px] overflow-y-auto px-4 py-2">
     <div
+      *ngIf="loading"
+      class="py-6 text-center text-xs"
+      [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'"
+    >
+      Cargando eventos de paradas...
+    </div>
+
+    <div
+      *ngIf="!loading && events.length === 0"
+      class="py-6 text-center text-xs"
+      [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'"
+    >
+      Aún no hay registros de paso por paradas para este bus.
+    </div>
+
+    <div
       *ngFor="let event of events; let last = last"
       class="flex items-start gap-2.5 py-2.5"
       [ngClass]="!last ? ((isDarkMode$ | async) ? 'border-b border-white/6' : 'border-b border-slate-100') : ''"

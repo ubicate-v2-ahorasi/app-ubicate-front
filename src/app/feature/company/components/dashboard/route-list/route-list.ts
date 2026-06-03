@@ -10,44 +10,30 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject, takeUntil, finalize } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { RouteMapService } from '../../../service/route/route-map.service';
-import { RouteEditorService } from '../../../service/route/route-editor.service';
 import { RouteResponse } from '../../../models/route.model';
 import { IconsModule } from '../../../icons.module';
-import { DeleteRouteModalComponent } from './delete-route-modal';
-import { SuccessModalComponent } from './success-modal';
 
 @Component({
   selector: 'app-route-list',
   standalone: true,
-  imports: [CommonModule, IconsModule, DeleteRouteModalComponent, SuccessModalComponent],
+  imports: [CommonModule, IconsModule],
   templateUrl: './route-list.html',
 })
 export class RouteListComponent implements OnInit, OnDestroy {
   @Input() isVisible = false;
-  @Input() map: google.maps.Map | null = null;
   @Input() showBelowBusSearch = false;
   @Output() selectRouteId = new EventEmitter<number>();
   @Output() close = new EventEmitter<void>();
-  @Output() createRoute = new EventEmitter<void>();
-  @Output() routeSaved = new EventEmitter<void>();
 
   private destroy$ = new Subject<void>();
   private routeMapService = inject(RouteMapService);
-  private routeEditorService = inject(RouteEditorService);
   private cdr = inject(ChangeDetectorRef);
 
   routes: RouteResponse[] = [];
   loading = false;
   error: string | null = null;
-  
-  showDeleteModal = false;
-  showSuccessModal = false;
-  routeToDelete: RouteResponse | null = null;
-  isDeleting = false;
-  deletedRouteName = '';
-
   ngOnInit() {
     this.routeMapService.routes$
       .pipe(takeUntil(this.destroy$))
@@ -90,83 +76,8 @@ export class RouteListComponent implements OnInit, OnDestroy {
     this.routeMapService.toggleRouteActive(route.id).subscribe();
   }
 
-  onDeleteRoute(event: Event, route: RouteResponse) {
-    event.stopPropagation();
-    this.routeToDelete = route;
-    this.showDeleteModal = true;
-    this.cdr.detectChanges();
-  }
-
-  onEditRoute(event: Event, route: RouteResponse) {
-    event.stopPropagation();
-    if (this.map) {
-      this.routeMapService.getById(route.id).subscribe({
-        next: (freshRoute) => {
-          if (this.map) {
-            this.routeEditorService.startEditing(freshRoute, this.map).catch(err => {
-              console.error('Error starting route edit:', err);
-            });
-          }
-        },
-        error: (err) => {
-          console.error('Error fetching route for edit:', err);
-        }
-      });
-    }
-  }
-
-  onConfirmDelete() {
-    if (!this.routeToDelete) return;
-
-    this.isDeleting = true;
-    this.cdr.detectChanges();
-
-    this.routeMapService.deleteRoute(this.routeToDelete.id)
-      .pipe(
-        finalize(() => {
-          this.isDeleting = false;
-          this.cdr.detectChanges();
-        })
-      )
-      .subscribe({
-        next: () => {
-          this.deletedRouteName = this.routeToDelete?.nombre || '';
-          this.showDeleteModal = false;
-          this.showSuccessModal = true;
-          
-          // Actualizar la lista eliminando la ruta del BehaviorSubject
-          const updatedRoutes = this.routes.filter(r => r.id !== this.routeToDelete?.id);
-          this.routeMapService.updateRoutesList(updatedRoutes);
-          
-          this.routeToDelete = null;
-          this.cdr.detectChanges();
-        },
-        error: () => {
-          this.showDeleteModal = false;
-          this.routeToDelete = null;
-          this.cdr.detectChanges();
-        }
-      });
-  }
-
-  onCancelDelete() {
-    this.showDeleteModal = false;
-    this.routeToDelete = null;
-    this.cdr.detectChanges();
-  }
-
-  onCloseSuccess() {
-    this.showSuccessModal = false;
-    this.deletedRouteName = '';
-    this.cdr.detectChanges();
-  }
-
   onClose() {
     this.close.emit();
-  }
-
-  onCreateRoute() {
-    this.createRoute.emit();
   }
 
   trackByRoute(_: number, route: RouteResponse): number {
@@ -190,10 +101,10 @@ export class RouteListComponent implements OnInit, OnDestroy {
 
   getRouteInfo(route: RouteResponse): string {
     const a: string[] = [];
-    if (route.bus_ids?.length)
-      a.push(
-        `${route.bus_ids.length} bus${route.bus_ids.length !== 1 ? 'es' : ''}`
-      );
+    const busCount =
+      route.total_buses ?? route.buses?.length ?? route.bus_ids?.length ?? 0;
+    if (busCount)
+      a.push(`${busCount} bus${busCount !== 1 ? 'es' : ''}`);
     if (route.estado) a.push(`Estado: ${route.estado}`);
     return a.length ? a.join(' • ') : 'Sin información';
   }

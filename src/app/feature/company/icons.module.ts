@@ -22,6 +22,9 @@ import {
   RotateCw,
   Edit3,
   Check,
+  ArrowLeft,
+  Save,
+  MapPinned,
 } from 'lucide-angular';
 
 const icons = {
@@ -45,6 +48,9 @@ const icons = {
   RotateCw,
   Edit3,
   Check,
+  ArrowLeft,
+  Save,
+  MapPinned,
 };
 
 @NgModule({

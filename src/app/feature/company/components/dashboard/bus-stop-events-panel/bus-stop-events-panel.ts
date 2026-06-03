@@ -1,12 +1,17 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
+  OnChanges,
+  SimpleChanges,
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ThemeService } from '../../../../../core/service/theme.service';
 import { SelectedBusDetails } from '../../../service/bus/bus-marker.service';
+import { RouteStopPassageEvent } from '../../../models/route.model';
+import { RouteService } from '../../../service/route/route.service';
 
 interface StopEventItem {
   time: string;
@@ -22,42 +27,80 @@ interface StopEventItem {
   templateUrl: './bus-stop-events-panel.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BusStopEventsPanelComponent {
+export class BusStopEventsPanelComponent implements OnChanges {
   private themeService = inject(ThemeService);
+  private routeService = inject(RouteService);
+  private cdr = inject(ChangeDetectorRef);
 
   @Input({ required: true }) bus!: SelectedBusDetails;
 
   isDarkMode$ = this.themeService.isDarkMode$;
+  loading = false;
+  events: StopEventItem[] = [];
 
-  get events(): StopEventItem[] {
-    const plate = this.bus?.placa || 'VHC-001';
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['bus']) {
+      this.loadEvents();
+    }
+  }
 
-    return [
-      {
-        time: '08:45 AM',
-        title: 'Cruzo Parada Central',
-        subtitle: `${plate} - Av. Espana`,
-        tone: 'blue',
+  private loadEvents(): void {
+    const routeId = this.bus?.ruta?.id;
+    const busId = this.bus?.id;
+
+    if (!routeId || !busId) {
+      this.events = [];
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.loading = true;
+    this.cdr.markForCheck();
+
+    this.routeService.getRouteStopEvents(routeId, busId).subscribe({
+      next: (events) => {
+        this.events = events.map((event, index) =>
+          this.mapEventToItem(event, index)
+        );
+        this.loading = false;
+        this.cdr.markForCheck();
       },
-      {
-        time: '08:30 AM',
-        title: 'Cruzo Paradero Los Pinos',
-        subtitle: `${plate} - Bodega Principal`,
-        tone: 'green',
+      error: () => {
+        this.events = [];
+        this.loading = false;
+        this.cdr.markForCheck();
       },
-      {
-        time: '08:15 AM',
-        title: 'Cruzo Parada Mercado Norte',
-        subtitle: `${plate} - Zona Comercial`,
-        tone: 'violet',
-      },
-      {
-        time: '08:00 AM',
-        title: 'Salida desde Patio',
-        subtitle: `${plate} - Terminal Norte`,
-        tone: 'red',
-      },
-    ];
+    });
+  }
+
+  private mapEventToItem(
+    event: RouteStopPassageEvent,
+    index: number
+  ): StopEventItem {
+    const tones: StopEventItem['tone'][] = ['blue', 'green', 'violet', 'red'];
+    const stopName =
+      event.route_stop_nombre ||
+      event.route_stop_direccion ||
+      `Parada ${event.route_stop_orden}`;
+
+    return {
+      time: this.formatTime(event.timestamp),
+      title: `Paso por ${stopName}`,
+      subtitle:
+        event.conductor?.trim() || this.bus?.conductor?.trim() || this.bus?.placa,
+      tone: tones[index % tones.length],
+    };
+  }
+
+  private formatTime(value: string): string {
+    try {
+      return new Date(value).toLocaleTimeString('es-PE', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return '--:--';
+    }
   }
 
   getToneClasses(tone: StopEventItem['tone']): string {

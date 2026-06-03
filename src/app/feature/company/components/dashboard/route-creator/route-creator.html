@@ -1,7 +1,7 @@
 <!-- src/app/feature/company/components/dashboard/route-creator/route-creator.html -->
 <div
   class="absolute left-4 z-20 w-80 overflow-hidden rounded-lg bg-white shadow-xl"
-  [ngClass]="showBelowBusSearch ? 'top-[7.5rem]' : 'top-14'"
+  [ngClass]="showBelowBusSearch ? 'top-[7.5rem]' : 'top-4'"
 >
   <div class="flex items-center justify-between bg-[#021133] p-2.5 text-white">
     <div class="flex items-center gap-2">
@@ -121,7 +121,7 @@
 
 <div
   *ngIf="isCreatingRoute && !hasOrigin"
-  class="absolute left-1/2 top-20 z-35 -translate-x-1/2 rounded-lg bg-green-600 px-4 py-2 text-white shadow-lg"
+  class="absolute left-1/2 top-12 z-35 -translate-x-1/2 rounded-lg bg-green-600 px-4 py-2 text-white shadow-lg"
 >
   <div class="flex items-center gap-2">
     <div class="h-3 w-3 animate-pulse rounded-full bg-white"></div>
@@ -131,7 +131,7 @@
 
 <div
   *ngIf="isCreatingRoute && hasOrigin && !hasDestination"
-  class="absolute left-1/2 top-20 z-35 -translate-x-1/2 rounded-lg bg-red-600 px-4 py-2 text-white shadow-lg"
+  class="absolute left-1/2 top-12 z-35 -translate-x-1/2 rounded-lg bg-red-600 px-4 py-2 text-white shadow-lg"
 >
   <div class="flex items-center gap-2">
     <div class="h-3 w-3 animate-pulse rounded-full bg-white"></div>

@@ -5,19 +5,9 @@
 >
   <div class="flex items-center justify-between bg-[#021133] p-2.5 text-white">
     <h4 class="font-semibold text-xs">Lista de Rutas</h4>
-    <div class="flex items-center gap-1.5">
-      <button
-        type="button"
-        (click)="onCreateRoute()"
-        class="inline-flex items-center gap-1 rounded-md bg-white/10 px-2 py-1 text-[11px] font-medium text-white transition-colors hover:bg-white/20"
-      >
-        <lucide-icon name="plus" class="h-3.5 w-3.5"></lucide-icon>
-        Nueva ruta
-      </button>
-      <button (click)="onClose()" class="text-white transition-colors hover:text-gray-300" aria-label="Cerrar">
-        <lucide-icon name="x" class="h-4 w-4"></lucide-icon>
-      </button>
-    </div>
+    <button (click)="onClose()" class="text-white transition-colors hover:text-gray-300" aria-label="Cerrar">
+      <lucide-icon name="x" class="h-4 w-4"></lucide-icon>
+    </button>
   </div>
 
   <div *ngIf="error" class="border-l-4 border-red-400 bg-red-50 p-2.5 text-xs text-red-700">{{error}}</div>
@@ -55,34 +45,8 @@
             class="rounded-full px-1.5 py-0.5 text-[10px] transition-colors">
             {{route.estado === 'ACTIVA' ? 'Activa' : 'Inactiva'}}
           </button>
-
-          <button (click)="onEditRoute($event, route)"
-            class="mt-1 self-center rounded-full p-1 text-blue-500 transition-colors hover:bg-blue-50"
-            title="Editar ruta en mapa">
-            <lucide-icon name="edit" class="h-3.5 w-3.5"></lucide-icon>
-          </button>
-
-          <button (click)="onDeleteRoute($event, route)"
-            class="mt-1 self-center rounded-full p-1 text-red-500 transition-colors hover:bg-red-50"
-            title="Eliminar ruta">
-            <lucide-icon name="trash-2" class="h-3.5 w-3.5"></lucide-icon>
-          </button>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<app-delete-route-modal
-  [isVisible]="showDeleteModal"
-  [route]="routeToDelete"
-  [isDeleting]="isDeleting"
-  (confirm)="onConfirmDelete()"
-  (cancel)="onCancelDelete()"
-></app-delete-route-modal>
-
-<app-success-modal
-  [isVisible]="showSuccessModal"
-  [routeName]="deletedRouteName"
-  (close)="onCloseSuccess()"
-></app-success-modal>

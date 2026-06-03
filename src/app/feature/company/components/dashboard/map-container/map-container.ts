@@ -23,7 +23,6 @@ import {
   BusWithPosition,
 } from '../../../service/bus/bus-marker.service';
 import { Bus } from '../../../models/buses.model';
-import { RouteCreator } from '../route-creator/route-creator';
 import { RouteResponse } from '../../../models/route.model';
 import { IconsModule } from '../../../icons.module';
 import { FirebaseService } from '../../../../../core/service/firebase.service';
@@ -32,7 +31,6 @@ import { RealtimeBusService } from '../../../../../core/service/realtime-bus.ser
 import { environment } from '../../../../../core/config/environment';
 import { MapDarkModeComponent } from '../map-dark-mode/map-dark-mode';
 import { MAP_DARK_STYLES } from '../map-dark-mode/map-dark-mode.styles';
-import { RouteEditControlComponent } from '../route-edit-control/route-edit-control';
 import { BusDetailPanelComponent } from '../bus-detail-panel/bus-detail-panel';
 import { BusStopEventsPanelComponent } from '../bus-stop-events-panel/bus-stop-events-panel';
 import { SelectedBusDetails } from '../../../service/bus/bus-marker.service';
@@ -44,11 +42,9 @@ import { SelectedBusDetails } from '../../../service/bus/bus-marker.service';
     GoogleMapsModule,
     CommonModule,
     FormsModule,
-    RouteCreator,
     MapControlsComponent,
     BusListComponent,
     RouteListComponent,
-    RouteEditControlComponent,
     BusDetailPanelComponent,
     BusStopEventsPanelComponent,
     IconsModule,

@@ -1,0 +1,248 @@
+<div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-colors dark:border-gray-700 dark:bg-gray-800">
+  <div class="border-b border-gray-200 bg-[#021133] px-4 py-3 text-white dark:border-gray-700">
+    <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <div>
+        <h2 class="text-sm font-semibold">{{ title }}</h2>
+        <p class="mt-1 text-xs text-blue-100/90">{{ subtitle }}</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button
+          *ngIf="isStopsMode"
+          type="button"
+          (click)="saveStops()"
+          [disabled]="isBusy"
+          class="inline-flex h-9 items-center gap-2 rounded-lg bg-emerald-500 px-4 text-sm font-medium text-white transition-colors hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <lucide-icon name="save" class="h-4 w-4"></lucide-icon>
+          Guardar paradas
+        </button>
+
+        <button
+          type="button"
+          (click)="onCancel()"
+          class="inline-flex h-9 items-center gap-2 rounded-lg border border-white/15 bg-white/10 px-4 text-sm font-medium text-white transition-colors hover:bg-white/20"
+        >
+          <lucide-icon name="arrow-left" class="h-4 w-4"></lucide-icon>
+          Volver
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div [class]="layoutClass">
+    <div class="relative h-[72vh] bg-slate-200 dark:bg-slate-950">
+      <google-map
+        [center]="center"
+        [zoom]="zoom"
+        [options]="mapOptions"
+        [width]="mapWidth"
+        [height]="mapHeight"
+        class="block h-full w-full"
+      ></google-map>
+
+      <app-route-creator
+        *ngIf="mode === 'create' && googleMapReady"
+        [map]="safeGoogleMap"
+        (routeCreated)="onCreateCompleted()"
+        (cancel)="onCancel()"
+      ></app-route-creator>
+
+      <app-route-edit-control
+        *ngIf="mode === 'edit' && googleMapReady"
+        (changesSaved)="onEditCompleted()"
+      ></app-route-edit-control>
+
+      <div
+        *ngIf="mode === 'stops'"
+        class="pointer-events-none absolute left-4 top-4 z-20 rounded-xl border border-white/20 bg-white/92 px-3 py-2 text-xs text-slate-700 shadow-lg backdrop-blur dark:border-slate-700 dark:bg-slate-900/92 dark:text-slate-200"
+      >
+        Haz clic sobre el recorrido para crear una parada. Cada parada se ajusta al punto más cercano del poliline.
+      </div>
+
+      <div
+        *ngIf="isBusy"
+        class="absolute inset-0 z-30 flex items-center justify-center bg-slate-950/20 backdrop-blur-[1px]"
+      >
+        <div class="rounded-xl bg-white px-4 py-3 text-sm text-slate-700 shadow-xl dark:bg-slate-900 dark:text-slate-200">
+          Cargando información...
+        </div>
+      </div>
+    </div>
+
+    <aside *ngIf="isStopsMode" [class]="stopsAsideClass">
+      <div class="mb-4 flex items-start justify-between gap-3" [class.mb-0]="isStopsPanelCollapsed">
+        <div *ngIf="!isStopsPanelCollapsed">
+          <div class="flex items-center gap-2">
+            <h3 class="text-sm font-semibold text-[#040E1C] dark:text-white">Paradas de la ruta</h3>
+            <div class="group relative">
+              <button
+                type="button"
+                class="inline-flex h-5 w-5 items-center justify-center rounded-full border border-gray-200 bg-white text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:border-gray-700 dark:bg-gray-800 dark:text-slate-300 dark:hover:bg-gray-700 dark:hover:text-white"
+                aria-label="Informacion de paradas"
+                title="Informacion de paradas"
+              >
+                <svg viewBox="0 0 20 20" fill="none" class="h-3.5 w-3.5" aria-hidden="true">
+                  <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.6"></circle>
+                  <path d="M10 8.3V13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+                  <circle cx="10" cy="6" r="1" fill="currentColor"></circle>
+                </svg>
+              </button>
+              <div class="pointer-events-none absolute left-1/2 top-7 z-40 w-56 -translate-x-1/2 rounded-md bg-[#0B1628] px-3 py-2 text-[10px] leading-4 text-blue-50 opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+                Puedes nombrarlas manualmente o dejar el texto sugerido por Google.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="isStopsPanelCollapsed" class="flex flex-1 flex-col items-center gap-3 pt-1">
+          <span
+            class="rounded-full bg-[#021133] px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-white [writing-mode:vertical-rl] [text-orientation:mixed]"
+          >
+            Paradas
+          </span>
+          <span class="inline-flex min-w-10 items-center justify-center rounded-full bg-white px-2 py-1 text-[11px] font-semibold text-slate-700 shadow-sm dark:bg-gray-800 dark:text-slate-200">
+            {{ orderedStops.length }}
+          </span>
+        </div>
+
+        <button
+          type="button"
+          (click)="toggleStopsPanel()"
+          class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:border-gray-700 dark:bg-gray-800 dark:text-slate-300 dark:hover:bg-gray-700 dark:hover:text-white"
+          [attr.aria-label]="isStopsPanelCollapsed ? 'Expandir panel de paradas' : 'Minimizar panel de paradas'"
+          [title]="isStopsPanelCollapsed ? 'Expandir panel' : 'Minimizar panel'"
+        >
+          <svg
+            viewBox="0 0 20 20"
+            fill="none"
+            class="h-4 w-4 transition-transform duration-200"
+            [class.rotate-180]="isStopsPanelCollapsed"
+            aria-hidden="true"
+          >
+            <path
+              d="M12.5 4.5L7 10l5.5 5.5"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div *ngIf="!isStopsPanelCollapsed" class="flex max-h-[calc(72vh-5rem)] flex-col overflow-hidden">
+      <div
+        *ngIf="stopError"
+        class="mb-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300"
+      >
+        {{ stopError }}
+      </div>
+
+      <div *ngIf="orderedStops.length === 0" class="rounded-xl border border-dashed border-gray-300 px-4 py-6 text-center text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400">
+        Aún no hay paradas creadas. Selecciona puntos sobre la ruta para empezar.
+      </div>
+
+      <div *ngIf="orderedStops.length > 0" class="flex-1 space-y-3 overflow-y-auto pr-1">
+        <div
+          *ngFor="let stop of orderedStops; trackBy: trackByStop"
+          class="rounded-2xl border border-gray-200 bg-white p-3 shadow-sm transition-colors dark:border-gray-700 dark:bg-gray-800"
+        >
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <span
+                class="inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold text-white"
+                [style.background]="stop.color_hex"
+              >
+                {{ stop.orden }}
+              </span>
+              <span class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                {{ stop.latitud | number : '1.4-4' }}, {{ stop.longitud | number : '1.4-4' }}
+              </span>
+            </div>
+
+            <div class="flex items-center gap-1">
+              <button
+                type="button"
+                (click)="toggleStopCollapse(stop.clientId)"
+                class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-white"
+                [title]="stop.isCollapsed ? 'Expandir parada' : 'Minimizar parada'"
+                [attr.aria-label]="stop.isCollapsed ? 'Expandir parada' : 'Minimizar parada'"
+              >
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  class="h-4 w-4 transition-transform duration-200"
+                  [class.rotate-180]="stop.isCollapsed"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12.5 4.5L7 10l5.5 5.5"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+
+              <button
+                type="button"
+                (click)="removeStop(stop.clientId)"
+                class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-red-500 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30"
+                title="Eliminar parada"
+                aria-label="Eliminar parada"
+              >
+                <lucide-icon name="trash-2" class="h-4 w-4"></lucide-icon>
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="stop.isCollapsed" class="rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-600 dark:bg-slate-900/70 dark:text-slate-300">
+            {{ stop.nombre || stop.direccion }}
+          </div>
+
+          <div *ngIf="!stop.isCollapsed" class="space-y-3">
+            <div>
+              <label class="mb-1 block text-[11px] font-medium text-gray-700 dark:text-gray-300">Nombre</label>
+              <input
+                [(ngModel)]="stop.nombre"
+                type="text"
+                placeholder="Si lo dejas vacío se usará la dirección"
+                class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-[11px] font-medium text-gray-700 dark:text-gray-300">Dirección</label>
+              <textarea
+                [(ngModel)]="stop.direccion"
+                rows="2"
+                class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              ></textarea>
+            </div>
+
+            <div>
+              <label class="mb-1 block text-[11px] font-medium text-gray-700 dark:text-gray-300">Color</label>
+                <div class="flex items-center gap-3">
+                  <input
+                    [(ngModel)]="stop.color_hex"
+                    (ngModelChange)="onStopColorChange(stop.clientId, $event)"
+                    type="color"
+                    class="h-10 w-12 rounded-lg border border-gray-300 bg-white p-1 dark:border-gray-600 dark:bg-gray-700"
+                  />
+                  <input
+                    [(ngModel)]="stop.color_hex"
+                    (ngModelChange)="onStopColorChange(stop.clientId, $event)"
+                    type="text"
+                    class="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </aside>
+  </div>
+</div>

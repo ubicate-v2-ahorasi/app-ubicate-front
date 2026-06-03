@@ -1,24 +1,26 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { RouteMapService } from '../../service/route/route-map.service';
 import { RouteResponse } from '../../models/route.model';
 import { IconsModule } from '../../icons.module';
+import {
+  RouteManagementMapComponent,
+  RouteManagementMode,
+} from './route-management-map';
 
 type RouteStatusFilter = 'TODAS' | 'ACTIVA' | 'INACTIVA';
 
 @Component({
   selector: 'app-route-management-table',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconsModule],
+  imports: [CommonModule, FormsModule, IconsModule, RouteManagementMapComponent],
   templateUrl: './route-management-table.html',
 })
 export class RouteManagementTable implements OnInit {
   private routeMapService = inject(RouteMapService);
   private cdr = inject(ChangeDetectorRef);
-  private router = inject(Router);
 
   routes: RouteResponse[] = [];
   loading = false;
@@ -27,6 +29,8 @@ export class RouteManagementTable implements OnInit {
   selectedEstado: RouteStatusFilter = 'TODAS';
   currentPage = 1;
   pageSize = 10;
+  activeView: 'table' | RouteManagementMode = 'table';
+  selectedRoute: RouteResponse | null = null;
 
   ngOnInit() {
     this.loadRoutes();
@@ -129,7 +133,30 @@ export class RouteManagementTable implements OnInit {
   }
 
   onCreateRoute() {
-    void this.router.navigate(['/company/dashboard']);
+    this.selectedRoute = null;
+    this.activeView = 'create';
+  }
+
+  onEditRoute(route: RouteResponse) {
+    this.selectedRoute = route;
+    this.activeView = 'edit';
+  }
+
+  onManageStops(route: RouteResponse) {
+    this.selectedRoute = route;
+    this.activeView = 'stops';
+  }
+
+  onMapClosed() {
+    this.activeView = 'table';
+    this.selectedRoute = null;
+    this.cdr.markForCheck();
+  }
+
+  onMapSaved() {
+    this.activeView = 'table';
+    this.selectedRoute = null;
+    this.loadRoutes();
   }
 
   onPageChange(page: number) {
@@ -144,7 +171,7 @@ export class RouteManagementTable implements OnInit {
   }
 
   getBusCount(route: RouteResponse): number {
-    return route.bus_ids?.length || 0;
+    return route.total_buses ?? route.buses?.length ?? route.bus_ids?.length ?? 0;
   }
 
   getEstadoBadge(estado: string): string {
