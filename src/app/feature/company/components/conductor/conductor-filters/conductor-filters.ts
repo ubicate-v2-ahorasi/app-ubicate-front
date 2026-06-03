@@ -33,6 +33,15 @@ export class ConductorFilters {
   @Output() onClearFilters = new EventEmitter<void>();
   @Output() onCreateNew = new EventEmitter<void>();
 
+  hasActiveFilters(): boolean {
+    return !!(
+      this.searchTerm.trim() ||
+      this.selectedEstado !== 'Todos' ||
+      this.selectedCategoria !== 'Todas' ||
+      this.selectedTurno !== 'Todos'
+    );
+  }
+
   onSearchInput() {
     this.onSearch.emit(this.searchTerm);
   }

@@ -22,6 +22,14 @@ export class BusFilter {
   selectedEstado = signal('');
   selectedRuta = signal<number | null>(null);
 
+  hasActiveFilters(): boolean {
+    return !!(
+      this.searchTerm().trim() ||
+      this.selectedEstado() ||
+      this.selectedRuta() !== null
+    );
+  }
+
   onSearchChange(value: string) {
     this.searchTerm.set(value);
     this.emitFilterChange();
