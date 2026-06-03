@@ -28,8 +28,21 @@
   input[type="tel"],
   input[type="number"],
   input[type="date"],
+  select,
   textarea {
     cursor: text;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input:focus,
+  input:focus-visible,
+  select:focus,
+  select:focus-visible,
+  textarea:focus,
+  textarea:focus-visible {
+    outline: none !important;
+    border-color: rgb(59 130 246 / 0.75) !important;
+    box-shadow: 0 0 0 2px rgb(59 130 246 / 0.18) !important;
   }
 
   button:disabled,
