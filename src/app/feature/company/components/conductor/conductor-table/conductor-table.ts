@@ -68,7 +68,13 @@ export class ConductorTable implements OnInit {
   currentSortDirection: SortDirection = 'desc';
   showDeleteModal = false;
   showEditModal = false;
+  showPasswordModal = false;
   selectedConductor: ConductorVM | null = null;
+  newPassword = '';
+  confirmPassword = '';
+  passwordErrorMessage: string | null = null;
+  passwordSuccessMessage: string | null = null;
+  changingPassword = false;
 
   Math = Math;
 
@@ -311,7 +317,7 @@ export class ConductorTable implements OnInit {
     }
 
     const target = event.target as HTMLElement;
-    if (target.tagName === 'SELECT' || target.closest('select')) {
+    if (target.tagName === 'SELECT' || target.closest('select') || target.closest('button')) {
       return;
     }
 
@@ -327,6 +333,61 @@ export class ConductorTable implements OnInit {
   onDelete(conductor: ConductorVM) {
     this.selectedConductor = conductor;
     this.showDeleteModal = true;
+  }
+
+  onOpenPasswordModal(conductor: ConductorVM, event?: MouseEvent) {
+    event?.stopPropagation();
+    this.selectedConductor = conductor;
+    this.newPassword = '';
+    this.confirmPassword = '';
+    this.passwordErrorMessage = null;
+    this.passwordSuccessMessage = null;
+    this.showPasswordModal = true;
+  }
+
+  onCancelPasswordChange() {
+    if (this.changingPassword) return;
+    this.showPasswordModal = false;
+    this.selectedConductor = null;
+    this.newPassword = '';
+    this.confirmPassword = '';
+    this.passwordErrorMessage = null;
+    this.passwordSuccessMessage = null;
+  }
+
+  onConfirmPasswordChange() {
+    if (!this.selectedConductor || this.changingPassword) return;
+
+    const password = this.newPassword.trim();
+    this.passwordErrorMessage = null;
+    this.passwordSuccessMessage = null;
+
+    if (password.length < 8) {
+      this.passwordErrorMessage = 'La contraseña debe tener al menos 8 caracteres.';
+      return;
+    }
+    if (!/[A-Z]/.test(password) || !/\d/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
+      this.passwordErrorMessage = 'Debe incluir una mayúscula, un número y un carácter especial.';
+      return;
+    }
+    if (password !== this.confirmPassword.trim()) {
+      this.passwordErrorMessage = 'Las contraseñas no coinciden.';
+      return;
+    }
+
+    this.changingPassword = true;
+    this.conductorService.changePassword(this.selectedConductor.id, password).subscribe({
+      next: () => {
+        this.changingPassword = false;
+        this.passwordSuccessMessage = 'Contraseña actualizada correctamente.';
+        setTimeout(() => this.onCancelPasswordChange(), 700);
+      },
+      error: (err) => {
+        this.changingPassword = false;
+        this.passwordErrorMessage =
+          err?.error?.message ?? err?.message ?? 'No se pudo actualizar la contraseña.';
+      },
+    });
   }
 
   onCancelEdit() {

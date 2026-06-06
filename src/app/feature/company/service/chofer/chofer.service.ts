@@ -118,6 +118,13 @@ export class ConductorService {
     );
   }
 
+  changePassword(conductorId: number, newPassword: string): Observable<ApiResponse> {
+    return this.httpClient.patch<ApiResponse>(
+      `${this.base}/${conductorId}/password`,
+      { newPassword }
+    );
+  }
+
   // Actualizar estado del conductor
   updateConductorStatus(
     conductorId: number,
