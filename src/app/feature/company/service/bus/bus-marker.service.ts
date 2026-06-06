@@ -1,5 +1,11 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { BusService } from './bus.service';
+import {
+  ConductorResponse,
+  ConductorService,
+} from '../chofer/chofer.service';
+import { Bus } from '../../models/buses.model';
 
 export interface BusWithPosition {
   id: string | number;
@@ -15,14 +21,22 @@ export interface BusWithPosition {
   lastUpdate?: number;
   timestamp?: number;
   conductor?: string;
+  conductorId?: number | null;
 }
 
 export interface SelectedBusDetails extends BusWithPosition {
   address: string;
+  detailsLoading?: boolean;
+  detailsError?: string | null;
+  busInfo?: Bus | null;
+  conductorInfo?: ConductorResponse | null;
 }
 
 @Injectable({ providedIn: 'root' })
 export class BusMarkerService {
+  private busService = inject(BusService);
+  private conductorService = inject(ConductorService);
+
   private busMarkers = new Map<string, google.maps.Marker>();
   private geocoder: google.maps.Geocoder | null = null;
   private addressCache = new Map<string, string>();
@@ -357,19 +371,154 @@ export class BusMarkerService {
   async selectBus(bus: BusWithPosition): Promise<void> {
     const selectedBus: SelectedBusDetails = {
       ...bus,
-      address: 'Obteniendo direccion...'
+      address: 'Obteniendo direccion...',
+      detailsLoading: true,
+      detailsError: null,
     };
 
     this.selectedBusSubject.next(selectedBus);
 
-    const address = await this.resolveAddress(bus.position);
+    const [address, details] = await Promise.all([
+      this.resolveAddress(bus.position),
+      this.resolveBusDetails(bus),
+    ]);
+
     const latestSelected = this.selectedBusSubject.value;
     if (latestSelected && String(latestSelected.id) === String(bus.id)) {
       this.selectedBusSubject.next({
         ...selectedBus,
-        address
+        ...details,
+        address,
+        detailsLoading: false,
       });
     }
+  }
+
+  private async resolveBusDetails(
+    bus: BusWithPosition
+  ): Promise<Partial<SelectedBusDetails>> {
+    const numericBusId = Number(bus.id);
+    if (!Number.isFinite(numericBusId)) {
+      return {
+        detailsLoading: false,
+        detailsError: 'No se pudo leer el ID del bus.',
+      };
+    }
+
+    try {
+      const busInfo = await firstValueFrom(this.busService.getBusById(numericBusId));
+      const conductorInfo = await this.resolveConductorForBus(busInfo, numericBusId);
+      const conductorName = conductorInfo
+        ? this.formatConductorName(conductorInfo)
+        : this.extractConductorName(busInfo) || bus.conductor;
+
+      return {
+        ...this.mergeBusInfo(bus, busInfo, conductorInfo, conductorName),
+        busInfo,
+        conductorInfo,
+        conductor: conductorName || bus.conductor,
+        conductorId: conductorInfo?.id ?? this.extractConductorId(busInfo) ?? bus.conductorId ?? null,
+      };
+    } catch (error) {
+      console.error('[BusMarkerService] No se pudo cargar el detalle del bus', error);
+      return {
+        detailsLoading: false,
+        detailsError: 'No se pudo cargar la informacion completa.',
+      };
+    }
+  }
+
+  private async resolveConductorForBus(
+    busInfo: any,
+    busId: number
+  ): Promise<ConductorResponse | null> {
+    const conductorFromBus = busInfo?.conductor ?? busInfo?.chofer ?? null;
+    if (conductorFromBus && typeof conductorFromBus === 'object') {
+      return conductorFromBus as ConductorResponse;
+    }
+
+    const conductorId = this.extractConductorId(busInfo);
+    if (conductorId) {
+      return firstValueFrom(this.conductorService.getConductorById(conductorId));
+    }
+
+    const conductores = await firstValueFrom(
+      this.conductorService.getConductores(0, 1000, 'fechaIngreso,desc')
+    );
+    const content = (conductores?.content ?? []) as any[];
+    return (
+      content.find((conductor) => {
+        const assignedBusId =
+          conductor.busAsignadoId ??
+          conductor.bus_asignado_id ??
+          conductor.busAsignado?.id ??
+          conductor.bus_asignado?.id ??
+          null;
+
+        return Number(assignedBusId) === busId;
+      }) ?? null
+    );
+  }
+
+  private extractConductorId(busInfo: any): number | null {
+    const raw =
+      busInfo?.conductorId ??
+      busInfo?.conductor_id ??
+      busInfo?.conductorAsignadoId ??
+      busInfo?.conductor_asignado_id ??
+      busInfo?.choferId ??
+      busInfo?.chofer_id ??
+      busInfo?.conductor?.id ??
+      busInfo?.chofer?.id ??
+      null;
+
+    const numeric = Number(raw);
+    return Number.isFinite(numeric) && numeric > 0 ? numeric : null;
+  }
+
+  private extractConductorName(busInfo: any): string | undefined {
+    const raw =
+      busInfo?.conductorNombre ??
+      busInfo?.conductor_nombre ??
+      busInfo?.nombreConductor ??
+      busInfo?.nombre_conductor ??
+      busInfo?.conductor;
+
+    if (typeof raw === 'string') {
+      return raw.trim() || undefined;
+    }
+
+    if (raw && typeof raw === 'object') {
+      return this.formatConductorName(raw as ConductorResponse);
+    }
+
+    return undefined;
+  }
+
+  private formatConductorName(conductor: ConductorResponse): string {
+    const fullName =
+      (conductor as any).nombreCompleto ??
+      (conductor as any).nombre_completo ??
+      [conductor.nombre, conductor.apellido].filter(Boolean).join(' ');
+
+    return fullName?.trim() || 'Conductor sin nombre';
+  }
+
+  private mergeBusInfo(
+    selectedBus: BusWithPosition,
+    busInfo: any,
+    conductorInfo: ConductorResponse | null,
+    conductorName?: string
+  ): Partial<SelectedBusDetails> {
+    return {
+      placa: busInfo?.placa ?? selectedBus.placa,
+      modelo: busInfo?.modelo ?? selectedBus.modelo,
+      estado: busInfo?.estado ?? selectedBus.estado,
+      activo: busInfo?.activo ?? selectedBus.activo,
+      ruta: busInfo?.ruta ?? selectedBus.ruta,
+      conductor: conductorName,
+      conductorId: conductorInfo?.id ?? this.extractConductorId(busInfo),
+    };
   }
 
   clearSelectedBus(): void {

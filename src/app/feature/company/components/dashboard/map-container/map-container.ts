@@ -53,27 +53,6 @@ import { SelectedBusDetails } from '../../../service/bus/bus-marker.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapContainerComponent implements OnDestroy, OnInit {
-  private readonly demoBus: BusWithPosition = {
-    id: '__demo-bus__',
-    placa: 'VHC-001',
-    modelo: 'Mercedes Sprinter',
-    estado: 'EN_RUTA',
-    activo: true,
-    latitud: -8.1112,
-    longitud: -79.0281,
-    velocidad: 60,
-    conductor: 'Juan Perez',
-    position: { lat: -8.1112, lng: -79.0281 },
-    timestamp: Date.now() - 10000,
-    lastUpdate: Date.now() - 10000,
-    ruta: {
-      id: 999,
-      nombre: 'Ruta de prueba',
-      codigo: 'TEST-01',
-      color_hex: '#3B82F6',
-    },
-  };
-
   @ViewChild(GoogleMap) set googleMap(component: GoogleMap | undefined) {
     if (!component) {
       this.googleMapComponent = undefined;
@@ -222,12 +201,7 @@ export class MapContainerComponent implements OnDestroy, OnInit {
   }
 
   private getRenderableBuses(): BusWithPosition[] {
-    const realtimeBuses = this.showBuses ? this.buses : [];
-    const filteredRealtimeBuses = realtimeBuses.filter(
-      (bus) => String(bus.id) !== String(this.demoBus.id)
-    );
-
-    return [this.demoBus, ...filteredRealtimeBuses];
+    return this.showBuses ? this.buses : [];
   }
 
   private renderMapBuses(): void {
@@ -245,7 +219,7 @@ export class MapContainerComponent implements OnDestroy, OnInit {
       return [];
     }
 
-    return this.buses.filter((bus) => String(bus.id) !== String(this.demoBus.id));
+    return this.buses;
   }
 
   get filteredRouteBuses(): BusWithPosition[] {

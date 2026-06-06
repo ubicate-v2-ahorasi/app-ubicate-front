@@ -46,56 +46,148 @@
     </div>
   </div>
 
-  <div class="space-y-3 px-4 py-3 text-xs">
-    <div class="flex items-start justify-between gap-4">
-      <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Placa</span>
-      <span
-        class="text-right font-medium"
-        [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'"
-      >{{ bus.placa || 'Sin registro' }}</span>
-    </div>
-
-    <div class="flex items-start justify-between gap-4">
-      <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Conductor</span>
-      <span
-        class="text-right font-medium"
-        [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'"
-      >{{ bus.conductor || 'No asignado' }}</span>
-    </div>
-
-    <div class="flex items-start justify-between gap-4">
-      <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Velocidad</span>
-      <span
-        class="text-right font-medium"
-        [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'"
-      >
-        {{ bus.velocidad != null ? (bus.velocidad + ' km/h') : 'Sin datos' }}
-      </span>
-    </div>
-
-    <div class="flex items-start justify-between gap-4">
-      <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Direccion</span>
-      <span
-        class="max-w-[156px] text-right font-medium leading-5"
-        [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'"
-      >
-        {{ bus.address }}
-      </span>
+  <div class="space-y-4 px-4 py-3 text-xs">
+    <div
+      *ngIf="bus.detailsLoading"
+      class="flex items-center gap-2 rounded-lg px-3 py-2"
+      [ngClass]="(isDarkMode$ | async) ? 'bg-white/5 text-slate-300' : 'bg-slate-50 text-slate-600'"
+    >
+      <lucide-icon name="loader-2" class="h-3.5 w-3.5 animate-spin"></lucide-icon>
+      <span>Cargando informacion del bus...</span>
     </div>
 
     <div
-      class="pt-3"
+      *ngIf="bus.detailsError"
+      class="rounded-lg px-3 py-2 text-[11px]"
+      [ngClass]="(isDarkMode$ | async) ? 'bg-red-500/10 text-red-200' : 'bg-red-50 text-red-700'"
+    >
+      {{ bus.detailsError }}
+    </div>
+
+    <section class="space-y-2">
+      <div
+        class="text-[11px] font-semibold uppercase tracking-wide"
+        [ngClass]="(isDarkMode$ | async) ? 'text-blue-200' : 'text-blue-700'"
+      >
+        Bus
+      </div>
+
+      <div class="flex items-start justify-between gap-4">
+        <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Placa</span>
+        <span class="text-right font-medium" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
+          {{ bus.placa || 'Sin registro' }}
+        </span>
+      </div>
+
+      <div class="flex items-start justify-between gap-4">
+        <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Modelo</span>
+        <span class="max-w-[156px] text-right font-medium leading-5" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
+          {{ busBrandModel }}
+        </span>
+      </div>
+
+      <div class="flex items-start justify-between gap-4">
+        <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Capacidad</span>
+        <span class="text-right font-medium" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
+          {{ busCapacity }}
+        </span>
+      </div>
+
+      <div class="flex items-start justify-between gap-4">
+        <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Año</span>
+        <span class="text-right font-medium" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
+          {{ busYear }}
+        </span>
+      </div>
+
+      <div class="flex items-start justify-between gap-4">
+        <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Ruta</span>
+        <span class="max-w-[156px] text-right font-medium leading-5" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
+          {{ routeName }}
+        </span>
+      </div>
+
+      <div class="flex items-start justify-between gap-4">
+        <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Velocidad</span>
+        <span class="text-right font-medium" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
+          {{ bus.velocidad != null ? (bus.velocidad + ' km/h') : 'Sin datos' }}
+        </span>
+      </div>
+    </section>
+
+    <section
+      class="space-y-2 pt-3"
+      [ngClass]="(isDarkMode$ | async) ? 'border-t border-white/6' : 'border-t border-slate-200'"
+    >
+      <div
+        class="text-[11px] font-semibold uppercase tracking-wide"
+        [ngClass]="(isDarkMode$ | async) ? 'text-emerald-200' : 'text-emerald-700'"
+      >
+        Conductor
+      </div>
+
+      <div class="flex items-start justify-between gap-4">
+        <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Nombre</span>
+        <span class="max-w-[156px] text-right font-medium leading-5" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
+          {{ conductorName }}
+        </span>
+      </div>
+
+      <ng-container *ngIf="hasConductorInfo">
+        <div class="flex items-start justify-between gap-4">
+          <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">DNI</span>
+          <span class="text-right font-medium" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
+            {{ conductorDni }}
+          </span>
+        </div>
+
+        <div class="flex items-start justify-between gap-4">
+          <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Telefono</span>
+          <span class="text-right font-medium" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
+            {{ conductorPhone }}
+          </span>
+        </div>
+
+        <div class="flex items-start justify-between gap-4">
+          <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Licencia</span>
+          <span class="text-right font-medium" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
+            {{ conductorLicense }}
+          </span>
+        </div>
+
+        <div class="flex items-start justify-between gap-4">
+          <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Categoria</span>
+          <span class="text-right font-medium" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
+            {{ conductorCategory }}
+          </span>
+        </div>
+
+        <div class="flex items-start justify-between gap-4">
+          <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Estado</span>
+          <span class="text-right font-medium" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
+            {{ conductorStatus }}
+          </span>
+        </div>
+      </ng-container>
+    </section>
+
+    <section
+      class="space-y-2 pt-3"
       [ngClass]="(isDarkMode$ | async) ? 'border-t border-white/6' : 'border-t border-slate-200'"
     >
       <div class="flex items-start justify-between gap-4">
+        <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Direccion</span>
+        <span class="max-w-[156px] text-right font-medium leading-5" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
+          {{ bus.address }}
+        </span>
+      </div>
+
+      <div class="flex items-start justify-between gap-4">
         <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Ultima actualizacion</span>
-        <span
-          class="text-right font-semibold"
-          [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'"
-        >
+        <span class="text-right font-semibold" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
           {{ formattedUpdatedAt }}
         </span>
       </div>
-    </div>
+    </section>
   </div>
 </div>

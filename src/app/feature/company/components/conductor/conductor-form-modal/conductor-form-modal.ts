@@ -43,7 +43,7 @@ export class ConductorFormModal implements OnInit {
   formErrorMessage: string | null = null;
   formErrorDetails: { [key: string]: any } | null = null;
 
-  categorias = ['A1', 'A2a', 'A2b', 'A3a', 'A3b', 'A3c'];
+  categorias = ['A1', 'A2A', 'A2B', 'A3A', 'A3B', 'A3C'];
 
   private onlyLettersValidator(control: any) {
     const value = control.value;

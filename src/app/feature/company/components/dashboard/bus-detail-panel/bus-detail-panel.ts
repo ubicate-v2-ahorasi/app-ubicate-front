@@ -145,4 +145,63 @@ export class BusDetailPanelComponent {
     const diffDays = Math.floor(diffHours / 24);
     return `Hace ${diffDays} d`;
   }
+
+  get busBrandModel(): string {
+    const marca = this.bus.busInfo?.marca;
+    const modelo = this.bus.busInfo?.modelo ?? this.bus.modelo;
+    return [marca, modelo].filter(Boolean).join(' ') || 'Sin registro';
+  }
+
+  get busCapacity(): string {
+    const capacidad = this.bus.busInfo?.capacidad;
+    return capacidad != null ? `${capacidad} pasajeros` : 'Sin registro';
+  }
+
+  get busYear(): string {
+    const anio = this.bus.busInfo?.anio;
+    return anio != null ? String(anio) : 'Sin registro';
+  }
+
+  get routeName(): string {
+    const ruta = this.bus.busInfo?.ruta ?? this.bus.ruta;
+    if (!ruta) {
+      return 'Sin ruta asignada';
+    }
+
+    return [ruta.codigo, ruta.nombre].filter(Boolean).join(' - ');
+  }
+
+  get conductorName(): string {
+    const conductor = this.bus.conductorInfo as any;
+    const fullName =
+      conductor?.nombreCompleto ??
+      conductor?.nombre_completo ??
+      [conductor?.nombre, conductor?.apellido].filter(Boolean).join(' ');
+
+    return fullName?.trim() || this.bus.conductor || 'No asignado';
+  }
+
+  get conductorDni(): string {
+    return this.bus.conductorInfo?.dni || 'Sin registro';
+  }
+
+  get conductorPhone(): string {
+    return this.bus.conductorInfo?.telefono || 'Sin registro';
+  }
+
+  get conductorLicense(): string {
+    return this.bus.conductorInfo?.numeroLicencia || 'Sin registro';
+  }
+
+  get conductorCategory(): string {
+    return this.bus.conductorInfo?.categoriaLicencia || 'Sin registro';
+  }
+
+  get conductorStatus(): string {
+    return this.bus.conductorInfo?.estado || 'Sin registro';
+  }
+
+  get hasConductorInfo(): boolean {
+    return !!this.bus.conductorInfo;
+  }
 }

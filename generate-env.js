@@ -3,7 +3,9 @@ const path = require('path');
 
 const targetPath = path.join(__dirname, './src/app/core/config/environment.ts');
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction =
+  process.env.NODE_ENV === 'production' ||
+  process.env.npm_lifecycle_event === 'build:prod';
 
 const DEFAULT_API = isProduction ? 'https://ubicate.codlyp.website/api' : 'http://localhost:8080/api';
 const DEFAULT_WS = isProduction ? 'https://ubicate.codlyp.website/ws-tracking' : 'http://localhost:8080/ws-tracking';
