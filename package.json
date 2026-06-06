@@ -3,10 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "start:dev": "ng serve --open",
+    "start": "node generate-env.js && ng serve",
+    "start:dev": "node generate-env.js && ng serve --open",
     "build:prod": "node generate-env.js && ng build --configuration production",
-    "build": "ng build --configuration production",
+    "build": "npm run build:prod",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
