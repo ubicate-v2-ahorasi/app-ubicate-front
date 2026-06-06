@@ -16,6 +16,7 @@ interface ConductorVM {
   id: number;
   nombreCompleto: string;
   dni: string;
+  email: string | null;
   telefono: string | null;
   numeroLicencia: string;
   categoriaLicencia: string;
@@ -80,6 +81,7 @@ export class ConductorTable implements OnInit {
     id: c.id,
     nombreCompleto: c.nombreCompleto ?? c.nombre_completo ?? '',
     dni: c.dni,
+    email: c.email ?? c.correo ?? null,
     telefono: c.telefono ?? null,
     numeroLicencia: c.numeroLicencia ?? c.numero_licencia,
     categoriaLicencia: c.categoriaLicencia ?? c.categoria_licencia,
