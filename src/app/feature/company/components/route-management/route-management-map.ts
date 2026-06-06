@@ -141,7 +141,7 @@ export class RouteManagementMapComponent implements OnInit, OnDestroy {
       case 'edit':
         return 'Ajusta la geometría arrastrando la ruta o los puntos A/B.';
       case 'stops':
-        return 'Haz clic cerca del poliline para agregar paradas y ordenarlas.';
+        return 'Haz clic cerca del recorrido para agregar paradas. Arrástralas para ajustar posición y orden.';
     }
   }
 
@@ -397,15 +397,19 @@ export class RouteManagementMapComponent implements OnInit, OnDestroy {
 
     this.stopError = null;
     const snappedPoint = this.routePath[nearest.index];
-    const address = await this.reverseGeocode(snappedPoint);
+    const coordinateLabel = this.formatCoordinateLabel(
+      snappedPoint.lat,
+      snappedPoint.lng
+    );
+    const clientId = `new-stop-${this.stopSequence + 1}`;
 
     this.stopSequence += 1;
     this.stops = [
       ...this.stops,
       {
-        clientId: `new-stop-${this.stopSequence}`,
+        clientId,
         nombre: '',
-        direccion: address,
+        direccion: coordinateLabel,
         latitud: snappedPoint.lat,
         longitud: snappedPoint.lng,
         color_hex: this.route?.color_hex || '#0F766E',
@@ -419,6 +423,9 @@ export class RouteManagementMapComponent implements OnInit, OnDestroy {
     this.reindexStops();
     this.renderStopMarkers();
     this.cdr.markForCheck();
+
+    const address = await this.reverseGeocode(snappedPoint);
+    this.updateStopAddress(clientId, address);
   }
 
   private reverseGeocode(point: google.maps.LatLngLiteral): Promise<string> {
@@ -456,7 +463,26 @@ export class RouteManagementMapComponent implements OnInit, OnDestroy {
         map: this.safeGoogleMap,
         position: { lat: stop.latitud, lng: stop.longitud },
         title: stop.nombre || stop.direccion,
+        draggable: true,
+        cursor: 'grab',
         icon: this.createStopMarkerIcon(stop.color_hex, stop.orden),
+      });
+
+      marker.addListener('dragstart', () => {
+        this.stopError = null;
+        this.cdr.markForCheck();
+      });
+
+      marker.addListener('dragend', async () => {
+        const position = marker.getPosition();
+        if (!position) {
+          return;
+        }
+
+        await this.moveStopFromDrag(stop.clientId, {
+          lat: position.lat(),
+          lng: position.lng(),
+        });
       });
 
       this.stopMarkers.set(stop.clientId, marker);
@@ -488,6 +514,62 @@ export class RouteManagementMapComponent implements OnInit, OnDestroy {
         ...stop,
         orden: index + 1,
       }));
+  }
+
+  private async moveStopFromDrag(
+    clientId: string,
+    point: google.maps.LatLngLiteral
+  ): Promise<void> {
+    if (!this.routePath.length) {
+      this.stopError = 'La ruta no tiene un poliline válido para mover paradas.';
+      this.renderStopMarkers();
+      this.cdr.markForCheck();
+      return;
+    }
+
+    const nearest = this.findNearestPathIndex(point);
+    if (nearest.distanceMeters > 90) {
+      this.stopError =
+        'Suelta la parada más cerca del recorrido para mantenerla dentro de la ruta.';
+      this.renderStopMarkers();
+      this.cdr.markForCheck();
+      return;
+    }
+
+    const snappedPoint = this.routePath[nearest.index];
+    const coordinateLabel = this.formatCoordinateLabel(
+      snappedPoint.lat,
+      snappedPoint.lng
+    );
+
+    this.stops = this.stops.map((stop) =>
+      stop.clientId === clientId
+        ? {
+            ...stop,
+            latitud: snappedPoint.lat,
+            longitud: snappedPoint.lng,
+            direccion: coordinateLabel,
+            pathIndex: nearest.index,
+          }
+        : stop
+    );
+
+    this.stopError = null;
+    this.reindexStops();
+    this.renderStopMarkers();
+    this.cdr.markForCheck();
+
+    const address = await this.reverseGeocode(snappedPoint);
+    this.updateStopAddress(clientId, address);
+  }
+
+  private updateStopAddress(clientId: string, address: string): void {
+    this.stops = this.stops.map((stop) =>
+      stop.clientId === clientId ? { ...stop, direccion: address } : stop
+    );
+
+    this.updateStopMarker(clientId);
+    this.cdr.markForCheck();
   }
 
   private findNearestPathIndex(point: google.maps.LatLngLiteral): {
