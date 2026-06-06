@@ -19,6 +19,19 @@ export interface Bus {
   empresa_id: number;
   fecha_creacion: string;
   fecha_actualizacion: string;
+  conductor?: {
+    id: number;
+    nombre_completo?: string;
+    nombreCompleto?: string;
+    email?: string;
+    dni?: string;
+    telefono?: string;
+    numero_licencia?: string;
+    numeroLicencia?: string;
+    categoria_licencia?: string;
+    categoriaLicencia?: string;
+    estado?: string;
+  } | null;
   ruta?: {
     id: number;
     nombre: string;

@@ -190,11 +190,13 @@ export class BusDetailPanelComponent {
   }
 
   get conductorLicense(): string {
-    return this.bus.conductorInfo?.numeroLicencia || 'Sin registro';
+    const conductor = this.bus.conductorInfo as any;
+    return conductor?.numeroLicencia || conductor?.numero_licencia || 'Sin registro';
   }
 
   get conductorCategory(): string {
-    return this.bus.conductorInfo?.categoriaLicencia || 'Sin registro';
+    const conductor = this.bus.conductorInfo as any;
+    return conductor?.categoriaLicencia || conductor?.categoria_licencia || 'Sin registro';
   }
 
   get conductorStatus(): string {

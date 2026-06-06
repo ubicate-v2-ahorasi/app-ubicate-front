@@ -32,7 +32,6 @@ import { environment } from '../../../../../core/config/environment';
 import { MapDarkModeComponent } from '../map-dark-mode/map-dark-mode';
 import { MAP_DARK_STYLES } from '../map-dark-mode/map-dark-mode.styles';
 import { BusDetailPanelComponent } from '../bus-detail-panel/bus-detail-panel';
-import { BusStopEventsPanelComponent } from '../bus-stop-events-panel/bus-stop-events-panel';
 import { SelectedBusDetails } from '../../../service/bus/bus-marker.service';
 
 @Component({
@@ -46,7 +45,6 @@ import { SelectedBusDetails } from '../../../service/bus/bus-marker.service';
     BusListComponent,
     RouteListComponent,
     BusDetailPanelComponent,
-    BusStopEventsPanelComponent,
     IconsModule,
   ],
   templateUrl: './map-container.html',

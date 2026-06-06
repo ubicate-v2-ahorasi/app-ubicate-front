@@ -1,10 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { BusService } from './bus.service';
-import {
-  ConductorResponse,
-  ConductorService,
-} from '../chofer/chofer.service';
+import { ConductorResponse } from '../chofer/chofer.service';
 import { Bus } from '../../models/buses.model';
 
 export interface BusWithPosition {
@@ -35,7 +32,6 @@ export interface SelectedBusDetails extends BusWithPosition {
 @Injectable({ providedIn: 'root' })
 export class BusMarkerService {
   private busService = inject(BusService);
-  private conductorService = inject(ConductorService);
 
   private busMarkers = new Map<string, google.maps.Marker>();
   private geocoder: google.maps.Geocoder | null = null;
@@ -407,7 +403,7 @@ export class BusMarkerService {
 
     try {
       const busInfo = await firstValueFrom(this.busService.getBusById(numericBusId));
-      const conductorInfo = await this.resolveConductorForBus(busInfo, numericBusId);
+      const conductorInfo = this.resolveConductorFromBus(busInfo);
       const conductorName = conductorInfo
         ? this.formatConductorName(conductorInfo)
         : this.extractConductorName(busInfo) || bus.conductor;
@@ -428,36 +424,19 @@ export class BusMarkerService {
     }
   }
 
-  private async resolveConductorForBus(
-    busInfo: any,
-    busId: number
-  ): Promise<ConductorResponse | null> {
-    const conductorFromBus = busInfo?.conductor ?? busInfo?.chofer ?? null;
+  private resolveConductorFromBus(busInfo: any): ConductorResponse | null {
+    const conductorFromBus =
+      busInfo?.conductor ??
+      busInfo?.conductor_asignado ??
+      busInfo?.conductorAsignado ??
+      busInfo?.chofer ??
+      null;
+
     if (conductorFromBus && typeof conductorFromBus === 'object') {
       return conductorFromBus as ConductorResponse;
     }
 
-    const conductorId = this.extractConductorId(busInfo);
-    if (conductorId) {
-      return firstValueFrom(this.conductorService.getConductorById(conductorId));
-    }
-
-    const conductores = await firstValueFrom(
-      this.conductorService.getConductores(0, 1000, 'fechaIngreso,desc')
-    );
-    const content = (conductores?.content ?? []) as any[];
-    return (
-      content.find((conductor) => {
-        const assignedBusId =
-          conductor.busAsignadoId ??
-          conductor.bus_asignado_id ??
-          conductor.busAsignado?.id ??
-          conductor.bus_asignado?.id ??
-          null;
-
-        return Number(assignedBusId) === busId;
-      }) ?? null
-    );
+    return null;
   }
 
   private extractConductorId(busInfo: any): number | null {
