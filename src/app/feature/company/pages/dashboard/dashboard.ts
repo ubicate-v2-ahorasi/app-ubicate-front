@@ -3,13 +3,12 @@ import { Stats } from '../../components/dashboard/stats/stats';
 import { MapContainerComponent } from '../../components/dashboard/map-container/map-container';
 import { CommonModule } from '@angular/common';
 import { BusDetailPanelComponent } from '../../components/dashboard/bus-detail-panel/bus-detail-panel';
-import { BusStopEventsPanelComponent } from '../../components/dashboard/bus-stop-events-panel/bus-stop-events-panel';
 import { BusMarkerService, SelectedBusDetails } from '../../service/bus/bus-marker.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [Stats, MapContainerComponent, CommonModule, BusDetailPanelComponent, BusStopEventsPanelComponent],
+  imports: [Stats, MapContainerComponent, CommonModule, BusDetailPanelComponent],
   templateUrl: './dashboard.html',
 })
 export class Dashboard implements OnInit {
