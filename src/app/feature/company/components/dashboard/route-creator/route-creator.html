@@ -121,7 +121,8 @@
 
 <div
   *ngIf="isCreatingRoute && !hasOrigin"
-  class="absolute left-1/2 top-12 z-35 -translate-x-1/2 rounded-lg bg-green-600 px-4 py-2 text-white shadow-lg"
+  class="absolute left-1/2 z-35 -translate-x-1/2 rounded-lg bg-green-600 px-4 py-2 text-white shadow-lg"
+  [ngClass]="showBelowBusSearch ? 'top-[7.5rem]' : 'top-4'"
 >
   <div class="flex items-center gap-2">
     <div class="h-3 w-3 animate-pulse rounded-full bg-white"></div>
