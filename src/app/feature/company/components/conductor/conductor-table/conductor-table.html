@@ -19,13 +19,12 @@
           <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider">Email</th>
           <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider">Contacto</th>
           <th class="px-4 py-2 text-left text-xs font-medium text-white uppercase tracking-wider">Vigencia</th>
-          <th class="px-4 py-2 text-right text-xs font-medium text-white uppercase tracking-wider">Acciones</th>
         </tr>
       </thead>
 
       <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 transition-colors">
         <tr *ngIf="conductores.length === 0">
-          <td colspan="8" class="px-6 py-12 text-center">
+          <td colspan="7" class="px-6 py-12 text-center">
             <div class="flex flex-col items-center">
               <svg class="w-12 h-12 text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor"
                 viewBox="0 0 24 24">
@@ -71,7 +70,7 @@
                 <option [ngValue]="null">Sin bus asignado</option>
                 <option *ngFor="let bus of busesDisponibles" [ngValue]="bus.id"
                   [disabled]="bus.conductorAsignadoId && bus.conductorAsignadoId !== conductor.id">
-                  {{ bus.placa }} - {{ bus.modelo || '—' }}
+                  {{ bus.placa }} - {{ bus.modelo || '-' }}
                 </option>
               </select>
             </div>
@@ -132,27 +131,14 @@
               </span>
             </div>
           </td>
-
-          <td class="px-4 py-3 whitespace-nowrap text-right">
-            <button type="button" (click)="onOpenPasswordModal(conductor, $event)"
-              class="inline-flex h-9 w-9 items-center justify-center rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              title="Cambiar contraseña">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M15 7a2 2 0 1 1 4 0 2 2 0 0 1-4 0zM7 14l8.586-8.586a2 2 0 1 1 2.828 2.828L9.828 16.828a2 2 0 0 1-1.414.586H6v-2.414A2 2 0 0 1 7 14z" />
-              </svg>
-            </button>
-          </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Footer de paginación corregido -->
   <div *ngIf="!loading && conductores.length > 0"
     class="bg-gray-50 dark:bg-gray-900 px-4 py-3 border-t border-gray-200 dark:border-gray-700 transition-colors">
     <div class="flex items-center justify-between">
-      <!-- Izquierda: mensaje en dos líneas -->
       <div>
         <div class="text-sm text-gray-700 dark:text-gray-300">
           <p class="mb-1">Se encontraron <strong class="text-[#040E1C] dark:text-white">{{ totalElements }}</strong>
@@ -162,9 +148,7 @@
         </div>
       </div>
 
-      <!-- Derecha: Filas por página / Página X de Y / flechas -->
       <div class="flex items-center gap-4">
-        <!-- Filas por página -->
         <div class="flex items-center gap-2">
           <label class="text-xs text-gray-600 dark:text-gray-400">Filas por página</label>
           <select [(ngModel)]="pageSize" (change)="onPageSizeChange()"
@@ -176,12 +160,10 @@
           </select>
         </div>
 
-        <!-- Página X de Y -->
         <div class="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
           Página {{ currentPage }} de {{ totalPages }}
         </div>
 
-        <!-- Botones flecha (únicos) -->
         <div class="flex items-center space-x-2">
           <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1"
             class="p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
@@ -211,56 +193,3 @@
 <app-conductor-edit-modal [isVisible]="showEditModal" [conductor]="selectedConductor" [buses]="busesDisponibles"
   (onCancel)="onCancelEdit()" (onSave)="onConfirmEdit()" (onDelete)="onDeleteFromEdit()">
 </app-conductor-edit-modal>
-
-<div *ngIf="showPasswordModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
-  (click)="onCancelPasswordChange()">
-  <div class="w-full max-w-md rounded-lg bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700"
-    (click)="$event.stopPropagation()">
-    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700">
-      <div>
-        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Cambiar contraseña</h3>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ selectedConductor?.nombreCompleto }}</p>
-      </div>
-      <button type="button" (click)="onCancelPasswordChange()"
-        class="inline-flex h-8 w-8 items-center justify-center rounded text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
-        title="Cerrar">
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-    </div>
-
-    <div class="px-5 py-4 space-y-4">
-      <div *ngIf="passwordErrorMessage" class="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-        {{ passwordErrorMessage }}
-      </div>
-      <div *ngIf="passwordSuccessMessage"
-        class="rounded border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-700">
-        {{ passwordSuccessMessage }}
-      </div>
-
-      <label class="block">
-        <span class="text-sm font-medium text-gray-700 dark:text-gray-200">Nueva contraseña</span>
-        <input type="password" [(ngModel)]="newPassword" autocomplete="new-password"
-          class="mt-1 w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#040E1C]" />
-      </label>
-
-      <label class="block">
-        <span class="text-sm font-medium text-gray-700 dark:text-gray-200">Confirmar contraseña</span>
-        <input type="password" [(ngModel)]="confirmPassword" autocomplete="new-password"
-          class="mt-1 w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#040E1C]" />
-      </label>
-    </div>
-
-    <div class="flex justify-end gap-3 px-5 py-4 border-t border-gray-200 dark:border-gray-700">
-      <button type="button" (click)="onCancelPasswordChange()" [disabled]="changingPassword"
-        class="rounded border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-60">
-        Cancelar
-      </button>
-      <button type="button" (click)="onConfirmPasswordChange()" [disabled]="changingPassword"
-        class="rounded bg-[#040E1C] px-4 py-2 text-sm font-semibold text-white hover:bg-[#061936] disabled:opacity-60">
-        {{ changingPassword ? 'Guardando...' : 'Guardar' }}
-      </button>
-    </div>
-  </div>
-</div>

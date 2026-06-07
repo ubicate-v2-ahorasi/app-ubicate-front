@@ -52,6 +52,7 @@ export class ConductorTable implements OnInit {
 
   @Output() onCreateNew = new EventEmitter<void>();
   @Output() onDataChanged = new EventEmitter<void>();
+
   formErrorMessage: string | null = null;
   conductores: ConductorVM[] = [];
   busesDisponibles: BusVM[] = [];
@@ -68,13 +69,7 @@ export class ConductorTable implements OnInit {
   currentSortDirection: SortDirection = 'desc';
   showDeleteModal = false;
   showEditModal = false;
-  showPasswordModal = false;
   selectedConductor: ConductorVM | null = null;
-  newPassword = '';
-  confirmPassword = '';
-  passwordErrorMessage: string | null = null;
-  passwordSuccessMessage: string | null = null;
-  changingPassword = false;
 
   Math = Math;
 
@@ -147,15 +142,14 @@ export class ConductorTable implements OnInit {
     this.loading = true;
     const requestedPage = this.currentPage;
 
-    // Se pasa solo el estado si no es 'Todos'
     this.conductorService
       .getConductores(
         requestedPage,
         this.pageSize,
         'fechaIngreso,desc',
         this.currentSearchTerm,
-        this.currentEstado !== 'Todos' ? this.currentEstado : undefined, // Solo pasa el estado si no es 'Todos'
-        this.currentCategoria !== 'Todas' ? this.currentCategoria : undefined // Asegurarse de que la categoría se pasa correctamente
+        this.currentEstado !== 'Todos' ? this.currentEstado : undefined,
+        this.currentCategoria !== 'Todas' ? this.currentCategoria : undefined
       )
       .subscribe({
         next: (response: any) => {
@@ -286,8 +280,9 @@ export class ConductorTable implements OnInit {
 
         if (prevBusId) {
           const prevBus = this.busesDisponibles.find((b) => b.id === prevBusId);
-          if (prevBus && prevBus.conductorAsignadoId === conductor.id)
+          if (prevBus && prevBus.conductorAsignadoId === conductor.id) {
             prevBus.conductorAsignadoId = null;
+          }
         }
         if (newBusId) {
           const nextBus = this.busesDisponibles.find((b) => b.id === newBusId);
@@ -298,10 +293,7 @@ export class ConductorTable implements OnInit {
         this.loadingBusAssignment[conductor.id] = false;
       },
       error: (err) => {
-        // Asignamos el mensaje de error a la propiedad 'formErrorMessage'
-        this.formErrorMessage = err.message; // Aquí puedes asignar el mensaje de error
-
-        // Restauramos el bus asignado si ocurre un error
+        this.formErrorMessage = err.message;
         this.selectedBusByConductor[conductor.id] = prevBusId;
         this.loadingBusAssignment[conductor.id] = false;
       },
@@ -317,7 +309,11 @@ export class ConductorTable implements OnInit {
     }
 
     const target = event.target as HTMLElement;
-    if (target.tagName === 'SELECT' || target.closest('select') || target.closest('button')) {
+    if (
+      target.tagName === 'SELECT' ||
+      target.closest('select') ||
+      target.closest('button')
+    ) {
       return;
     }
 
@@ -333,61 +329,6 @@ export class ConductorTable implements OnInit {
   onDelete(conductor: ConductorVM) {
     this.selectedConductor = conductor;
     this.showDeleteModal = true;
-  }
-
-  onOpenPasswordModal(conductor: ConductorVM, event?: MouseEvent) {
-    event?.stopPropagation();
-    this.selectedConductor = conductor;
-    this.newPassword = '';
-    this.confirmPassword = '';
-    this.passwordErrorMessage = null;
-    this.passwordSuccessMessage = null;
-    this.showPasswordModal = true;
-  }
-
-  onCancelPasswordChange() {
-    if (this.changingPassword) return;
-    this.showPasswordModal = false;
-    this.selectedConductor = null;
-    this.newPassword = '';
-    this.confirmPassword = '';
-    this.passwordErrorMessage = null;
-    this.passwordSuccessMessage = null;
-  }
-
-  onConfirmPasswordChange() {
-    if (!this.selectedConductor || this.changingPassword) return;
-
-    const password = this.newPassword.trim();
-    this.passwordErrorMessage = null;
-    this.passwordSuccessMessage = null;
-
-    if (password.length < 8) {
-      this.passwordErrorMessage = 'La contraseña debe tener al menos 8 caracteres.';
-      return;
-    }
-    if (!/[A-Z]/.test(password) || !/\d/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
-      this.passwordErrorMessage = 'Debe incluir una mayúscula, un número y un carácter especial.';
-      return;
-    }
-    if (password !== this.confirmPassword.trim()) {
-      this.passwordErrorMessage = 'Las contraseñas no coinciden.';
-      return;
-    }
-
-    this.changingPassword = true;
-    this.conductorService.changePassword(this.selectedConductor.id, password).subscribe({
-      next: () => {
-        this.changingPassword = false;
-        this.passwordSuccessMessage = 'Contraseña actualizada correctamente.';
-        setTimeout(() => this.onCancelPasswordChange(), 700);
-      },
-      error: (err) => {
-        this.changingPassword = false;
-        this.passwordErrorMessage =
-          err?.error?.message ?? err?.message ?? 'No se pudo actualizar la contraseña.';
-      },
-    });
   }
 
   onCancelEdit() {

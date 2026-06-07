@@ -8,7 +8,15 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { ConductorService } from '../../../service/chofer/chofer.service';
 
 @Component({
@@ -30,8 +38,13 @@ export class ConductorEditModal implements OnInit, OnChanges {
 
   conductorForm!: FormGroup;
   isSubmitting = false;
+  changingPassword = false;
+  passwordErrorMessage: string | null = null;
+  passwordSuccessMessage: string | null = null;
+  showPassword = false;
+  showConfirmPassword = false;
+  showPasswordSection = false;
 
-  // Opciones para selects
   estados = ['ACTIVO', 'INACTIVO', 'VACACIONES', 'SUSPENDIDO'];
 
   ngOnInit() {
@@ -45,11 +58,24 @@ export class ConductorEditModal implements OnInit, OnChanges {
   }
 
   initForm() {
-    this.conductorForm = this.fb.group({
-      telefono: ['', [Validators.required, Validators.pattern(/^\d{9}$/), Validators.maxLength(9)]],
-      estado: ['ACTIVO'],
-      busAsignadoId: [null],
-    });
+    this.conductorForm = this.fb.group(
+      {
+        telefono: [
+          '',
+          [Validators.required, Validators.pattern(/^\d{9}$/), Validators.maxLength(9)],
+        ],
+        estado: ['ACTIVO'],
+        busAsignadoId: [null],
+        password: [
+          '',
+          [Validators.minLength(8), Validators.pattern(/^(?=.*\d)(?=.*[^A-Za-z0-9])(?=.*[A-Z]).+$/)],
+        ],
+        confirmPassword: [''],
+      },
+      {
+        validators: [this.matchPasswordsValidator('password', 'confirmPassword')],
+      }
+    );
   }
 
   populateForm() {
@@ -58,7 +84,16 @@ export class ConductorEditModal implements OnInit, OnChanges {
         telefono: this.conductor.telefono || '',
         estado: this.conductor.estado || 'ACTIVO',
         busAsignadoId: this.conductor.busAsignadoId || null,
+        password: '',
+        confirmPassword: '',
       });
+      this.passwordErrorMessage = null;
+      this.passwordSuccessMessage = null;
+      this.showPassword = false;
+      this.showConfirmPassword = false;
+      this.showPasswordSection = false;
+      this.conductorForm.get('password')?.markAsPristine();
+      this.conductorForm.get('confirmPassword')?.markAsPristine();
     }
   }
 
@@ -67,7 +102,14 @@ export class ConductorEditModal implements OnInit, OnChanges {
       telefono: '',
       estado: 'ACTIVO',
       busAsignadoId: null,
+      password: '',
+      confirmPassword: '',
     });
+    this.passwordErrorMessage = null;
+    this.passwordSuccessMessage = null;
+    this.showPassword = false;
+    this.showConfirmPassword = false;
+    this.showPasswordSection = false;
   }
 
   cancel() {
@@ -76,38 +118,149 @@ export class ConductorEditModal implements OnInit, OnChanges {
   }
 
   onSubmit() {
-    if (!this.isSubmitting && this.conductor) {
+    if (!this.isSubmitting && this.conductor && this.canSubmitProfile) {
       this.isSubmitting = true;
       const formData = this.conductorForm.value;
 
       this.conductorService
-        .updateConductor(this.conductor.id, formData)
+        .updateConductor(this.conductor.id, {
+          telefono: formData.telefono,
+          estado: formData.estado,
+          busAsignadoId: formData.busAsignadoId,
+        })
         .subscribe({
           next: () => {
             this.isSubmitting = false;
-            this.resetForm();
+            this.resetPasswordFields();
             this.onSave.emit();
           },
-          error: (error) => {
+          error: () => {
             this.isSubmitting = false;
           },
         });
     }
   }
 
+  onChangePassword() {
+    if (!this.conductor || this.changingPassword || !this.canSubmitPassword) {
+      this.markPasswordFieldsTouched();
+      return;
+    }
+
+    this.changingPassword = true;
+    this.passwordErrorMessage = null;
+    this.passwordSuccessMessage = null;
+
+    const password = this.conductorForm.get('password')?.value;
+    this.conductorService.changePassword(this.conductor.id, password).subscribe({
+      next: () => {
+        this.changingPassword = false;
+        this.passwordSuccessMessage = 'Contraseña actualizada correctamente.';
+        this.resetPasswordFields();
+      },
+      error: (err) => {
+        this.changingPassword = false;
+        this.passwordErrorMessage =
+          err?.error?.message ?? err?.message ?? 'No se pudo actualizar la contraseña.';
+      },
+    });
+  }
+
   get submitButtonText(): string {
     return this.isSubmitting ? 'Actualizando...' : 'Actualizar Conductor';
+  }
+
+  get canSubmitProfile(): boolean {
+    return (
+      !!this.conductorForm.get('telefono')?.valid &&
+      !!this.conductorForm.get('estado')?.valid
+    );
+  }
+
+  get canSubmitPassword(): boolean {
+    const passwordControl = this.conductorForm.get('password');
+    const confirmControl = this.conductorForm.get('confirmPassword');
+    const password = passwordControl?.value as string;
+    const confirm = confirmControl?.value as string;
+
+    if (!password && !confirm) return false;
+
+    return !!password && !!confirm && !passwordControl?.invalid && !this.conductorForm.errors?.['passwordsMismatch'];
+  }
+
+  get passwordValue(): string {
+    return (this.conductorForm.get('password')?.value as string) || '';
+  }
+
+  get hasMinLength(): boolean {
+    return this.passwordValue.length >= 8;
+  }
+
+  get hasNumber(): boolean {
+    return /\d/.test(this.passwordValue);
+  }
+
+  get hasSymbol(): boolean {
+    return /[^A-Za-z0-9]/.test(this.passwordValue);
+  }
+
+  get hasUppercase(): boolean {
+    return /[A-Z]/.test(this.passwordValue);
   }
 
   deleteClick() {
     this.onDelete.emit();
   }
 
+  togglePasswordSection() {
+    this.showPasswordSection = !this.showPasswordSection;
+
+    if (!this.showPasswordSection) {
+      this.passwordErrorMessage = null;
+      this.passwordSuccessMessage = null;
+      this.showPassword = false;
+      this.showConfirmPassword = false;
+      this.resetPasswordFields();
+    }
+  }
+
   onlyNumbers(event: KeyboardEvent): void {
     const key = event.key;
-    // Permitir teclas de control (backspace, delete, arrows, etc.)
     if (key.length === 1 && !/^\d$/.test(key)) {
       event.preventDefault();
     }
+  }
+
+  private resetPasswordFields() {
+    this.conductorForm.patchValue({
+      password: '',
+      confirmPassword: '',
+    });
+    this.conductorForm.get('password')?.markAsPristine();
+    this.conductorForm.get('password')?.markAsUntouched();
+    this.conductorForm.get('confirmPassword')?.markAsPristine();
+    this.conductorForm.get('confirmPassword')?.markAsUntouched();
+  }
+
+  private markPasswordFieldsTouched() {
+    this.conductorForm.get('password')?.markAsTouched();
+    this.conductorForm.get('confirmPassword')?.markAsTouched();
+  }
+
+  private matchPasswordsValidator(passwordKey: string, confirmKey: string): ValidatorFn {
+    return (group: AbstractControl): ValidationErrors | null => {
+      const password = group.get(passwordKey)?.value;
+      const confirmPassword = group.get(confirmKey)?.value;
+
+      if (!password && !confirmPassword) {
+        return null;
+      }
+
+      if (!password || !confirmPassword) {
+        return { passwordsMismatch: true };
+      }
+
+      return password === confirmPassword ? null : { passwordsMismatch: true };
+    };
   }
 }
