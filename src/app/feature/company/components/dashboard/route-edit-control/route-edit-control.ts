@@ -1,4 +1,4 @@
-import { Component, inject, Output, EventEmitter } from '@angular/core';
+import { Component, inject, Output, EventEmitter, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouteEditorService } from '../../../service/route/route-editor.service';
 import { IconsModule } from '../../../icons.module';
@@ -8,7 +8,11 @@ import { IconsModule } from '../../../icons.module';
   standalone: true,
   imports: [CommonModule, IconsModule],
   template: `
-    <div class="edit-control" *ngIf="editor.isEditing()">
+    <div
+      class="edit-control"
+      [class.edit-control-below-bus-search]="showBelowBusSearch"
+      *ngIf="editor.isEditing()"
+    >
       <div class="edit-info">
         <lucide-icon name="edit-3" class="w-4 h-4"></lucide-icon>
         <span>Editando ruta #{{ editor.getEditingRouteId() }}</span>
@@ -32,7 +36,7 @@ import { IconsModule } from '../../../icons.module';
   styles: [`
     .edit-control {
       position: absolute;
-      top: 60px;
+      top: 16px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 1000;
@@ -44,6 +48,10 @@ import { IconsModule } from '../../../icons.module';
       border-radius: 10px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
       font-family: 'Segoe UI', sans-serif;
+    }
+
+    .edit-control-below-bus-search {
+      top: 7.5rem;
     }
 
     .edit-info {
@@ -120,6 +128,7 @@ import { IconsModule } from '../../../icons.module';
   `]
 })
 export class RouteEditControlComponent {
+  @Input() showBelowBusSearch = false;
   editor = inject(RouteEditorService);
   @Output() changesSaved = new EventEmitter<void>();
 
