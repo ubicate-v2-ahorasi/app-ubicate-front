@@ -393,7 +393,7 @@ export class MapContainerComponent implements OnDestroy, OnInit {
       )
       .subscribe((route) => {
         if (route) {
-          this.routeMapService.showRouteOnMap(route, this.safeGoogleMap!);
+          void this.renderRouteWithStops(route);
         }
         this.showRouteList = false;
       });
@@ -591,16 +591,30 @@ export class MapContainerComponent implements OnDestroy, OnInit {
       );
 
       if (cachedRoute) {
-        this.routeMapService.showRouteOnMap(cachedRoute, this.safeGoogleMap);
+        void this.renderRouteWithStops(cachedRoute);
       } else {
         this.routeMapService
           .getById(this.selectedRouteId)
           .subscribe((route) => {
             if (this.safeGoogleMap) {
-              this.routeMapService.showRouteOnMap(route, this.safeGoogleMap);
+              void this.renderRouteWithStops(route);
             }
           });
       }
+    }
+  }
+
+  private async renderRouteWithStops(route: RouteResponse): Promise<void> {
+    if (!this.safeGoogleMap) {
+      return;
+    }
+
+    await this.routeMapService.showRouteOnMap(route, this.safeGoogleMap);
+
+    try {
+      await this.routeMapService.showRouteStopsOnMap(route, this.safeGoogleMap);
+    } catch (error) {
+      console.error('[MapContainer] No se pudieron cargar las paradas de la ruta', error);
     }
   }
 

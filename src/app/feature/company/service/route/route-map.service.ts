@@ -4,12 +4,13 @@ import {
   Observable,
   catchError,
   finalize,
+  firstValueFrom,
   of,
   tap,
   map,
 } from 'rxjs';
 import { RouteService, EstadoRuta } from './route.service';
-import { RouteResponse } from '../../models/route.model';
+import { RouteResponse, RouteStopResponse } from '../../models/route.model';
 
 type AnyMarker = google.maps.marker.AdvancedMarkerElement | google.maps.Marker;
 
@@ -31,7 +32,8 @@ export class RouteMapService {
       polyline?: google.maps.Polyline; 
       animatedPolyline?: google.maps.Polyline;
       origin?: AnyMarker; 
-      dest?: AnyMarker 
+      dest?: AnyMarker;
+      stops?: google.maps.Marker[];
     }
   >();
 
@@ -186,6 +188,14 @@ export class RouteMapService {
     this.rendered.set(route.id, { polyline, animatedPolyline, origin, dest });
   }
 
+  async showRouteStopsOnMap(
+    route: RouteResponse,
+    map: google.maps.Map
+  ): Promise<void> {
+    const stops = await firstValueFrom(this.api.getRouteStops(route.id));
+    this.renderStopsOnMap(route.id, stops, map, route.color_hex || '#7C3AED');
+  }
+
   clearRouteFromMap(routeId: number): void {
     const r = this.rendered.get(routeId);
     if (r) {
@@ -202,6 +212,7 @@ export class RouteMapService {
       else (r.origin as google.maps.Marker | undefined)?.setMap(null);
       if ((r.dest as any)?.map !== undefined) (r.dest as any).map = null;
       else (r.dest as google.maps.Marker | undefined)?.setMap(null);
+      r.stops?.forEach((marker) => marker.setMap(null));
       this.rendered.delete(routeId);
     }
   }
@@ -333,5 +344,78 @@ export class RouteMapService {
       this.showAddressOnMarkerClick(marker, title)
     );
     return marker;
+  }
+
+  private renderStopsOnMap(
+    routeId: number,
+    stops: RouteStopResponse[],
+    map: google.maps.Map,
+    fallbackColor: string
+  ): void {
+    const renderedRoute = this.rendered.get(routeId);
+    if (!renderedRoute) {
+      return;
+    }
+
+    renderedRoute.stops?.forEach((marker) => marker.setMap(null));
+
+    const stopMarkers = stops
+      .sort((a, b) => a.orden - b.orden)
+      .map((stop) => {
+        const marker = new google.maps.Marker({
+          map,
+          position: { lat: stop.latitud, lng: stop.longitud },
+          title: stop.nombre || stop.direccion || `Parada ${stop.orden}`,
+          icon: this.createStopMarkerIcon(
+            stop.color_hex || fallbackColor,
+            stop.orden
+          ),
+          zIndex: 20 + stop.orden,
+        });
+
+        marker.addListener('click', () => {
+          this.showRouteStopInfo(marker, stop);
+        });
+
+        return marker;
+      });
+
+    this.rendered.set(routeId, { ...renderedRoute, stops: stopMarkers });
+  }
+
+  private createStopMarkerIcon(color: string, order: number): google.maps.Icon {
+    const label = String(order).slice(-2);
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'>
+      <circle cx='18' cy='18' r='14' fill='${color}' stroke='white' stroke-width='3'/>
+      <text x='18' y='22' text-anchor='middle' font-size='13' font-weight='700' fill='white'>${label}</text>
+    </svg>`;
+
+    return {
+      url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`,
+      scaledSize: new google.maps.Size(36, 36),
+      anchor: new google.maps.Point(18, 18),
+    };
+  }
+
+  private showRouteStopInfo(
+    marker: google.maps.Marker,
+    stop: RouteStopResponse
+  ): void {
+    this.ensureInfoHelpers();
+    const title = stop.nombre || `Parada ${stop.orden}`;
+    const detail =
+      stop.direccion ||
+      `Lat ${stop.latitud.toFixed(6)}, Lng ${stop.longitud.toFixed(6)}`;
+
+    this.infoWindow!.setContent(
+      `<div style="padding: 4px; max-width: 190px; color: #1f2937; font-family: Arial, sans-serif;">
+        <div style="font-weight: 700; font-size: 12px; margin-bottom: 4px;">${title}</div>
+        <div style="font-size: 11px; line-height: 1.35;">${detail}</div>
+      </div>`
+    );
+    this.infoWindow!.open({
+      anchor: marker,
+      map: marker.getMap() as google.maps.Map,
+    });
   }
 }
