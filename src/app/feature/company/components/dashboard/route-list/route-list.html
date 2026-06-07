@@ -1,6 +1,6 @@
 <div
   *ngIf="isVisible"
-  class="absolute left-4 z-30 max-h-80 w-80 overflow-hidden rounded-lg bg-white shadow-xl"
+  class="absolute left-4 z-30 max-h-80 w-80 overflow-hidden rounded-lg bg-white shadow-xl dark:bg-slate-900 dark:shadow-black/30"
   [ngClass]="showBelowBusSearch ? 'top-[7.5rem]' : 'top-14'"
 >
   <div class="flex items-center justify-between bg-[#021133] p-2.5 text-white">
@@ -10,33 +10,33 @@
     </button>
   </div>
 
-  <div *ngIf="error" class="border-l-4 border-red-400 bg-red-50 p-2.5 text-xs text-red-700">{{error}}</div>
+  <div *ngIf="error" class="border-l-4 border-red-400 bg-red-50 p-2.5 text-xs text-red-700 dark:bg-red-950/40 dark:text-red-300">{{error}}</div>
 
   <div *ngIf="loading" class="p-3 text-center">
     <div class="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-blue-600"></div>
-    <p class="mt-1.5 text-xs text-gray-600">Cargando rutas...</p>
+    <p class="mt-1.5 text-xs text-gray-600 dark:text-slate-300">Cargando rutas...</p>
   </div>
 
   <div *ngIf="!loading" class="max-h-64 overflow-y-auto">
-    <div *ngIf="routes.length === 0" class="p-3 text-center text-xs text-gray-500">No hay rutas disponibles</div>
+    <div *ngIf="routes.length === 0" class="p-3 text-center text-xs text-gray-500 dark:text-slate-400">No hay rutas disponibles</div>
 
     <div *ngFor="let route of routes; trackBy: trackByRoute" (click)="onSelectRoute(route)"
-      class="cursor-pointer border-b border-gray-100 p-2.5 transition-colors hover:bg-gray-50"
+      class="cursor-pointer border-b border-gray-100 p-2.5 transition-colors hover:bg-gray-50 dark:border-slate-800 dark:hover:bg-slate-800/70"
       [class.opacity-50]="route.estado !== 'ACTIVA'">
       <div class="flex items-start justify-between">
         <div class="flex min-w-0 flex-1 items-start gap-2">
           <div [style.background-color]="route.color_hex"
-            class="mt-0.5 h-3 w-3 flex-shrink-0 rounded border border-gray-300"></div>
+            class="mt-0.5 h-3 w-3 flex-shrink-0 rounded border border-gray-300 dark:border-slate-600"></div>
           <div class="min-w-0 flex-1">
             <div class="mb-0.5 flex items-center gap-1.5">
-              <div class="truncate text-xs font-medium text-gray-900">{{route.nombre}}</div>
-              <span class="flex-shrink-0 rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-600">
+               <div class="truncate text-xs font-medium text-gray-900 dark:text-slate-100">{{route.nombre}}</div>
+               <span class="flex-shrink-0 rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-600 dark:bg-slate-800 dark:text-slate-300">
                 {{route.codigo}}
               </span>
             </div>
-            <div class="mb-0.5 truncate text-[10px] text-gray-500">{{getOriginDestination(route)}}</div>
-            <div class="truncate text-[10px] text-gray-400">{{getRouteInfo(route)}}</div>
-            <div class="mt-0.5 text-[10px] text-gray-400">Creada: {{formatDate(route.fecha_creacion)}}</div>
+             <div class="mb-0.5 truncate text-[10px] text-gray-500 dark:text-slate-400">{{getOriginDestination(route)}}</div>
+             <div class="truncate text-[10px] text-gray-400 dark:text-slate-500">{{getRouteInfo(route)}}</div>
+             <div class="mt-0.5 text-[10px] text-gray-400 dark:text-slate-500">Creada: {{formatDate(route.fecha_creacion)}}</div>
           </div>
         </div>
         <div class="ml-1.5 flex flex-shrink-0 flex-col gap-1">

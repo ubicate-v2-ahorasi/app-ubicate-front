@@ -7,7 +7,7 @@ const isProduction =
   process.env.NODE_ENV === 'production' ||
   process.env.npm_lifecycle_event === 'build:prod';
 
-const DEFAULT_API = isProduction ? 'https://ubicate.codlyp.website/api' : 'http://localhost:8080/api';
+const DEFAULT_API = isProduction ? 'https://ubicate.codlyp.website/api' : 'https://ubicate.codlyp.website/api';
 const DEFAULT_WS = isProduction ? 'https://ubicate.codlyp.website/ws-tracking' : 'http://localhost:8080/ws-tracking';
 
 const apiCore = process.env.API_CORE || DEFAULT_API;
