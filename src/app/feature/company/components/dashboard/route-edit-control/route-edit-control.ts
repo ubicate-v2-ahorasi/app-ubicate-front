@@ -16,8 +16,8 @@ import { IconsModule } from '../../../icons.module';
       <div class="edit-info">
         <lucide-icon name="edit-3" class="w-4 h-4"></lucide-icon>
         <span>Editando ruta #{{ editor.getEditingRouteId() }}</span>
-        <span class="hint" *ngIf="editor.isLoading$ | async">• Calculando ruta...</span>
-        <span class="hint" *ngIf="!(editor.isLoading$ | async)">• Arrastra los puntos A/B</span>
+        <span class="hint" *ngIf="editor.isLoading$ | async">Calculando ruta...</span>
+        <span class="hint" *ngIf="!(editor.isLoading$ | async)">Arrastra los puntos A/B</span>
       </div>
 
       <div class="edit-actions">
@@ -43,10 +43,12 @@ import { IconsModule } from '../../../icons.module';
       display: flex;
       align-items: center;
       gap: 16px;
-      background: #1f2937;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(148, 163, 184, 0.28);
       padding: 10px 16px;
       border-radius: 10px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.16);
+      backdrop-filter: blur(10px);
       font-family: 'Segoe UI', sans-serif;
     }
 
@@ -54,19 +56,33 @@ import { IconsModule } from '../../../icons.module';
       top: 7.5rem;
     }
 
+    :host-context(.dark) .edit-control {
+      background: rgba(15, 23, 42, 0.94);
+      border-color: rgba(71, 85, 105, 0.7);
+      box-shadow: 0 12px 30px rgba(2, 6, 23, 0.38);
+    }
+
     .edit-info {
       display: flex;
       align-items: center;
       gap: 8px;
-      color: #60a5fa;
+      color: #1d4ed8;
       font-weight: 600;
       font-size: 13px;
     }
 
+    :host-context(.dark) .edit-info {
+      color: #93c5fd;
+    }
+
     .hint {
-      color: #9ca3af;
+      color: #64748b;
       font-weight: 400;
       font-size: 12px;
+    }
+
+    :host-context(.dark) .hint {
+      color: #94a3b8;
     }
 
     .edit-actions {
@@ -79,7 +95,7 @@ import { IconsModule } from '../../../icons.module';
       align-items: center;
       gap: 5px;
       padding: 6px 12px;
-      border: none;
+      border: 1px solid transparent;
       border-radius: 6px;
       font-size: 13px;
       font-weight: 500;
@@ -88,18 +104,30 @@ import { IconsModule } from '../../../icons.module';
     }
 
     .btn-discard {
-      background: #374151;
-      color: #9ca3af;
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      color: #334155;
     }
 
     .btn-discard:hover:not(:disabled) {
-      background: #4b5563;
-      color: #e5e7eb;
+      background: #f1f5f9;
+      color: #0f172a;
     }
 
     .btn-discard:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+
+    :host-context(.dark) .btn-discard {
+      background: #334155;
+      border-color: #475569;
+      color: #cbd5e1;
+    }
+
+    :host-context(.dark) .btn-discard:hover:not(:disabled) {
+      background: #475569;
+      color: #f8fafc;
     }
 
     .btn-save {
@@ -112,9 +140,14 @@ import { IconsModule } from '../../../icons.module';
     }
 
     .btn-save:disabled {
-      background: #4b5563;
-      color: #9ca3af;
+      background: #cbd5e1;
+      color: #64748b;
       cursor: not-allowed;
+    }
+
+    :host-context(.dark) .btn-save:disabled {
+      background: #475569;
+      color: #94a3b8;
     }
 
     .animate-spin {
