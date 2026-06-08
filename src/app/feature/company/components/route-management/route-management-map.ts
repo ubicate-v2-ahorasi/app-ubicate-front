@@ -351,7 +351,7 @@ export class RouteManagementMapComponent implements OnInit, OnDestroy {
           lat: stop.latitud,
           lng: stop.longitud,
         }).index,
-        isCollapsed: false,
+        isCollapsed: true,
       }))
       .sort((a, b) => a.orden - b.orden);
   }
