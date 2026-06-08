@@ -88,6 +88,8 @@ export class BusDetailPanelComponent {
   @Output() closed = new EventEmitter<void>();
 
   isDarkMode$ = this.themeService.isDarkMode$;
+  isBusExpanded = true;
+  isConductorExpanded = false;
 
   get animationKey(): string {
     return String(this.bus?.id ?? '');
@@ -152,16 +154,6 @@ export class BusDetailPanelComponent {
     return [marca, modelo].filter(Boolean).join(' ') || 'Sin registro';
   }
 
-  get busCapacity(): string {
-    const capacidad = this.bus.busInfo?.capacidad;
-    return capacidad != null ? `${capacidad} pasajeros` : 'Sin registro';
-  }
-
-  get busYear(): string {
-    const anio = this.bus.busInfo?.anio;
-    return anio != null ? String(anio) : 'Sin registro';
-  }
-
   get routeName(): string {
     const ruta = this.bus.busInfo?.ruta ?? this.bus.ruta;
     if (!ruta) {
@@ -189,21 +181,15 @@ export class BusDetailPanelComponent {
     return this.bus.conductorInfo?.telefono || 'Sin registro';
   }
 
-  get conductorLicense(): string {
-    const conductor = this.bus.conductorInfo as any;
-    return conductor?.numeroLicencia || conductor?.numero_licencia || 'Sin registro';
-  }
-
-  get conductorCategory(): string {
-    const conductor = this.bus.conductorInfo as any;
-    return conductor?.categoriaLicencia || conductor?.categoria_licencia || 'Sin registro';
-  }
-
-  get conductorStatus(): string {
-    return this.bus.conductorInfo?.estado || 'Sin registro';
-  }
-
   get hasConductorInfo(): boolean {
     return !!this.bus.conductorInfo;
+  }
+
+  toggleConductorCard(): void {
+    this.isConductorExpanded = !this.isConductorExpanded;
+  }
+
+  toggleBusCard(): void {
+    this.isBusExpanded = !this.isBusExpanded;
   }
 }

@@ -25,6 +25,7 @@ import {
   ArrowLeft,
   Save,
   MapPinned,
+  ChevronDown,
 } from 'lucide-angular';
 
 const icons = {
@@ -51,6 +52,7 @@ const icons = {
   ArrowLeft,
   Save,
   MapPinned,
+  ChevronDown,
 };
 
 @NgModule({

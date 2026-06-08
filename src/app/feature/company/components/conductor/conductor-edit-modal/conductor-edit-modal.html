@@ -59,7 +59,7 @@
         <button type="button" (click)="togglePasswordSection()"
           class="flex w-full items-center justify-between gap-3 text-left">
           <div>
-            <h4 class="text-sm font-semibold text-[#040E1C] dark:text-white">Cambiar contrasena</h4>
+            <h4 class="text-sm font-semibold text-[#040E1C] dark:text-white">Cambiar contraseña</h4>
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
               Despliega esta seccion solo cuando necesites actualizar la clave.
             </p>
@@ -84,7 +84,7 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Nueva contrasena</label>
+              <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Nueva contraseña</label>
               <div class="relative">
                 <input [type]="showPassword ? 'text' : 'password'" formControlName="password"
                   class="w-full px-3 py-2 pr-10 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
@@ -103,7 +103,7 @@
               <div *ngIf="conductorForm.get('password')?.errors && conductorForm.get('password')?.touched"
                 class="text-red-500 dark:text-red-400 text-xs mt-1">Debe cumplir los requisitos</div>
               <div class="mt-2 text-[11px] space-y-1">
-                <p class="text-gray-600 dark:text-gray-400">La contrasena debe tener:</p>
+                <p class="text-gray-600 dark:text-gray-400">La contraseña debe tener:</p>
                 <ul class="space-y-1">
                   <li [class]="hasMinLength ? 'text-green-600 dark:text-green-400' : 'text-gray-600 dark:text-gray-400'" class="flex items-center gap-2">
                     <span class="inline-flex h-4 w-4 items-center justify-center rounded-full border" [class]="hasMinLength ? 'border-green-600 text-green-600 dark:border-green-400 dark:text-green-400' : 'border-gray-300 text-gray-400 dark:border-gray-600 dark:text-gray-500'">
@@ -142,7 +142,7 @@
             </div>
 
             <div>
-              <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Confirmar contrasena</label>
+              <label class="block text-xs font-medium text-[#040E1C] dark:text-gray-300 mb-1">Confirmar contraseña</label>
               <div class="relative">
                 <input [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword"
                   class="w-full px-3 py-2 pr-10 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#132137] transition-all"
@@ -159,11 +159,11 @@
                 </button>
               </div>
               <div *ngIf="conductorForm.errors?.['passwordsMismatch'] && conductorForm.get('confirmPassword')?.touched"
-                class="text-red-500 dark:text-red-400 text-xs mt-1">Las contrasenas no coinciden</div>
+                class="text-red-500 dark:text-red-400 text-xs mt-1">Las contraseñas no coinciden</div>
 
               <button type="button" (click)="onChangePassword()" [disabled]="changingPassword || !canSubmitPassword"
                 class="mt-4 w-full px-4 py-2.5 text-sm font-medium text-white bg-[#040E1C] dark:bg-gray-600 border border-transparent rounded-lg hover:bg-[#021133] dark:hover:bg-gray-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                {{ changingPassword ? 'Actualizando contrasena...' : 'Cambiar contrasena' }}
+                {{ changingPassword ? 'Actualizando contraseña...' : 'Cambiar contraseña' }}
               </button>
             </div>
           </div>
