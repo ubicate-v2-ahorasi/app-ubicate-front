@@ -8,11 +8,15 @@ import { RouteResponse } from '../../../models/route.model';
 import { BusDeleteModal } from '../bus-delete-modal/bus-delete-modal';
 import { BusFilter, BusFilterCriteria } from '../bus-filter/bus-filter';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import {
+  AnimatedSelectComponent,
+  AnimatedSelectOption,
+} from '../../shared/animated-select/animated-select';
 
 @Component({
   selector: 'app-bus-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, BusDeleteModal],
+  imports: [CommonModule, FormsModule, BusDeleteModal, AnimatedSelectComponent],
   templateUrl: './bus-list.html',
 })
 export class BusList implements OnInit {
@@ -46,6 +50,12 @@ export class BusList implements OnInit {
   qrError = signal(false);
 
   readonly ESTADOS = ['ACTIVO', 'INACTIVO', 'EN_RUTA', 'MANTENIMIENTO'] as const;
+  readonly pageSizeOptions: AnimatedSelectOption<number>[] = [
+    { label: '10', value: 10 },
+    { label: '25', value: 25 },
+    { label: '50', value: 50 },
+    { label: '100', value: 100 },
+  ];
 
   Math = Math;
 
@@ -144,6 +154,20 @@ export class BusList implements OnInit {
     const target = event.target as HTMLSelectElement;
     const value = target.value;
     return value && value !== '' ? +value : null;
+  }
+
+  getRouteOptions(): AnimatedSelectOption<string>[] {
+    return this.rutas().map((ruta) => ({
+      label: `${ruta.codigo} - ${ruta.nombre}`,
+      value: ruta.id.toString(),
+    }));
+  }
+
+  getEstadoOptions(): AnimatedSelectOption<string>[] {
+    return this.ESTADOS.map((estado) => ({
+      label: this.getEstadoLabel(estado),
+      value: estado,
+    }));
   }
 
   openDeleteModal(bus: Bus) {

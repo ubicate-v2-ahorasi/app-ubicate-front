@@ -18,11 +18,15 @@ import {
   Validators,
 } from '@angular/forms';
 import { ConductorService } from '../../../service/chofer/chofer.service';
+import {
+  AnimatedSelectComponent,
+  AnimatedSelectOption,
+} from '../../shared/animated-select/animated-select';
 
 @Component({
   selector: 'app-conductor-edit-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, AnimatedSelectComponent],
   templateUrl: './conductor-edit-modal.html',
 })
 export class ConductorEditModal implements OnInit, OnChanges {
@@ -46,6 +50,20 @@ export class ConductorEditModal implements OnInit, OnChanges {
   showPasswordSection = false;
 
   estados = ['ACTIVO', 'INACTIVO', 'VACACIONES', 'SUSPENDIDO'];
+  get estadoOptions(): AnimatedSelectOption<string>[] {
+    return this.estados.map((estado) => ({ label: estado, value: estado }));
+  }
+
+  get busOptions(): AnimatedSelectOption<number | null>[] {
+    return [
+      { label: 'Sin bus asignado', value: null },
+      ...this.buses.map((bus) => ({
+        label: `${bus.placa} - ${bus.modelo || '-'}`,
+        value: bus.id,
+        disabled: !!(bus.conductorAsignadoId && bus.conductorAsignadoId !== this.conductor?.id),
+      })),
+    ];
+  }
 
   ngOnInit() {
     this.initForm();

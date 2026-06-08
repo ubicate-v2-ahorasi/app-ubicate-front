@@ -9,9 +9,9 @@ interface EnvironmentConfig {
 }
 
 export const environment: EnvironmentConfig = {
-  production: false,
+  production: true,
   apiCore: 'https://ubicate.codlyp.website/api',
-  wsUrl: 'http://localhost:8080/ws-tracking',
+  wsUrl: 'https://ubicate.codlyp.website/ws-tracking',
   googleMaps: {
     mapId: undefined,
     darkMapId: undefined,

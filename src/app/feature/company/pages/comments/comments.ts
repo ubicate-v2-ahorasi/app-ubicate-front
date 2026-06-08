@@ -3,6 +3,10 @@ import { FirebaseService } from '../../../../core/service/firebase.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import {
+  AnimatedSelectComponent,
+  AnimatedSelectOption,
+} from '../../components/shared/animated-select/animated-select';
 
 export interface Comment {
   id: string;
@@ -20,7 +24,7 @@ export interface Comment {
 @Component({
   selector: 'app-comments',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AnimatedSelectComponent],
   templateUrl: './comments.html',
   styleUrls: ['./comments.css'],
 })
@@ -70,6 +74,12 @@ export class Comments implements OnInit, OnDestroy {
     { value: '3', label: '⭐⭐⭐ (3 estrellas)' },
     { value: '2', label: '⭐⭐ (2 estrellas)' },
     { value: '1', label: '⭐ (1 estrella)' },
+  ];
+  pageSizeOptions: AnimatedSelectOption<number>[] = [
+    { label: '10', value: 10 },
+    { label: '25', value: 25 },
+    { label: '50', value: 50 },
+    { label: '100', value: 100 },
   ];
 
   constructor(private firebaseService: FirebaseService) {}

@@ -119,19 +119,19 @@
     <!-- Filtro por Rating -->
     <div class="flex-1 min-w-[150px]">
       <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Calificación</label>
-      <select [(ngModel)]="selectedRating" (change)="onRatingChange(selectedRating)"
-        class="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors">
-        <option *ngFor="let rating of ratingOptions" [value]="rating.value">{{ rating.label }}</option>
-      </select>
+      <app-animated-select [(ngModel)]="selectedRating" (ngModelChange)="onRatingChange(selectedRating)"
+        [options]="ratingOptions"
+        [triggerClass]="'flex w-full items-center justify-between gap-2 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-left transition-colors dark:border-gray-600 dark:bg-gray-700 dark:text-white'">
+      </app-animated-select>
     </div>
 
     <!-- Filtro por Estado -->
     <div class="flex-1 min-w-[150px]">
       <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Estado</label>
-      <select [(ngModel)]="selectedStatus" (change)="onStatusChange(selectedStatus)"
-        class="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors">
-        <option *ngFor="let status of statusOptions" [value]="status.value">{{ status.label }}</option>
-      </select>
+      <app-animated-select [(ngModel)]="selectedStatus" (ngModelChange)="onStatusChange(selectedStatus)"
+        [options]="statusOptions"
+        [triggerClass]="'flex w-full items-center justify-between gap-2 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-left transition-colors dark:border-gray-600 dark:bg-gray-700 dark:text-white'">
+      </app-animated-select>
     </div>
 
     <!-- Botón Limpiar -->
@@ -344,13 +344,10 @@
         </div>
         <div class="flex items-center gap-2">
           <label class="text-xs text-gray-600 dark:text-gray-400">Filas por página:</label>
-          <select [(ngModel)]="pageSize" (change)="onPageSizeChange()"
-            class="px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 dark:text-white">
-            <option [value]="10">10</option>
-            <option [value]="25">25</option>
-            <option [value]="50">50</option>
-            <option [value]="100">100</option>
-          </select>
+          <app-animated-select [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange()"
+            [options]="pageSizeOptions"
+            [triggerClass]="'flex min-w-[84px] items-center justify-between gap-2 rounded border border-gray-300 bg-white px-2 py-1 text-sm text-left dark:border-gray-600 dark:bg-gray-700 dark:text-white'">
+          </app-animated-select>
         </div>
       </div>
       <div class="flex space-x-1">

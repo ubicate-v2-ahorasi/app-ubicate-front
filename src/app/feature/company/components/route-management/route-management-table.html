@@ -40,15 +40,12 @@
 
     <div class="w-full sm:w-44">
       <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Estado</label>
-      <select
+      <app-animated-select
         [ngModel]="selectedEstado"
         (ngModelChange)="onEstadoChange($event)"
-        class="w-full px-2.5 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 dark:text-white transition-all"
-      >
-        <option value="TODAS">Todas las rutas</option>
-        <option value="ACTIVA">Activas</option>
-        <option value="INACTIVA">Inactivas</option>
-      </select>
+        [options]="estadoOptions"
+        [triggerClass]="'flex w-full items-center justify-between gap-2 rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-sm text-left text-gray-700 transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white'"
+      ></app-animated-select>
     </div>
 
     <div class="w-full sm:w-auto flex items-end gap-2">
@@ -236,16 +233,12 @@
       <div class="flex items-center gap-4">
         <div class="flex items-center gap-2">
           <label class="text-xs text-gray-600 dark:text-gray-400">Filas por pagina</label>
-          <select
+          <app-animated-select
             [ngModel]="pageSize"
             (ngModelChange)="onPageSizeChange($event)"
-            class="ml-2 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 dark:text-white"
-          >
-            <option [value]="10">10</option>
-            <option [value]="25">25</option>
-            <option [value]="50">50</option>
-            <option [value]="100">100</option>
-          </select>
+            [options]="pageSizeOptions"
+            [triggerClass]="'ml-2 flex min-w-[84px] items-center justify-between gap-2 rounded border border-gray-300 bg-white px-2 py-1 text-sm text-left dark:border-gray-600 dark:bg-gray-800 dark:text-white'"
+          ></app-animated-select>
         </div>
 
         <div class="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">

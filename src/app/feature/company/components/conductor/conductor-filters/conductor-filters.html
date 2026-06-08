@@ -1,9 +1,7 @@
-<!-- Filtros y Búsqueda -->
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-4 transition-colors">
 
   <div class="flex flex-col sm:flex-row items-end gap-3">
 
-    <!-- Búsqueda -->
     <div class="flex-1 min-w-0">
       <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Buscar</label>
       <div class="relative">
@@ -17,26 +15,24 @@
       </div>
     </div>
 
-    <!-- Estado -->
     <div class="w-full sm:w-40">
       <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Estado</label>
-      <select [(ngModel)]="selectedEstado" (change)="onEstadoSelect()"
-        class="w-full px-2.5 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 dark:text-white transition-all">
-        <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
-      </select>
+      <app-animated-select
+        [(ngModel)]="selectedEstado"
+        (valueChange)="onEstadoSelect()"
+        [options]="estadoOptions"
+      ></app-animated-select>
     </div>
 
-    <!-- Categoría -->
     <div class="w-full sm:w-40">
-      <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Categoría</label>
-      <select [(ngModel)]="selectedCategoria" (change)="onCategoriaSelect()"
-        class="w-full px-2.5 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 dark:text-white transition-all">
-        <option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria }}</option>
-      </select>
+      <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Categoria</label>
+      <app-animated-select
+        [(ngModel)]="selectedCategoria"
+        (valueChange)="onCategoriaSelect()"
+        [options]="categoriaOptions"
+      ></app-animated-select>
     </div>
 
-
-    <!-- Botón Limpiar -->
     <div class="w-full sm:w-auto flex items-end gap-2">
       <button *ngIf="hasActiveFilters()" type="button" (click)="clearAllFilters()" title="Limpiar filtros" aria-label="Limpiar filtros"
         class="h-9 w-9 inline-flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors">
@@ -64,7 +60,6 @@
       </button>
     </div>
 
-    <!-- Botón Nuevo Conductor -->
     <div class="w-full sm:w-auto flex items-end">
       <button (click)="createNewConductor()"
         class="w-full sm:w-auto h-9 bg-gradient-to-r from-[#040E1C] to-[#021133] dark:from-gray-700 dark:to-gray-600 hover:opacity-90 text-white font-medium px-4 text-sm rounded-lg transition-all duration-200 inline-flex items-center justify-center gap-2 shadow-sm hover:shadow-md whitespace-nowrap">

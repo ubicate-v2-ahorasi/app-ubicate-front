@@ -1,6 +1,10 @@
 import { Component, Output, EventEmitter, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import {
+  AnimatedSelectComponent,
+  AnimatedSelectOption,
+} from '../../shared/animated-select/animated-select';
 
 export interface BusFilterCriteria {
   search: string;
@@ -11,7 +15,7 @@ export interface BusFilterCriteria {
 @Component({
   selector: 'app-bus-filter',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AnimatedSelectComponent],
   templateUrl: './bus-filter.html',
 })
 export class BusFilter {
@@ -21,6 +25,14 @@ export class BusFilter {
   searchTerm = signal('');
   selectedEstado = signal('');
   selectedRuta = signal<number | null>(null);
+
+  estadoOptions: AnimatedSelectOption<string>[] = [
+    { label: 'Todos los estados', value: '' },
+    { label: 'Activo', value: 'ACTIVO' },
+    { label: 'Inactivo', value: 'INACTIVO' },
+    { label: 'En Ruta', value: 'EN_RUTA' },
+    { label: 'Mantenimiento', value: 'MANTENIMIENTO' },
+  ];
 
   hasActiveFilters(): boolean {
     return !!(

@@ -9,13 +9,17 @@ import {
   RouteManagementMapComponent,
   RouteManagementMode,
 } from './route-management-map';
+import {
+  AnimatedSelectComponent,
+  AnimatedSelectOption,
+} from '../shared/animated-select/animated-select';
 
 type RouteStatusFilter = 'TODAS' | 'ACTIVA' | 'INACTIVA';
 
 @Component({
   selector: 'app-route-management-table',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconsModule, RouteManagementMapComponent],
+  imports: [CommonModule, FormsModule, IconsModule, RouteManagementMapComponent, AnimatedSelectComponent],
   templateUrl: './route-management-table.html',
 })
 export class RouteManagementTable implements OnInit {
@@ -31,6 +35,17 @@ export class RouteManagementTable implements OnInit {
   pageSize = 10;
   activeView: 'table' | RouteManagementMode = 'table';
   selectedRoute: RouteResponse | null = null;
+  readonly estadoOptions: AnimatedSelectOption<RouteStatusFilter>[] = [
+    { label: 'Todas las rutas', value: 'TODAS' },
+    { label: 'Activas', value: 'ACTIVA' },
+    { label: 'Inactivas', value: 'INACTIVA' },
+  ];
+  readonly pageSizeOptions: AnimatedSelectOption<number>[] = [
+    { label: '10', value: 10 },
+    { label: '25', value: 25 },
+    { label: '50', value: 50 },
+    { label: '100', value: 100 },
+  ];
 
   ngOnInit() {
     this.loadRoutes();

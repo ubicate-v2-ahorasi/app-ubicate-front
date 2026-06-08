@@ -64,15 +64,11 @@
 
           <td class="px-4 py-3 whitespace-nowrap">
             <div class="space-y-1">
-              <select [(ngModel)]="selectedBusByConductor[conductor.id]"
-                (ngModelChange)="onBusAssignment(conductor, $event)" (click)="$event.stopPropagation()"
-                class="text-xs font-medium px-2 py-1 rounded border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-[#040E1C] bg-white dark:bg-gray-700 dark:text-white transition-all w-full min-w-[220px]">
-                <option [ngValue]="null">Sin bus asignado</option>
-                <option *ngFor="let bus of busesDisponibles" [ngValue]="bus.id"
-                  [disabled]="bus.conductorAsignadoId && bus.conductorAsignadoId !== conductor.id">
-                  {{ bus.placa }} - {{ bus.modelo || '-' }}
-                </option>
-              </select>
+              <app-animated-select [(ngModel)]="selectedBusByConductor[conductor.id]"
+                (ngModelChange)="onBusAssignment(conductor, $event)"
+                [options]="getBusOptions(conductor)"
+                [triggerClass]="'flex w-full min-w-[220px] items-center justify-between gap-2 rounded border border-gray-300 bg-white px-2 py-1 text-xs font-medium text-left transition-all dark:border-gray-600 dark:bg-gray-700 dark:text-white'">
+              </app-animated-select>
             </div>
           </td>
 
@@ -151,13 +147,10 @@
       <div class="flex items-center gap-4">
         <div class="flex items-center gap-2">
           <label class="text-xs text-gray-600 dark:text-gray-400">Filas por página</label>
-          <select [(ngModel)]="pageSize" (change)="onPageSizeChange()"
-            class="ml-1 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 dark:text-white">
-            <option [value]="10">10</option>
-            <option [value]="25">25</option>
-            <option [value]="50">50</option>
-            <option [value]="100">100</option>
-          </select>
+          <app-animated-select [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange()"
+            [options]="pageSizeOptions"
+            [triggerClass]="'ml-1 flex min-w-[82px] items-center justify-between gap-2 rounded border border-gray-300 bg-white px-2 py-1 text-sm text-left dark:border-gray-600 dark:bg-gray-800 dark:text-white'">
+          </app-animated-select>
         </div>
 
         <div class="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">

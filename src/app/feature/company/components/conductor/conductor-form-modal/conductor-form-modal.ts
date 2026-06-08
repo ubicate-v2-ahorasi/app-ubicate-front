@@ -16,11 +16,15 @@ import { ConductorService } from '../../../service/chofer/chofer.service';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DatePickerModule } from 'primeng/datepicker';
+import {
+  AnimatedSelectComponent,
+  AnimatedSelectOption,
+} from '../../shared/animated-select/animated-select';
 
 @Component({
   selector: 'app-conductor-form-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DatePickerModule],
+  imports: [CommonModule, ReactiveFormsModule, DatePickerModule, AnimatedSelectComponent],
   templateUrl: './conductor-form-modal.html',
 })
 export class ConductorFormModal implements OnInit {
@@ -44,6 +48,12 @@ export class ConductorFormModal implements OnInit {
   formErrorDetails: { [key: string]: any } | null = null;
 
   categorias = ['A1', 'A2A', 'A2B', 'A3A', 'A3B', 'A3C'];
+  get categoriaOptions(): AnimatedSelectOption<string>[] {
+    return [
+      { label: 'Seleccionar categoria', value: '' },
+      ...this.categorias.map((categoria) => ({ label: categoria, value: categoria })),
+    ];
+  }
 
   private onlyLettersValidator(control: any) {
     const value = control.value;

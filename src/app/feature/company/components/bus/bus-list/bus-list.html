@@ -116,16 +116,13 @@
             </div>
             }
 
-            <select 
+            <app-animated-select 
               [ngModel]="bus.ruta?.id?.toString() || ''" 
               (ngModelChange)="onRutaChange(bus, $event ? +$event : null)"
-              class="text-xs font-medium px-2 py-1 rounded border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-[#040E1C] bg-white dark:bg-gray-700 dark:text-white transition-all w-full"
+              [options]="getRouteOptions()"
+              [triggerClass]="'flex w-full items-center justify-between gap-2 rounded border border-gray-300 bg-white px-2 py-1 text-xs font-medium text-left dark:border-gray-600 dark:bg-gray-700 dark:text-white'"
               [disabled]="updatingRutaId() === bus.id || rutasLoading()">
-
-              <option *ngFor="let ruta of rutas()" [value]="ruta.id.toString()">
-                {{ ruta.codigo }} - {{ ruta.nombre }}
-              </option>
-            </select>
+            </app-animated-select>
 
             @if (updatingRutaId() === bus.id) {
             <div class="text-xs text-blue-600 mt-1 flex items-center">
@@ -142,15 +139,12 @@
 
           <td class="px-4 py-3 whitespace-nowrap">
             <div class="flex items-center">
-              <select [ngModel]="bus.estado" (ngModelChange)="onEstadoChange(bus, $event)"
-                class="text-xs font-medium px-2 py-1 rounded-full border-0 focus:ring-2 focus:ring-[#040E1C] transition-all"
-                [class]="getEstadoBadge(bus.estado)" [disabled]="updatingId() === bus.id">
-                @for (estado of ESTADOS; track estado) {
-                <option [value]="estado">
-                  {{ getEstadoLabel(estado) }}
-                </option>
-                }
-              </select>
+              <app-animated-select [ngModel]="bus.estado" (ngModelChange)="onEstadoChange(bus, $event)"
+                [options]="getEstadoOptions()"
+                [triggerClass]="'flex items-center justify-between gap-2 rounded-full px-2 py-1 text-xs font-medium border-0 transition-all min-w-[140px] ' + getEstadoBadge(bus.estado)"
+                [panelClass]="'absolute z-20 mt-2 w-full min-w-[180px] overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-600 dark:bg-gray-700'"
+                [disabled]="updatingId() === bus.id">
+              </app-animated-select>
               @if (updatingId() === bus.id) {
               <svg class="animate-spin ml-2 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -209,13 +203,10 @@
       <div class="flex items-center gap-4">
         <div class="flex items-center gap-2">
           <label class="text-xs text-gray-600 dark:text-gray-400">Filas por página</label>
-          <select [ngModel]="pageSize()" (ngModelChange)="onPageSizeChange($event)"
-            class="ml-2 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 dark:text-white">
-            <option [value]="10">10</option>
-            <option [value]="25">25</option>
-            <option [value]="50">50</option>
-            <option [value]="100">100</option>
-          </select>
+          <app-animated-select [ngModel]="pageSize()" (ngModelChange)="onPageSizeChange($event)"
+            [options]="pageSizeOptions"
+            [triggerClass]="'ml-2 flex min-w-[84px] items-center justify-between gap-2 rounded border border-gray-300 bg-white px-2 py-1 text-sm text-left dark:border-gray-600 dark:bg-gray-800 dark:text-white'">
+          </app-animated-select>
         </div>
 
         <div class="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">

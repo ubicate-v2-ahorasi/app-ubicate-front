@@ -16,11 +16,15 @@ import {
 } from '@angular/forms';
 import { BusService } from '../../../service/bus/bus.service';
 import { Bus } from '../../../models/buses.model';
+import {
+  AnimatedSelectComponent,
+  AnimatedSelectOption,
+} from '../../shared/animated-select/animated-select';
 
 @Component({
   selector: 'app-bus-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, AnimatedSelectComponent],
   templateUrl: './bus-create.html',
 })
 export class BusCreate implements OnInit {
@@ -37,6 +41,37 @@ export class BusCreate implements OnInit {
   isEdit = false;
   formErrorMessage: string | null = null;
   formErrorDetails: any | null = null;
+  readonly yearOptions: AnimatedSelectOption<string>[] = [
+    { label: 'Año', value: '' },
+    { label: '2024', value: '2024' },
+    { label: '2023', value: '2023' },
+    { label: '2022', value: '2022' },
+    { label: '2021', value: '2021' },
+    { label: '2020', value: '2020' },
+    { label: '2019', value: '2019' },
+    { label: '2018', value: '2018' },
+    { label: '2017', value: '2017' },
+    { label: '2016', value: '2016' },
+    { label: '2015', value: '2015' },
+  ];
+  readonly brandOptions: AnimatedSelectOption<string>[] = [
+    { label: 'Marca', value: '' },
+    { label: 'Mercedes Benz', value: 'Mercedes Benz' },
+    { label: 'Volvo', value: 'Volvo' },
+    { label: 'Scania', value: 'Scania' },
+    { label: 'Iveco', value: 'Iveco' },
+    { label: 'Hyundai', value: 'Hyundai' },
+    { label: 'Yutong', value: 'Yutong' },
+    { label: 'King Long', value: 'King Long' },
+    { label: 'Marcopolo', value: 'Marcopolo' },
+    { label: 'Otra', value: 'Otra' },
+  ];
+  readonly estadoOptions: AnimatedSelectOption<string>[] = [
+    { label: 'Activo - Disponible para servicio', value: 'ACTIVO' },
+    { label: 'Inactivo - Fuera de servicio', value: 'INACTIVO' },
+    { label: 'En Mantenimiento', value: 'MANTENIMIENTO' },
+    { label: 'En Ruta - Prestando servicio', value: 'EN_RUTA' },
+  ];
 
   // Validadores personalizados
   private plateValidator(control: any) {

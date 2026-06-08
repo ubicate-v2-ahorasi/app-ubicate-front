@@ -9,6 +9,10 @@ import {
 } from '../conductor-filters/conductor-filters';
 import { ConductorService } from '../../../service/chofer/chofer.service';
 import { BusService } from '../../../service/bus/bus.service';
+import {
+  AnimatedSelectComponent,
+  AnimatedSelectOption,
+} from '../../shared/animated-select/animated-select';
 
 type Estado = 'ACTIVO' | 'INACTIVO' | 'VACACIONES' | 'SUSPENDIDO';
 
@@ -43,6 +47,7 @@ interface BusVM {
     ConductorDeleteModal,
     ConductorEditModal,
     ConductorFilters,
+    AnimatedSelectComponent,
   ],
   templateUrl: './conductor-table.html',
 })
@@ -70,6 +75,12 @@ export class ConductorTable implements OnInit {
   showDeleteModal = false;
   showEditModal = false;
   selectedConductor: ConductorVM | null = null;
+  readonly pageSizeOptions: AnimatedSelectOption<number>[] = [
+    { label: '10', value: 10 },
+    { label: '25', value: 25 },
+    { label: '50', value: 50 },
+    { label: '100', value: 100 },
+  ];
 
   Math = Math;
 
@@ -227,6 +238,17 @@ export class ConductorTable implements OnInit {
   onPageSizeChange(): void {
     this.currentPage = 1;
     this.loadConductores();
+  }
+
+  getBusOptions(conductor: ConductorVM): AnimatedSelectOption<number | null>[] {
+    return [
+      { label: 'Sin bus asignado', value: null },
+      ...this.busesDisponibles.map((bus) => ({
+        label: `${bus.placa} - ${bus.modelo || '-'}`,
+        value: bus.id,
+        disabled: !!(bus.conductorAsignadoId && bus.conductorAsignadoId !== conductor.id),
+      })),
+    ];
   }
 
   getPages(): number[] {
