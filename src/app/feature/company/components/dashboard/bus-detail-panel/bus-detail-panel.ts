@@ -78,6 +78,22 @@ import { ThemeService } from '../../../../../core/service/theme.service';
         ),
       ]),
     ]),
+    trigger('sectionCollapse', [
+      transition(':enter', [
+        style({ height: 0, opacity: 0, overflow: 'hidden' }),
+        animate(
+          '220ms cubic-bezier(0.22, 1, 0.36, 1)',
+          style({ height: '*', opacity: 1, overflow: 'hidden' })
+        ),
+      ]),
+      transition(':leave', [
+        style({ height: '*', opacity: 1, overflow: 'hidden' }),
+        animate(
+          '180ms cubic-bezier(0.4, 0, 1, 1)',
+          style({ height: 0, opacity: 0, overflow: 'hidden' })
+        ),
+      ]),
+    ]),
   ],
 })
 export class BusDetailPanelComponent {

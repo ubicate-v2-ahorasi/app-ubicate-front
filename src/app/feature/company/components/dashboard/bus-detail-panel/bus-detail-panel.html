@@ -92,22 +92,15 @@
         </span>
       </button>
 
-      <div *ngIf="isBusExpanded" class="space-y-2">
-        <div class="flex items-start justify-between gap-4">
-          <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Placa</span>
-          <span class="text-right font-medium" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
-            {{ bus.placa || 'Sin registro' }}
-          </span>
-        </div>
-
-        <div class="flex items-start justify-between gap-4">
+      <div *ngIf="isBusExpanded" @sectionCollapse class="space-y-2">
+        <div class="detail-row flex items-start justify-between gap-4">
           <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Modelo</span>
           <span class="max-w-[156px] text-right font-medium leading-5" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
             {{ busBrandModel }}
           </span>
         </div>
 
-        <div class="flex items-start justify-between gap-4">
+        <div class="detail-row flex items-start justify-between gap-4">
           <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Ruta</span>
           <span class="max-w-[156px] text-right font-medium leading-5" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
             {{ routeName }}
@@ -144,23 +137,16 @@
         </span>
       </button>
 
-      <div *ngIf="isConductorExpanded" class="mt-3 space-y-2">
-        <div class="flex items-start justify-between gap-4">
-          <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Nombre</span>
-          <span class="max-w-[156px] text-right font-medium leading-5" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
-            {{ conductorName }}
-          </span>
-        </div>
-
+      <div *ngIf="isConductorExpanded" @sectionCollapse class="mt-3 space-y-2">
         <ng-container *ngIf="hasConductorInfo">
-          <div class="flex items-start justify-between gap-4">
+          <div class="detail-row flex items-start justify-between gap-4">
             <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">DNI</span>
             <span class="text-right font-medium" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
               {{ conductorDni }}
             </span>
           </div>
 
-          <div class="flex items-start justify-between gap-4">
+          <div class="detail-row flex items-start justify-between gap-4">
             <span [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'">Telefono</span>
             <span class="text-right font-medium" [ngClass]="(isDarkMode$ | async) ? 'text-slate-100' : 'text-slate-900'">
               {{ conductorPhone }}
