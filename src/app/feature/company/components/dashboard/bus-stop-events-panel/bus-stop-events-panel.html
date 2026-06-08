@@ -10,14 +10,7 @@
       ? 'border-b border-white/6 bg-gradient-to-r from-[#0E1D35] to-[#0A1424]'
       : 'border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white'"
   >
-    <h3 class="text-xs font-semibold">Cruce de paradas</h3>
-    <button
-      type="button"
-      class="text-xs transition-colors"
-      [ngClass]="(isDarkMode$ | async) ? 'text-blue-300 hover:text-blue-200' : 'text-blue-600 hover:text-blue-700'"
-    >
-      Ver todos
-    </button>
+    <h3 class="text-xs font-semibold">Paradas de la ruta</h3>
   </div>
 
   <div class="max-h-[260px] overflow-y-auto px-4 py-2">
@@ -26,7 +19,7 @@
       class="py-6 text-center text-xs"
       [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'"
     >
-      Cargando eventos de paradas...
+      Cargando paradas de la ruta...
     </div>
 
     <div
@@ -34,7 +27,7 @@
       class="py-6 text-center text-xs"
       [ngClass]="(isDarkMode$ | async) ? 'text-slate-400' : 'text-slate-500'"
     >
-      Aún no hay registros de paso por paradas para este bus.
+      Esta ruta aun no tiene paradas registradas.
     </div>
 
     <div
@@ -46,7 +39,7 @@
         class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs"
         [ngClass]="(isDarkMode$ | async) ? getToneClasses(event.tone) : getToneClassesLight(event.tone)"
       >
-        <span>•</span>
+        <span>{{ event.crossed ? 'OK' : '-' }}</span>
       </div>
 
       <div class="min-w-0 flex-1">

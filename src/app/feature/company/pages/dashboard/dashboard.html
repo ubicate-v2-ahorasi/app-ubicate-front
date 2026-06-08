@@ -32,6 +32,11 @@
             [bus]="selectedBus"
             (closed)="closeSelectedBus()"
           ></app-bus-detail-panel>
+          <app-bus-stop-events-panel
+            *ngIf="selectedRouteId || selectedBus.ruta?.id"
+            [bus]="selectedBus"
+            [routeId]="selectedRouteId"
+          ></app-bus-stop-events-panel>
         </div>
       </div>
     </div>
@@ -65,6 +70,11 @@
               [bus]="selectedBus"
               (closed)="closeSelectedBus()"
             ></app-bus-detail-panel>
+            <app-bus-stop-events-panel
+              *ngIf="selectedRouteId || selectedBus.ruta?.id"
+              [bus]="selectedBus"
+              [routeId]="selectedRouteId"
+            ></app-bus-stop-events-panel>
           </div>
         </div>
       </div>

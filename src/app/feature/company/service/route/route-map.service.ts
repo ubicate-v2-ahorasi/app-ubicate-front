@@ -21,10 +21,12 @@ export class RouteMapService {
   private routesSubject = new BehaviorSubject<RouteResponse[]>([]);
   private loadingSubject = new BehaviorSubject<boolean>(false);
   private errorSubject = new BehaviorSubject<string | null>(null);
+  private selectedRouteIdSubject = new BehaviorSubject<number | null>(null);
 
   routes$ = this.routesSubject.asObservable();
   loading$ = this.loadingSubject.asObservable();
   error$ = this.errorSubject.asObservable();
+  selectedRouteId$ = this.selectedRouteIdSubject.asObservable();
 
   private rendered = new Map<
     number,
@@ -225,6 +227,10 @@ export class RouteMapService {
 
   getRoutes(): RouteResponse[] {
     return this.routesSubject.value;
+  }
+
+  setSelectedRouteId(routeId: number | null): void {
+    this.selectedRouteIdSubject.next(routeId);
   }
 
   private ensureInfoHelpers() {

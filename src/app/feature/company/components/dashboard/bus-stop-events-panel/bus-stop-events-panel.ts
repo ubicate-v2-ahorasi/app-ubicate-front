@@ -8,9 +8,13 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { forkJoin } from 'rxjs';
 import { ThemeService } from '../../../../../core/service/theme.service';
 import { SelectedBusDetails } from '../../../service/bus/bus-marker.service';
-import { RouteStopPassageEvent } from '../../../models/route.model';
+import {
+  RouteStopPassageEvent,
+  RouteStopResponse,
+} from '../../../models/route.model';
 import { RouteService } from '../../../service/route/route.service';
 
 interface StopEventItem {
@@ -18,6 +22,7 @@ interface StopEventItem {
   title: string;
   subtitle: string;
   tone: 'green' | 'blue' | 'violet' | 'red';
+  crossed: boolean;
 }
 
 @Component({
@@ -33,19 +38,20 @@ export class BusStopEventsPanelComponent implements OnChanges {
   private cdr = inject(ChangeDetectorRef);
 
   @Input({ required: true }) bus!: SelectedBusDetails;
+  @Input() routeId: number | null = null;
 
   isDarkMode$ = this.themeService.isDarkMode$;
   loading = false;
   events: StopEventItem[] = [];
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['bus']) {
+    if (changes['bus'] || changes['routeId']) {
       this.loadEvents();
     }
   }
 
   private loadEvents(): void {
-    const routeId = this.bus?.ruta?.id;
+    const routeId = this.routeId ?? this.bus?.ruta?.id;
     const busId = this.bus?.id;
 
     if (!routeId || !busId) {
@@ -57,11 +63,12 @@ export class BusStopEventsPanelComponent implements OnChanges {
     this.loading = true;
     this.cdr.markForCheck();
 
-    this.routeService.getRouteStopEvents(routeId, busId).subscribe({
-      next: (events) => {
-        this.events = events.map((event, index) =>
-          this.mapEventToItem(event, index)
-        );
+    forkJoin({
+      stops: this.routeService.getRouteStops(routeId),
+      passages: this.routeService.getRouteStopEvents(routeId, busId),
+    }).subscribe({
+      next: ({ stops, passages }) => {
+        this.events = this.mapStopsToItems(stops, passages);
         this.loading = false;
         this.cdr.markForCheck();
       },
@@ -73,22 +80,46 @@ export class BusStopEventsPanelComponent implements OnChanges {
     });
   }
 
-  private mapEventToItem(
-    event: RouteStopPassageEvent,
+  private mapStopsToItems(
+    stops: RouteStopResponse[],
+    passages: RouteStopPassageEvent[]
+  ): StopEventItem[] {
+    const latestPassageByStop = new Map<number, RouteStopPassageEvent>();
+
+    for (const passage of passages) {
+      const current = latestPassageByStop.get(passage.route_stop_id);
+      if (
+        !current ||
+        new Date(passage.timestamp).getTime() > new Date(current.timestamp).getTime()
+      ) {
+        latestPassageByStop.set(passage.route_stop_id, passage);
+      }
+    }
+
+    return [...stops]
+      .sort((a, b) => a.orden - b.orden)
+      .map((stop, index) => this.mapStopToItem(stop, latestPassageByStop.get(stop.id), index));
+  }
+
+  private mapStopToItem(
+    stop: RouteStopResponse,
+    passage: RouteStopPassageEvent | undefined,
     index: number
   ): StopEventItem {
-    const tones: StopEventItem['tone'][] = ['blue', 'green', 'violet', 'red'];
+    const tones: StopEventItem['tone'][] = ['blue', 'green', 'violet'];
     const stopName =
-      event.route_stop_nombre ||
-      event.route_stop_direccion ||
-      `Parada ${event.route_stop_orden}`;
+      stop.nombre ||
+      stop.direccion ||
+      `Parada ${stop.orden}`;
 
     return {
-      time: this.formatTime(event.timestamp),
-      title: `Paso por ${stopName}`,
-      subtitle:
-        event.conductor?.trim() || this.bus?.conductor?.trim() || this.bus?.placa,
-      tone: tones[index % tones.length],
+      time: passage ? this.formatTime(passage.timestamp) : 'Pendiente',
+      title: `${stop.orden}. ${stopName}`,
+      subtitle: passage
+        ? passage.conductor?.trim() || this.bus?.conductor?.trim() || this.bus?.placa
+        : 'Sin cruce registrado',
+      tone: passage ? 'green' : tones[index % tones.length],
+      crossed: !!passage,
     };
   }
 
