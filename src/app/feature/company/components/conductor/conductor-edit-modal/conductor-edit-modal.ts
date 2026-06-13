@@ -92,7 +92,6 @@ export class ConductorEditModal implements OnInit, OnChanges {
           [Validators.required, Validators.pattern(/^\d{9}$/), Validators.maxLength(9)],
         ],
         estado: ['ACTIVO'],
-        busAsignadoId: [null],
         password: [
           '',
           [Validators.minLength(8), Validators.pattern(/^(?=.*\d)(?=.*[^A-Za-z0-9])(?=.*[A-Z]).+$/)],
@@ -113,7 +112,6 @@ export class ConductorEditModal implements OnInit, OnChanges {
       this.conductorForm.patchValue({
         telefono: this.conductor.telefono || '',
         estado: this.conductor.estado || 'ACTIVO',
-        busAsignadoId: this.conductor.busAsignadoId || null,
         password: '',
         confirmPassword: '',
         numeroLicencia: this.conductor.numeroLicencia || '',
@@ -140,7 +138,6 @@ export class ConductorEditModal implements OnInit, OnChanges {
     this.conductorForm.reset({
       telefono: '',
       estado: 'ACTIVO',
-      busAsignadoId: null,
       password: '',
       confirmPassword: '',
       numeroLicencia: '',
@@ -171,7 +168,6 @@ export class ConductorEditModal implements OnInit, OnChanges {
         .updateConductor(this.conductor.id, {
           telefono: formData.telefono,
           estado: formData.estado,
-          busAsignadoId: formData.busAsignadoId,
         })
         .subscribe({
           next: () => {
