@@ -24,6 +24,7 @@ interface ConductorVM {
   telefono: string | null;
   numeroLicencia: string;
   categoriaLicencia: string;
+  fechaVencimientoLicencia: string | null;
   estado: Estado;
   busAsignadoId: number | null;
   placaBusAsignado: string | null;
@@ -97,6 +98,8 @@ export class ConductorTable implements OnInit {
     telefono: c.telefono ?? null,
     numeroLicencia: c.numeroLicencia ?? c.numero_licencia,
     categoriaLicencia: c.categoriaLicencia ?? c.categoria_licencia,
+    fechaVencimientoLicencia:
+      c.fechaVencimientoLicencia ?? c.fecha_vencimiento_licencia ?? null,
     estado: c.estado as Estado,
     busAsignadoId: c.busAsignadoId ?? c.bus_asignado_id ?? null,
     placaBusAsignado: (() => {
@@ -339,13 +342,26 @@ export class ConductorTable implements OnInit {
       return;
     }
 
-    this.selectedConductor = conductor;
-    this.showEditModal = true;
+    this.openEditModal(conductor);
   }
 
   onEdit(conductor: ConductorVM) {
+    this.openEditModal(conductor);
+  }
+
+  private openEditModal(conductor: ConductorVM) {
     this.selectedConductor = conductor;
     this.showEditModal = true;
+
+    this.conductorService.getConductorById(conductor.id).subscribe({
+      next: (response) => {
+        this.selectedConductor = {
+          ...conductor,
+          ...this.toConductorVM(response),
+        };
+      },
+      error: () => {},
+    });
   }
 
   onDelete(conductor: ConductorVM) {

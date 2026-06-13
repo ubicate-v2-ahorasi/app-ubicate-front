@@ -118,7 +118,7 @@ export class ConductorEditModal implements OnInit, OnChanges {
         confirmPassword: '',
         numeroLicencia: this.conductor.numeroLicencia || '',
         categoriaLicencia: this.conductor.categoriaLicencia || 'A1',
-        fechaVencimientoLicencia: '',
+        fechaVencimientoLicencia: this.currentLicenseExpirationDate,
       });
       this.passwordErrorMessage = null;
       this.passwordSuccessMessage = null;
@@ -145,7 +145,7 @@ export class ConductorEditModal implements OnInit, OnChanges {
       confirmPassword: '',
       numeroLicencia: '',
       categoriaLicencia: 'A1',
-      fechaVencimientoLicencia: '',
+      fechaVencimientoLicencia: this.currentLicenseExpirationDate,
     });
     this.passwordErrorMessage = null;
     this.passwordSuccessMessage = null;
@@ -348,11 +348,21 @@ export class ConductorEditModal implements OnInit, OnChanges {
     this.conductorForm.patchValue({
       numeroLicencia: this.conductor.numeroLicencia || '',
       categoriaLicencia: this.conductor.categoriaLicencia || 'A1',
-      fechaVencimientoLicencia: '',
+      fechaVencimientoLicencia: this.currentLicenseExpirationDate,
     });
     this.conductorForm.get('numeroLicencia')?.markAsPristine();
     this.conductorForm.get('categoriaLicencia')?.markAsPristine();
     this.conductorForm.get('fechaVencimientoLicencia')?.markAsPristine();
+  }
+
+  private get currentLicenseExpirationDate(): string {
+    const rawDate =
+      this.conductor?.fechaVencimientoLicencia ??
+      this.conductor?.fecha_vencimiento_licencia ??
+      '';
+
+    if (!rawDate) return '';
+    return String(rawDate).slice(0, 10);
   }
 
   private markPasswordFieldsTouched() {
