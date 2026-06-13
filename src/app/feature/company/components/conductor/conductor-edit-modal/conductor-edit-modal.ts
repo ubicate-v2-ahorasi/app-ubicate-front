@@ -45,13 +45,22 @@ export class ConductorEditModal implements OnInit, OnChanges {
   changingPassword = false;
   passwordErrorMessage: string | null = null;
   passwordSuccessMessage: string | null = null;
+  licenseErrorMessage: string | null = null;
+  licenseSuccessMessage: string | null = null;
   showPassword = false;
   showConfirmPassword = false;
   showPasswordSection = false;
+  showLicenseSection = false;
+  renewingLicense = false;
 
   estados = ['ACTIVO', 'INACTIVO', 'VACACIONES', 'SUSPENDIDO'];
+  categorias = ['A1', 'A2a', 'A2b', 'A3a', 'A3b', 'A3c'];
   get estadoOptions(): AnimatedSelectOption<string>[] {
     return this.estados.map((estado) => ({ label: estado, value: estado }));
+  }
+
+  get categoriaOptions(): AnimatedSelectOption<string>[] {
+    return this.categorias.map((categoria) => ({ label: categoria, value: categoria }));
   }
 
   get busOptions(): AnimatedSelectOption<number | null>[] {
@@ -89,6 +98,9 @@ export class ConductorEditModal implements OnInit, OnChanges {
           [Validators.minLength(8), Validators.pattern(/^(?=.*\d)(?=.*[^A-Za-z0-9])(?=.*[A-Z]).+$/)],
         ],
         confirmPassword: [''],
+        numeroLicencia: ['', [Validators.required, Validators.maxLength(20)]],
+        categoriaLicencia: ['A1', Validators.required],
+        fechaVencimientoLicencia: ['', Validators.required],
       },
       {
         validators: [this.matchPasswordsValidator('password', 'confirmPassword')],
@@ -104,14 +116,23 @@ export class ConductorEditModal implements OnInit, OnChanges {
         busAsignadoId: this.conductor.busAsignadoId || null,
         password: '',
         confirmPassword: '',
+        numeroLicencia: this.conductor.numeroLicencia || '',
+        categoriaLicencia: this.conductor.categoriaLicencia || 'A1',
+        fechaVencimientoLicencia: '',
       });
       this.passwordErrorMessage = null;
       this.passwordSuccessMessage = null;
+      this.licenseErrorMessage = null;
+      this.licenseSuccessMessage = null;
       this.showPassword = false;
       this.showConfirmPassword = false;
       this.showPasswordSection = false;
+      this.showLicenseSection = false;
       this.conductorForm.get('password')?.markAsPristine();
       this.conductorForm.get('confirmPassword')?.markAsPristine();
+      this.conductorForm.get('numeroLicencia')?.markAsPristine();
+      this.conductorForm.get('categoriaLicencia')?.markAsPristine();
+      this.conductorForm.get('fechaVencimientoLicencia')?.markAsPristine();
     }
   }
 
@@ -122,12 +143,18 @@ export class ConductorEditModal implements OnInit, OnChanges {
       busAsignadoId: null,
       password: '',
       confirmPassword: '',
+      numeroLicencia: '',
+      categoriaLicencia: 'A1',
+      fechaVencimientoLicencia: '',
     });
     this.passwordErrorMessage = null;
     this.passwordSuccessMessage = null;
+    this.licenseErrorMessage = null;
+    this.licenseSuccessMessage = null;
     this.showPassword = false;
     this.showConfirmPassword = false;
     this.showPasswordSection = false;
+    this.showLicenseSection = false;
   }
 
   cancel() {
@@ -184,6 +211,37 @@ export class ConductorEditModal implements OnInit, OnChanges {
     });
   }
 
+  onRenewLicense() {
+    if (!this.conductor || this.renewingLicense || !this.canSubmitLicense) {
+      this.markLicenseFieldsTouched();
+      return;
+    }
+
+    this.renewingLicense = true;
+    this.licenseErrorMessage = null;
+    this.licenseSuccessMessage = null;
+
+    const formData = this.conductorForm.value;
+    this.conductorService
+      .renewLicense(this.conductor.id, {
+        numeroLicencia: formData.numeroLicencia,
+        categoriaLicencia: formData.categoriaLicencia,
+        fechaVencimientoLicencia: formData.fechaVencimientoLicencia,
+      })
+      .subscribe({
+        next: () => {
+          this.renewingLicense = false;
+          this.licenseSuccessMessage = 'Licencia renovada correctamente.';
+          this.onSave.emit();
+        },
+        error: (err) => {
+          this.renewingLicense = false;
+          this.licenseErrorMessage =
+            err?.error?.message ?? err?.message ?? 'No se pudo renovar la licencia.';
+        },
+      });
+  }
+
   get submitButtonText(): string {
     return this.isSubmitting ? 'Actualizando...' : 'Actualizar Conductor';
   }
@@ -204,6 +262,20 @@ export class ConductorEditModal implements OnInit, OnChanges {
     if (!password && !confirm) return false;
 
     return !!password && !!confirm && !passwordControl?.invalid && !this.conductorForm.errors?.['passwordsMismatch'];
+  }
+
+  get canSubmitLicense(): boolean {
+    return (
+      !!this.conductorForm.get('numeroLicencia')?.valid &&
+      !!this.conductorForm.get('categoriaLicencia')?.valid &&
+      !!this.conductorForm.get('fechaVencimientoLicencia')?.valid
+    );
+  }
+
+  get licenseMinDate(): string {
+    const today = new Date();
+    today.setDate(today.getDate() + 1);
+    return today.toISOString().slice(0, 10);
   }
 
   get passwordValue(): string {
@@ -242,6 +314,16 @@ export class ConductorEditModal implements OnInit, OnChanges {
     }
   }
 
+  toggleLicenseSection() {
+    this.showLicenseSection = !this.showLicenseSection;
+
+    if (!this.showLicenseSection) {
+      this.licenseErrorMessage = null;
+      this.licenseSuccessMessage = null;
+      this.populateLicenseFields();
+    }
+  }
+
   onlyNumbers(event: KeyboardEvent): void {
     const key = event.key;
     if (key.length === 1 && !/^\d$/.test(key)) {
@@ -260,9 +342,28 @@ export class ConductorEditModal implements OnInit, OnChanges {
     this.conductorForm.get('confirmPassword')?.markAsUntouched();
   }
 
+  private populateLicenseFields() {
+    if (!this.conductorForm || !this.conductor) return;
+
+    this.conductorForm.patchValue({
+      numeroLicencia: this.conductor.numeroLicencia || '',
+      categoriaLicencia: this.conductor.categoriaLicencia || 'A1',
+      fechaVencimientoLicencia: '',
+    });
+    this.conductorForm.get('numeroLicencia')?.markAsPristine();
+    this.conductorForm.get('categoriaLicencia')?.markAsPristine();
+    this.conductorForm.get('fechaVencimientoLicencia')?.markAsPristine();
+  }
+
   private markPasswordFieldsTouched() {
     this.conductorForm.get('password')?.markAsTouched();
     this.conductorForm.get('confirmPassword')?.markAsTouched();
+  }
+
+  private markLicenseFieldsTouched() {
+    this.conductorForm.get('numeroLicencia')?.markAsTouched();
+    this.conductorForm.get('categoriaLicencia')?.markAsTouched();
+    this.conductorForm.get('fechaVencimientoLicencia')?.markAsTouched();
   }
 
   private matchPasswordsValidator(passwordKey: string, confirmKey: string): ValidatorFn {

@@ -125,6 +125,20 @@ export class ConductorService {
     );
   }
 
+  renewLicense(
+    conductorId: number,
+    body: {
+      fechaVencimientoLicencia: string;
+      numeroLicencia?: string;
+      categoriaLicencia?: string;
+    }
+  ): Observable<ConductorResponse> {
+    return this.httpClient.patch<ConductorResponse>(
+      `${this.base}/${conductorId}/licencia`,
+      body
+    );
+  }
+
   // Actualizar estado del conductor
   updateConductorStatus(
     conductorId: number,
