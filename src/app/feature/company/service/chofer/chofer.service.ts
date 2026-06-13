@@ -128,9 +128,9 @@ export class ConductorService {
   renewLicense(
     conductorId: number,
     body: {
-      fechaVencimientoLicencia: string;
-      numeroLicencia?: string;
-      categoriaLicencia?: string;
+      fecha_vencimiento_licencia: string;
+      numero_licencia?: string;
+      categoria_licencia?: string;
     }
   ): Observable<ConductorResponse> {
     return this.httpClient.patch<ConductorResponse>(

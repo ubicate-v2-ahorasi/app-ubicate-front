@@ -98,7 +98,7 @@ export class ConductorEditModal implements OnInit, OnChanges {
           [Validators.minLength(8), Validators.pattern(/^(?=.*\d)(?=.*[^A-Za-z0-9])(?=.*[A-Z]).+$/)],
         ],
         confirmPassword: [''],
-        numeroLicencia: ['', [Validators.required, Validators.maxLength(20)]],
+        numeroLicencia: ['', [Validators.maxLength(20)]],
         categoriaLicencia: ['A1', Validators.required],
         fechaVencimientoLicencia: ['', Validators.required],
       },
@@ -224,9 +224,9 @@ export class ConductorEditModal implements OnInit, OnChanges {
     const formData = this.conductorForm.value;
     this.conductorService
       .renewLicense(this.conductor.id, {
-        numeroLicencia: formData.numeroLicencia,
-        categoriaLicencia: formData.categoriaLicencia,
-        fechaVencimientoLicencia: formData.fechaVencimientoLicencia,
+        numero_licencia: formData.numeroLicencia,
+        categoria_licencia: formData.categoriaLicencia,
+        fecha_vencimiento_licencia: formData.fechaVencimientoLicencia,
       })
       .subscribe({
         next: () => {
