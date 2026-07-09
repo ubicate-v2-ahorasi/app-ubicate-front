@@ -1,83 +1,40 @@
 <div class="flex flex-col h-full relative">
 
-  <div class="flex-shrink-0 mb-6 flex items-center justify-between">
+  <div class="flex-shrink-0 mb-6 flex items-center justify-between gap-4">
     <h1 class="text-3xl font-bold text-[#040E1C] dark:text-white transition-colors">Geolocalización de Buses</h1>
     <button
-      (click)="toggleLayout()"
+      (click)="toggleMetrics()"
       class="px-4 py-2 bg-[#021133] hover:bg-[#040E1C] dark:bg-[#1a2332] dark:hover:bg-[#2a3342] text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
-      [title]="isVerticalLayout ? 'Cambiar a vista horizontal' : 'Cambiar a vista vertical'"
+      [title]="showMetrics ? 'Ocultar metricas' : 'Mostrar metricas'"
     >
-      <svg *ngIf="!isVerticalLayout" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 4H5a2 2 0 00-2 2v14a2 2 0 002 2h4m0-18v18m0-18l7-2v18l-7 2" />
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path *ngIf="showMetrics" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18M10.58 10.58A2 2 0 0012 14a2 2 0 001.42-.58M9.88 4.24A10.44 10.44 0 0112 4c5 0 9.27 3.11 11 7.5a11.79 11.79 0 01-3.22 4.5M6.1 6.1A11.85 11.85 0 001 11.5C2.73 15.89 7 19 12 19c1.4 0 2.73-.24 3.95-.69" />
+        <path *ngIf="!showMetrics" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 12s3.75-7.5 9.75-7.5 9.75 7.5 9.75 7.5-3.75 7.5-9.75 7.5S2.25 12 2.25 12z" />
+        <path *ngIf="!showMetrics" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
       </svg>
-      <svg *ngIf="isVerticalLayout" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-      </svg>
-      <span>{{ isVerticalLayout ? 'Vista Horizontal' : 'Vista Vertical' }}</span>
+      <span>{{ showMetrics ? 'Ocultar metricas' : 'Mostrar metricas' }}</span>
     </button>
   </div>
 
-  <div class="flex-1 min-h-0" [ngClass]="isVerticalLayout ? 'flex gap-0 relative' : 'flex flex-col'">
-    <div [ngClass]="isVerticalLayout ? 'flex-1 min-w-0 h-full' : 'flex-shrink-0 mb-6'">
-      <app-stats [isVerticalLayout]="isVerticalLayout" *ngIf="!isVerticalLayout"></app-stats>
-      <div *ngIf="isVerticalLayout" class="relative h-full" [ngClass]="selectedBus ? 'pr-[296px]' : ''">
-        <div class="min-w-0 h-full">
-          <app-map-container class="h-full"></app-map-container>
-        </div>
-        <div
-          *ngIf="selectedBus"
-          class="absolute top-0 right-0 z-40 w-[280px] max-w-[280px]"
-        >
-          <app-bus-detail-panel
-            [bus]="selectedBus"
-            (closed)="closeSelectedBus()"
-          ></app-bus-detail-panel>
-          <app-bus-stop-events-panel
-            *ngIf="selectedRouteId || selectedBus.ruta?.id"
-            [bus]="selectedBus"
-            [routeId]="selectedRouteId"
-          ></app-bus-stop-events-panel>
-        </div>
-      </div>
-    </div>
+  <app-stats *ngIf="showMetrics" class="mb-6 flex-shrink-0"></app-stats>
 
-    <!-- Divisor redimensionable -->
-    <div 
-      *ngIf="isVerticalLayout"
-      (mousedown)="onMouseDown($event)"
-      class="w-1 bg-gray-300 dark:bg-gray-600 hover:bg-blue-500 dark:hover:bg-blue-400 cursor-col-resize flex-shrink-0 transition-colors relative group"
-      [class.bg-blue-500]="isResizing"
-      [class.dark:bg-blue-400]="isResizing"
-    >
-      <div class="absolute inset-y-0 -left-1 -right-1"></div>
+  <div class="relative flex flex-col gap-4 md:block md:flex-1 md:min-h-[540px]" [ngClass]="selectedBus ? 'md:pr-[296px]' : ''">
+    <div class="min-w-0 md:h-full md:flex-1" [ngClass]="selectedBus ? 'h-[360px]' : 'h-[calc(100vh-16rem)] min-h-[620px]'">
+      <app-map-container class="h-full"></app-map-container>
     </div>
-
-    <div 
-      [ngClass]="isVerticalLayout ? 'flex-shrink-0 overflow-hidden' : 'flex-1 min-h-0'"
-      [style.width.px]="isVerticalLayout ? sidebarWidth : null"
+    <div
+      *ngIf="selectedBus"
+      class="relative z-40 w-full md:absolute md:top-0 md:right-0 md:w-[280px] md:max-w-[280px]"
     >
-      <div class="h-full px-4">
-        <app-stats [isVerticalLayout]="isVerticalLayout" *ngIf="isVerticalLayout"></app-stats>
-        <div *ngIf="!isVerticalLayout" class="relative flex h-full min-h-[540px]" [ngClass]="selectedBus ? 'pr-[296px]' : ''">
-          <div class="min-w-0 h-full flex-1">
-            <app-map-container class="h-full"></app-map-container>
-          </div>
-          <div
-            *ngIf="selectedBus"
-            class="absolute top-0 right-0 z-40 w-[280px] max-w-[280px]"
-          >
-            <app-bus-detail-panel
-              [bus]="selectedBus"
-              (closed)="closeSelectedBus()"
-            ></app-bus-detail-panel>
-            <app-bus-stop-events-panel
-              *ngIf="selectedRouteId || selectedBus.ruta?.id"
-              [bus]="selectedBus"
-              [routeId]="selectedRouteId"
-            ></app-bus-stop-events-panel>
-          </div>
-        </div>
-      </div>
+      <app-bus-detail-panel
+        [bus]="selectedBus"
+        (closed)="closeSelectedBus()"
+      ></app-bus-detail-panel>
+      <app-bus-stop-events-panel
+        *ngIf="selectedRouteId || selectedBus.ruta?.id"
+        [bus]="selectedBus"
+        [routeId]="selectedRouteId"
+      ></app-bus-stop-events-panel>
     </div>
   </div>
 

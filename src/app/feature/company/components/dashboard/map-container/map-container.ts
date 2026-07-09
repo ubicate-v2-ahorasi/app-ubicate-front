@@ -50,6 +50,20 @@ import { SelectedBusDetails } from '../../../service/bus/bus-marker.service';
     IconsModule,
   ],
   templateUrl: './map-container.html',
+  styles: [
+    `
+    .scrollbar-hidden {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .scrollbar-hidden::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+    `, 
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapContainerComponent implements OnDestroy, OnInit {
@@ -102,6 +116,7 @@ export class MapContainerComponent implements OnDestroy, OnInit {
   buses: BusWithPosition[] = [];
   busSearchTerm = '';
   routes: RouteResponse[] = [];
+  selectedRoutes: RouteResponse[] = [];
   selectedRouteId: number | null = null;
   constructor(
     private firebaseService: FirebaseService,
@@ -396,6 +411,7 @@ export class MapContainerComponent implements OnDestroy, OnInit {
       )
       .subscribe((route) => {
         if (route) {
+          this.addSelectedRoute(route);
           void this.renderRouteWithStops(route);
         }
         this.showRouteList = false;
@@ -406,6 +422,31 @@ export class MapContainerComponent implements OnDestroy, OnInit {
     this.cdr.markForCheck();
   }
 
+  removeDisplayedRoute(routeId: number): void {
+    this.selectedRoutes = this.selectedRoutes.filter((route) => route.id !== routeId);
+    this.routeMapService.clearRouteFromMap(routeId);
+
+    if (this.selectedRouteId === routeId) {
+      const nextRoute = this.selectedRoutes[this.selectedRoutes.length - 1] ?? null;
+      this.selectedRouteId = nextRoute?.id ?? null;
+      this.rutaId = nextRoute?.id;
+      this.routeMapService.setSelectedRouteId(this.selectedRouteId);
+      this.busSearchTerm = '';
+
+      if (this.selectedRouteId) {
+        this.subscribeBusesStream(this.empresaId, this.selectedRouteId);
+      } else {
+        this.showBuses = false;
+        this.busesSub?.unsubscribe();
+        this.busesSub = undefined;
+        this.buses = [];
+        this.busMarkerService.clearMarkers();
+      }
+    }
+
+    this.renderMapBuses();
+    this.cdr.markForCheck();
+  }
   showAllBuses() {
     this.selectedRouteId = null;
     this.rutaId = undefined;
@@ -454,12 +495,6 @@ export class MapContainerComponent implements OnDestroy, OnInit {
     this.cdr.markForCheck();
   }
 
-  centerOnTrujillo() {
-    if (this.safeGoogleMap) {
-      this.safeGoogleMap.setCenter(this.center);
-      this.safeGoogleMap.setZoom(this.zoom);
-    }
-  }
 
   refreshData() {
     this.routeMapService.loadRoutes().subscribe();
@@ -471,6 +506,8 @@ export class MapContainerComponent implements OnDestroy, OnInit {
   clearRouteAndBuses() {
     this.selectedRouteId = null;
     this.rutaId = undefined;
+    this.selectedRoutes = [];
+    this.busSearchTerm = '';
     this.routeMapService.setSelectedRouteId(null);
     this.showBuses = false; // ✅ OCULTAR buses al limpiar
     this.busesSub?.unsubscribe();
@@ -596,12 +633,14 @@ export class MapContainerComponent implements OnDestroy, OnInit {
       );
 
       if (cachedRoute) {
+        this.addSelectedRoute(cachedRoute);
         void this.renderRouteWithStops(cachedRoute);
       } else {
         this.routeMapService
           .getById(this.selectedRouteId)
           .subscribe((route) => {
             if (this.safeGoogleMap) {
+              this.addSelectedRoute(route);
               void this.renderRouteWithStops(route);
             }
           });
@@ -609,6 +648,12 @@ export class MapContainerComponent implements OnDestroy, OnInit {
     }
   }
 
+  private addSelectedRoute(route: RouteResponse): void {
+    this.selectedRoutes = [
+      ...this.selectedRoutes.filter((selected) => selected.id !== route.id),
+      route,
+    ];
+  }
   private async renderRouteWithStops(route: RouteResponse): Promise<void> {
     if (!this.safeGoogleMap) {
       return;
@@ -633,3 +678,4 @@ export class MapContainerComponent implements OnDestroy, OnInit {
   };
 
 }
+

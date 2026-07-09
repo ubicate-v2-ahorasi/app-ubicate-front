@@ -23,23 +23,16 @@ export class Dashboard implements OnInit {
   private busMarkerService = inject(BusMarkerService);
   private routeMapService = inject(RouteMapService);
 
-  isVerticalLayout = false;
-  sidebarWidth = 400; // Ancho inicial en píxeles
-  isResizing = false;
+  showMetrics = true;
   selectedBus: SelectedBusDetails | null = null;
   selectedRouteId: number | null = null;
 
   ngOnInit() {
     // Cargar configuración guardada
-    const savedLayout = localStorage.getItem('dashboardLayout');
-    const savedWidth = localStorage.getItem('dashboardSidebarWidth');
-    
-    if (savedLayout) {
-      this.isVerticalLayout = savedLayout === 'vertical';
-    }
-    
-    if (savedWidth) {
-      this.sidebarWidth = parseInt(savedWidth, 10);
+    const savedMetrics = localStorage.getItem('dashboardShowMetrics');
+
+    if (savedMetrics !== null) {
+      this.showMetrics = savedMetrics === 'true';
     }
 
     this.busMarkerService.selectedBus$.subscribe((bus) => {
@@ -51,40 +44,13 @@ export class Dashboard implements OnInit {
     });
   }
 
-  toggleLayout() {
-    this.isVerticalLayout = !this.isVerticalLayout;
-    localStorage.setItem('dashboardLayout', this.isVerticalLayout ? 'vertical' : 'horizontal');
-  }
-
-  onMouseDown(event: MouseEvent) {
-    if (!this.isVerticalLayout) return;
-    
-    this.isResizing = true;
-    event.preventDefault();
-    
-    const startX = event.clientX;
-    const startWidth = this.sidebarWidth;
-
-    const onMouseMove = (e: MouseEvent) => {
-      if (!this.isResizing) return;
-      
-      const deltaX = startX - e.clientX;
-      const newWidth = Math.max(280, Math.min(600, startWidth + deltaX));
-      this.sidebarWidth = newWidth;
-    };
-
-    const onMouseUp = () => {
-      this.isResizing = false;
-      localStorage.setItem('dashboardSidebarWidth', this.sidebarWidth.toString());
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-    };
-
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+  toggleMetrics() {
+    this.showMetrics = !this.showMetrics;
+    localStorage.setItem('dashboardShowMetrics', String(this.showMetrics));
   }
 
   closeSelectedBus(): void {
     this.busMarkerService.clearSelectedBus();
   }
 }
+
