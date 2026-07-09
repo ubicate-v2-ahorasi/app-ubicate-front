@@ -20,13 +20,13 @@
 <!-- Accessibility Controls -->
 <app-accessibility-controls></app-accessibility-controls>
 
-<div class="h-screen overflow-hidden" 
-     [ngClass]="sidebarOpen ? 'ml-64' : 'ml-16'"
+<div class="h-screen overflow-hidden ml-0" 
+     [ngClass]="sidebarOpen ? 'md:ml-64' : 'md:ml-16'"
      style="transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
 
   <!-- <app-navbard (menuToggle)="toggleSidebar()"></app-navbard> -->
 
-  <main class="p-6 bg-gray-50 dark:bg-gray-900 h-full overflow-y-auto transition-colors duration-300">
+  <main class="p-4 pb-24 md:p-6 md:pb-6 bg-gray-50 dark:bg-gray-900 h-full overflow-y-auto transition-colors duration-300">
     <div [@fadeAnimation]="getRouteAnimationData()" class="h-full">
       <router-outlet></router-outlet>
     </div>

@@ -217,3 +217,43 @@
     transform: scale(1) translateY(0);
   }
 }
+
+@media (max-width: 767px) {
+  .tour-tooltip {
+    top: auto !important;
+    left: 50% !important;
+    bottom: calc(env(safe-area-inset-bottom) + 92px);
+    width: min(360px, calc(100vw - 32px));
+    max-height: calc(100vh - env(safe-area-inset-bottom) - 124px);
+    overflow-y: auto;
+    transform: translateX(-50%);
+    animation: tooltip-in-mobile 0.3s ease-out;
+  }
+
+  .tour-header {
+    padding: 14px 16px 10px;
+  }
+
+  .tour-content {
+    padding: 0 16px 16px;
+  }
+
+  .tour-navigation {
+    padding: 0 16px 16px;
+  }
+
+  .tour-btn {
+    padding: 10px 14px;
+  }
+}
+@keyframes tooltip-in-mobile {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1) translateY(0);
+  }
+}
+

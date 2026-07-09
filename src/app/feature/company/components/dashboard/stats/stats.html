@@ -1,15 +1,15 @@
 @if (stats) {
-<div class="grid gap-3 w-full" [ngClass]="isVerticalLayout ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'">
+<div class="flex flex-wrap gap-4 w-full" [ngClass]="isVerticalLayout ? 'flex-col' : ''">
   <!-- Total Buses -->
   <div
-    class="p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+    class="p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer flex-1 min-w-[180px]">
     <div class="flex items-start justify-between">
       <div class="flex flex-col">
-        <div class="text-2xl font-bold text-gray-900 dark:text-white mb-0.5 transition-colors">{{ stats.total_buses }}</div>
+        <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1 transition-colors">{{ stats.total_buses }}</div>
         <div class="text-xs text-gray-600 dark:text-gray-400 font-normal transition-colors">Total Buses</div>
       </div>
-      <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center flex-shrink-0 transition-colors">
-        <svg class="w-5 h-5 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center flex-shrink-0 transition-colors">
+        <svg class="w-6 h-6 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <rect x="3" y="6" width="18" height="10" rx="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
           <circle cx="8" cy="19" r="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
           <circle cx="16" cy="19" r="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
@@ -21,14 +21,14 @@
 
   <!-- Activos -->
   <div
-    class="p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+    class="p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer flex-1 min-w-[180px]">
     <div class="flex items-start justify-between">
       <div class="flex flex-col">
-        <div class="text-2xl font-bold text-gray-900 dark:text-white mb-0.5 transition-colors">{{ stats.buses_activos }}</div>
+        <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1 transition-colors">{{ stats.buses_activos }}</div>
         <div class="text-xs text-gray-600 dark:text-gray-400 font-normal transition-colors">Activos</div>
       </div>
-      <div class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center flex-shrink-0 transition-colors">
-        <svg class="w-5 h-5 text-green-600 dark:text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center flex-shrink-0 transition-colors">
+        <svg class="w-6 h-6 text-green-600 dark:text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
         </svg>
       </div>
@@ -37,14 +37,14 @@
 
   <!-- Inactivos -->
   <div
-    class="p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+    class="p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer flex-1 min-w-[180px]">
     <div class="flex items-start justify-between">
       <div class="flex flex-col">
-        <div class="text-2xl font-bold text-gray-900 dark:text-white mb-0.5 transition-colors">{{ stats.buses_inactivos }}</div>
+        <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1 transition-colors">{{ stats.buses_inactivos }}</div>
         <div class="text-xs text-gray-600 dark:text-gray-400 font-normal transition-colors">Inactivos</div>
       </div>
-      <div class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center flex-shrink-0 transition-colors">
-        <svg class="w-5 h-5 text-red-600 dark:text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center flex-shrink-0 transition-colors">
+        <svg class="w-6 h-6 text-red-600 dark:text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
         </svg>
       </div>
@@ -53,14 +53,14 @@
 
   <!-- Mantenimiento -->
   <div
-    class="p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+    class="p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer flex-1 min-w-[180px]">
     <div class="flex items-start justify-between">
       <div class="flex flex-col">
-        <div class="text-2xl font-bold text-gray-900 dark:text-white mb-0.5 transition-colors">{{ stats.buses_en_mantenimiento }}</div>
+        <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1 transition-colors">{{ stats.buses_en_mantenimiento }}</div>
         <div class="text-xs text-gray-600 dark:text-gray-400 font-normal transition-colors">Mantenimiento</div>
       </div>
-      <div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-center flex-shrink-0 transition-colors">
-        <svg class="w-5 h-5 text-orange-600 dark:text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-center flex-shrink-0 transition-colors">
+        <svg class="w-6 h-6 text-orange-600 dark:text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
           <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
         </svg>

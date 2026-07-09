@@ -22,6 +22,18 @@ import { VoiceAssistantService } from '../../../../../core/service/voice-assista
   selector: 'app-slidebard',
   imports: [CommonModule, GreenNotificationComponent],
   templateUrl: './slidebard.html',
+  styles: [`
+    .scrollbar-hidden {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .scrollbar-hidden::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+  `],
   animations: [menuItemAnimation]
 })
 export class Slidebard implements OnInit {
@@ -53,6 +65,7 @@ export class Slidebard implements OnInit {
   showGreenNotification = false;
   currentGreenTip?: GreenTip;
   isDarkMode = false;
+  showMobileOptions = false;
 
   ngOnInit(): void {
     // Obtener el nombre de la empresa desde el SessionService
@@ -87,6 +100,7 @@ export class Slidebard implements OnInit {
   }
 
   onItemClick(itemId: string): void {
+    this.showMobileOptions = false;
     const item = this.menuItems.find((menu) => menu.id === itemId);
     if (item) {
       if ((item as any).isExternal) {
@@ -101,6 +115,7 @@ export class Slidebard implements OnInit {
   }
 
   onLogout(): void {
+    this.showMobileOptions = false;
     this.sessionService.logout();
     this.logout.emit();
   }
@@ -126,13 +141,20 @@ export class Slidebard implements OnInit {
 
   toggleTheme(): void {
     this.themeService.toggleTheme();
+    this.showMobileOptions = false;
   }
 
   requestTour(): void {
+    this.showMobileOptions = false;
     this.showTourRequest.emit();
+  }
+
+  toggleMobileOptions(): void {
+    this.showMobileOptions = !this.showMobileOptions;
   }
 
   trackByFn(index: number, item: any): any {
     return item.id;
   }
 }
+

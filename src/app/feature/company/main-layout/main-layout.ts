@@ -29,37 +29,37 @@ export class MainLayout implements OnInit, OnDestroy {
     {
       title: '¡Bienvenido a Ubicate!',
       description: 'Te guiaremos por las principales funciones de la plataforma. Haz clic en "Siguiente" para comenzar.',
-      targetSelector: '#tour-sidebar-menu',
+      targetSelector: '#tour-sidebar-menu, #tour-mobile-navbar',
       position: 'right'
     },
     {
       title: 'Dashboard',
       description: 'Visualiza en tiempo real la ubicación de todos tus buses en el mapa. Puedes cambiar entre vista horizontal y vertical.',
-      targetSelector: '#tour-menu-dashboard',
+      targetSelector: '#tour-menu-dashboard, #tour-mobile-menu-dashboard',
       position: 'right'
     },
     {
       title: 'Gestión de Conductores',
       description: 'Administra tu equipo: agrega conductores, edita su información, visualiza estadísticas y asigna buses.',
-      targetSelector: '#tour-menu-users',
+      targetSelector: '#tour-menu-users, #tour-mobile-menu-users',
       position: 'right'
     },
     {
       title: 'Control de Buses',
       description: 'Gestiona tu flota completa: agrega vehículos, edita detalles, monitorea su estado y asigna conductores.',
-      targetSelector: '#tour-menu-buses',
+      targetSelector: '#tour-menu-buses, #tour-mobile-menu-buses',
       position: 'right'
     },
     {
       title: 'Rutas',
       description: 'Crea, edita y administra las rutas de tus buses, incluyendo paraderos, trazos en el mapa y recorridos asignados.',
-      targetSelector: '#tour-menu-routes',
+      targetSelector: '#tour-menu-routes, #tour-mobile-menu-routes',
       position: 'right'
     },
     {
       title: 'Comentarios',
       description: 'Revisa el feedback de los usuarios sobre el servicio para mejorar continuamente.',
-      targetSelector: '#tour-menu-comments',
+      targetSelector: '#tour-menu-comments, #tour-mobile-menu-comments',
       position: 'right'
     }
   ];
@@ -131,4 +131,3 @@ export class MainLayout implements OnInit, OnDestroy {
     this.showNotification = false;
   }
 }
-
