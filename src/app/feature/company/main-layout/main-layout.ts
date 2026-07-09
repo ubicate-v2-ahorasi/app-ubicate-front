@@ -51,6 +51,12 @@ export class MainLayout implements OnInit, OnDestroy {
       position: 'right'
     },
     {
+      title: 'Rutas',
+      description: 'Crea, edita y administra las rutas de tus buses, incluyendo paraderos, trazos en el mapa y recorridos asignados.',
+      targetSelector: '#tour-menu-routes',
+      position: 'right'
+    },
+    {
       title: 'Comentarios',
       description: 'Revisa el feedback de los usuarios sobre el servicio para mejorar continuamente.',
       targetSelector: '#tour-menu-comments',
@@ -68,13 +74,6 @@ export class MainLayout implements OnInit, OnDestroy {
     if (storedEmpresaId) {
       this.empresaId = parseInt(storedEmpresaId, 10);
       this.subscribeToNotifications();
-    }
-
-    const hasSeenTour = localStorage.getItem('ubicate_tour_completed');
-    if (!hasSeenTour) {
-      setTimeout(() => {
-        this.showTour = true;
-      }, 500);
     }
   }
 
@@ -132,3 +131,4 @@ export class MainLayout implements OnInit, OnDestroy {
     this.showNotification = false;
   }
 }
+
