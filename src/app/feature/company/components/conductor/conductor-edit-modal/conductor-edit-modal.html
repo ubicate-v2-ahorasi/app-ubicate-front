@@ -1,8 +1,8 @@
 @if (isVisible) {
 <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" (click)="cancel()"></div>
 
-<div class="fixed inset-0 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4 pointer-events-none">
-  <div class="bg-white dark:bg-gray-800 w-full max-w-2xl shadow-2xl rounded-2xl overflow-hidden pointer-events-auto">
+<div class="fixed inset-0 overflow-y-auto h-full w-full z-50 flex items-start sm:items-center justify-center p-4 pointer-events-none">
+  <div class="bg-white dark:bg-gray-800 w-full max-w-2xl max-h-[calc(100vh-2rem)] shadow-2xl rounded-2xl overflow-hidden pointer-events-auto flex flex-col">
 
     <div class="flex justify-between items-center px-6 py-4 bg-[#040E1C] text-white">
       <h3 class="text-lg font-semibold">Editar Conductor</h3>
@@ -13,7 +13,7 @@
       </button>
     </div>
 
-    <form [formGroup]="conductorForm" (ngSubmit)="onSubmit()" class="px-6 py-5">
+    <form [formGroup]="conductorForm" (ngSubmit)="onSubmit()" class="px-6 py-5 overflow-y-auto">
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
         <div>
@@ -240,3 +240,4 @@
   </div>
 </div>
 }
+
