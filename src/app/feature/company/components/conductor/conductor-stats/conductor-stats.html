@@ -1,15 +1,15 @@
 <!-- Compact KPIs -->
 @if (!loading && stats) {
-<div class="flex flex-wrap gap-4 mb-6">
+<div class="grid grid-cols-2 gap-3 mb-6 md:flex md:flex-wrap md:gap-4">
 
   <!-- Total -->
-  <div class="p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer flex-1 min-w-[180px]">
+  <div class="p-4 sm:p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer md:flex-1 md:min-w-[180px]">
     <div class="flex items-start justify-between">
       <div class="flex flex-col">
         <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1">{{ stats.total_conductores + 1 }}</div>
         <div class="text-xs text-gray-600 dark:text-gray-400 font-normal">Total conductores</div>
       </div>
-      <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center flex-shrink-0">
+      <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center flex-shrink-0">
         <svg class="w-6 h-6 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
         </svg>
@@ -18,13 +18,13 @@
   </div>
 
   <!-- Activos -->
-  <div class="p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer flex-1 min-w-[180px]">
+  <div class="p-4 sm:p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer md:flex-1 md:min-w-[180px]">
     <div class="flex items-start justify-between">
       <div class="flex flex-col">
         <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1">{{ stats.conductores_activos + 1 }}</div>
         <div class="text-xs text-gray-600 dark:text-gray-400 font-normal">Activos</div>
       </div>
-      <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center flex-shrink-0">
+      <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center flex-shrink-0">
         <svg class="w-6 h-6 text-green-600 dark:text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
         </svg>
@@ -33,13 +33,13 @@
   </div>
 
   <!-- Inactivos -->
-  <div class="p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer flex-1 min-w-[180px]">
+  <div class="p-4 sm:p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer md:flex-1 md:min-w-[180px]">
     <div class="flex items-start justify-between">
       <div class="flex flex-col">
         <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1">{{ stats.conductores_inactivos }}</div>
         <div class="text-xs text-gray-600 dark:text-gray-400 font-normal">Inactivos</div>
       </div>
-      <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+      <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
         <svg class="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
         </svg>
@@ -48,14 +48,14 @@
   </div>
 
   <!-- Licencias por vencer (resalta si > 0) -->
-  <div class="p-6 border rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer flex-1 min-w-[180px]"
+  <div class="p-4 sm:p-6 border rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer md:flex-1 md:min-w-[180px]"
     [ngClass]="stats.licencias_por_vencer > 0 ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-300 dark:border-amber-700' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700'">
     <div class="flex items-start justify-between">
       <div class="flex flex-col">
         <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1">{{ stats.licencias_por_vencer }}</div>
         <div class="text-xs text-gray-600 dark:text-gray-400 font-normal">Licencias por vencer</div>
       </div>
-      <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+      <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-shrink-0"
         [ngClass]="stats.licencias_por_vencer > 0 ? 'bg-amber-200 dark:bg-amber-800' : 'bg-orange-100 dark:bg-orange-900'">
         <svg class="w-6 h-6" [ngClass]="stats.licencias_por_vencer > 0 ? 'text-amber-700 dark:text-amber-300' : 'text-orange-600 dark:text-orange-300'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
@@ -66,13 +66,13 @@
 
   <!-- Licencias vencidas -->
   @if (stats.licencias_vencidas > 0) {
-  <div class="p-6 bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer flex-1 min-w-[180px]">
+  <div class="p-4 sm:p-6 bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer md:flex-1 md:min-w-[180px]">
     <div class="flex items-start justify-between">
       <div class="flex flex-col">
         <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1">{{ stats.licencias_vencidas }}</div>
         <div class="text-xs text-red-700 dark:text-red-400 font-normal">Licencias vencidas</div>
       </div>
-      <div class="w-12 h-12 rounded-full bg-red-200 dark:bg-red-800 flex items-center justify-center flex-shrink-0">
+      <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-red-200 dark:bg-red-800 flex items-center justify-center flex-shrink-0">
         <svg class="w-6 h-6 text-red-700 dark:text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
         </svg>
@@ -83,13 +83,13 @@
 
   <!-- Suspendidos -->
   @if (stats.conductores_suspendidos > 0) {
-  <div class="p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer flex-1 min-w-[180px]">
+  <div class="p-4 sm:p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer md:flex-1 md:min-w-[180px]">
     <div class="flex items-start justify-between">
       <div class="flex flex-col">
         <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1">{{ stats.conductores_suspendidos }}</div>
         <div class="text-xs text-gray-600 dark:text-gray-400 font-normal">Suspendidos</div>
       </div>
-      <div class="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center flex-shrink-0">
+      <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center flex-shrink-0">
         <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
         </svg>
