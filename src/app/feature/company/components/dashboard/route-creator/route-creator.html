@@ -1,9 +1,9 @@
 <!-- src/app/feature/company/components/dashboard/route-creator/route-creator.html -->
 <div
-  class="absolute left-4 z-20 w-80 overflow-hidden rounded-lg bg-white shadow-xl dark:bg-slate-900 dark:shadow-black/30"
-  [ngClass]="showBelowBusSearch ? 'top-[7.5rem]' : 'top-4'"
+  class="absolute left-3 right-3 z-20 max-h-[32vh] overflow-y-auto overflow-x-visible rounded-lg bg-white shadow-xl dark:bg-slate-900 dark:shadow-black/30 sm:left-4 sm:right-auto sm:w-80 sm:max-h-none sm:overflow-visible"
+  [ngClass]="showBelowBusSearch ? 'top-[7.5rem]' : 'top-3 sm:top-4'"
 >
-  <div class="flex items-center justify-between bg-[#021133] p-2.5 text-white">
+  <div class="sticky top-0 z-10 flex items-center justify-between bg-[#021133] p-2 text-white sm:p-2.5">
     <div class="flex items-center gap-2">
       <h4 class="text-xs font-semibold">Nueva Ruta</h4>
       <div class="group relative">
@@ -19,7 +19,7 @@
             <circle cx="12" cy="7" r="1" fill="currentColor" stroke="none"></circle>
           </svg>
         </button>
-        <div class="pointer-events-none absolute left-1/2 top-7 z-40 w-56 -translate-x-1/2 rounded-md bg-[#0B1628] px-3 py-2 text-[10px] leading-4 text-blue-50 opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+        <div class="pointer-events-none fixed left-24 top-24 z-[70] w-56 rounded-md bg-[#0B1628] px-3 py-2 text-[10px] leading-4 text-blue-50 opacity-0 shadow-lg transition-opacity group-hover:opacity-100 sm:absolute sm:left-full sm:top-0 sm:ml-2">
           Haz clic en el mapa para marcar primero el origen y luego el destino. Despues puedes ajustar la linea arrastrandola.
         </div>
       </div>
@@ -34,15 +34,15 @@
     </button>
   </div>
 
-  <div class="space-y-3 p-3 dark:text-slate-100">
-    <div class="space-y-2.5">
+  <div class="space-y-2 p-2.5 dark:text-slate-100 sm:space-y-3 sm:p-3">
+    <div class="grid grid-cols-2 gap-2 sm:block sm:space-y-2.5">
       <div>
         <label class="mb-1 block text-[11px] font-medium text-gray-700 dark:text-slate-300">Nombre</label>
         <input
           [(ngModel)]="routeData.nombre"
           type="text"
           placeholder="Ej: Ruta Centro-Norte"
-          class="w-full rounded-md border border-gray-300 px-2.5 py-2 text-xs text-gray-800 outline-none transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:ring-blue-900/50"
+          class="w-full rounded-md border border-gray-300 px-2 py-1.5 text-xs text-gray-800 outline-none transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:ring-blue-900/50 sm:px-2.5 sm:py-2"
         />
       </div>
 
@@ -52,7 +52,7 @@
           [(ngModel)]="routeData.codigo"
           type="text"
           placeholder="Ej: R001"
-          class="w-full rounded-md border border-gray-300 px-2.5 py-2 text-xs text-gray-800 outline-none transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:ring-blue-900/50"
+          class="w-full rounded-md border border-gray-300 px-2 py-1.5 text-xs text-gray-800 outline-none transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:ring-blue-900/50 sm:px-2.5 sm:py-2"
         />
       </div>
 
@@ -63,35 +63,35 @@
             [(ngModel)]="routeData.colorHex"
             (ngModelChange)="onColorChange()"
             type="color"
-            class="h-9 w-11 rounded-md border border-gray-300 bg-white p-1 dark:border-slate-700 dark:bg-slate-950"
+            class="h-8 w-10 rounded-md border border-gray-300 bg-white p-1 dark:border-slate-700 dark:bg-slate-950 sm:h-9 sm:w-11"
           />
           <input
             [(ngModel)]="routeData.colorHex"
             (ngModelChange)="onColorChange()"
             type="text"
             placeholder="#3B82F6"
-            class="flex-1 rounded-md border border-gray-300 px-2.5 py-2 text-xs text-gray-800 outline-none transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:ring-blue-900/50"
+            class="min-w-0 flex-1 rounded-md border border-gray-300 px-2 py-1.5 text-xs text-gray-800 outline-none transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:ring-blue-900/50 sm:px-2.5 sm:py-2"
           />
         </div>
       </div>
     </div>
 
-    <div class="rounded-md border border-gray-200 bg-gray-50 px-2.5 py-2 dark:border-slate-700 dark:bg-slate-800/70">
+    <div class="rounded-md border border-gray-200 bg-gray-50 px-2 py-1.5 dark:border-slate-700 dark:bg-slate-800/70 sm:px-2.5 sm:py-2">
       <div class="flex items-center justify-between text-[10px]">
          <span class="font-medium text-gray-600 dark:text-slate-300">Progreso</span>
          <span class="text-gray-500 dark:text-slate-400">
           {{ hasDestination ? 'Ruta lista' : hasOrigin ? 'Falta destino' : 'Falta origen' }}
         </span>
       </div>
-      <div class="mt-2 grid grid-cols-2 gap-2">
+      <div class="mt-1.5 grid grid-cols-2 gap-2 sm:mt-2">
         <div
-          class="rounded-md border px-2 py-1.5 text-center text-[10px] font-medium"
+          class="rounded-md border px-2 py-1 text-center text-[10px] font-medium sm:py-1.5"
            [ngClass]="hasOrigin ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300' : 'border-gray-200 bg-white text-gray-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400'"
         >
           Origen
         </div>
         <div
-          class="rounded-md border px-2 py-1.5 text-center text-[10px] font-medium"
+          class="rounded-md border px-2 py-1 text-center text-[10px] font-medium sm:py-1.5"
            [ngClass]="hasDestination ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300' : 'border-gray-200 bg-white text-gray-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400'"
         >
           Destino
@@ -99,19 +99,19 @@
       </div>
     </div>
 
-    <div class="flex items-center gap-2 pt-1">
+    <div class="sticky bottom-0 -mx-2.5 flex items-center gap-2 bg-white px-2.5 pt-1 dark:bg-slate-900 sm:static sm:mx-0 sm:bg-transparent sm:px-0 sm:dark:bg-transparent">
       <button
         type="button"
         (click)="onSave()"
         [disabled]="!isFormValid"
-        class="flex-1 rounded-md bg-blue-600 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300 dark:disabled:bg-slate-700 dark:disabled:text-slate-400"
+        class="flex-1 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300 dark:disabled:bg-slate-700 dark:disabled:text-slate-400 sm:py-2"
       >
         Guardar ruta
       </button>
       <button
         type="button"
         (click)="onClear()"
-        class="rounded-md border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+        class="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800 sm:py-2"
       >
         Limpiar
       </button>
@@ -121,21 +121,21 @@
 
 <div
   *ngIf="isCreatingRoute && !hasOrigin"
-  class="absolute left-1/2 z-35 -translate-x-1/2 rounded-lg bg-green-600 px-4 py-2 text-white shadow-lg"
-  [ngClass]="showBelowBusSearch ? 'top-[7.5rem]' : 'top-4'"
+  class="absolute left-3 right-3 z-35 rounded-lg bg-green-600 px-3 py-2 text-white shadow-lg sm:left-1/2 sm:right-auto sm:w-auto sm:-translate-x-1/2 sm:px-4"
+  [ngClass]="showBelowBusSearch ? 'top-[calc(7.5rem+32vh+0.5rem)] sm:top-[7.5rem]' : 'top-[calc(0.75rem+32vh+0.5rem)] sm:top-4'"
 >
   <div class="flex items-center gap-2">
     <div class="h-3 w-3 animate-pulse rounded-full bg-white"></div>
-    <span class="text-sm font-medium">Haz click para colocar el ORIGEN (A)</span>
+    <span class="text-xs font-medium sm:text-sm">Haz click para colocar el ORIGEN (A)</span>
   </div>
 </div>
 
 <div
   *ngIf="isCreatingRoute && hasOrigin && !hasDestination"
-  class="absolute left-1/2 top-12 z-35 -translate-x-1/2 rounded-lg bg-red-600 px-4 py-2 text-white shadow-lg"
+  class="absolute left-3 right-3 top-12 z-35 rounded-lg bg-red-600 px-3 py-2 text-white shadow-lg sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:px-4"
 >
   <div class="flex items-center gap-2">
     <div class="h-3 w-3 animate-pulse rounded-full bg-white"></div>
-    <span class="text-sm font-medium">Ahora haz click para el DESTINO (B)</span>
+    <span class="text-xs font-medium sm:text-sm">Ahora haz click para el DESTINO (B)</span>
   </div>
 </div>

@@ -31,7 +31,7 @@
   </div>
 
   <div [class]="layoutClass">
-    <div class="relative bg-slate-200 dark:bg-slate-950" [ngClass]="isStopsMode ? 'h-[52vh] lg:h-[72vh]' : 'h-[72vh]'">
+    <div class="relative bg-slate-200 dark:bg-slate-950" [ngClass]="isStopsMode ? 'h-[52vh] lg:h-[72vh]' : mode === 'create' ? 'h-[74vh] lg:h-[72vh]' : 'h-[72vh]'">
       <google-map
         [center]="center"
         [zoom]="zoom"
