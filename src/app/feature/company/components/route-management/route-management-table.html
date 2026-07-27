@@ -40,38 +40,30 @@
 
     <div class="w-full sm:w-44">
       <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Estado</label>
-      <app-animated-select
-        [ngModel]="selectedEstado"
-        (ngModelChange)="onEstadoChange($event)"
-        [options]="estadoOptions"
-        [triggerClass]="'flex w-full items-center justify-between gap-2 rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-sm text-left text-gray-700 transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white'"
-      ></app-animated-select>
-    </div>
+      <div class="flex items-center gap-2">
+        <div class="min-w-0 flex-1">
+          <app-animated-select
+            [ngModel]="selectedEstado"
+            (ngModelChange)="onEstadoChange($event)"
+            [options]="estadoOptions"
+            [triggerClass]="'flex w-full items-center justify-between gap-2 rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-sm text-left text-gray-700 transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white'"
+          ></app-animated-select>
+        </div>
 
-    <div class="w-full sm:w-auto flex items-end gap-2">
-      <button
-        *ngIf="hasActiveFilters()"
-        type="button"
-        (click)="clearFilters()"
-        title="Limpiar filtros"
-        aria-label="Limpiar filtros"
-        class="h-9 w-9 inline-flex items-center justify-center text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-      >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-        </svg>
-      </button>
-
-      <button
-        type="button"
-        (click)="loadRoutes()"
-        class="h-9 w-9 inline-flex items-center justify-center text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-        title="Actualizar rutas"
-        aria-label="Actualizar rutas"
-      >
-        <lucide-icon name="rotate-cw" [class.animate-spin]="loading" class="w-4 h-4"></lucide-icon>
-      </button>
+        <button
+          *ngIf="hasActiveFilters()"
+          type="button"
+          (click)="clearFilters()"
+          title="Limpiar filtros"
+          aria-label="Limpiar filtros"
+          class="h-9 w-9 shrink-0 inline-flex items-center justify-center text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </button>
+      </div>
     </div>
 
     <div class="w-full sm:w-auto flex items-end">
@@ -128,7 +120,7 @@
                 {{ routes.length === 0 ? 'No hay rutas registradas' : 'No se encontraron rutas' }}
               </h3>
               <p class="text-gray-500 dark:text-gray-400">
-                {{ routes.length === 0 ? 'Comienza creando tu primera ruta desde esta misma sección' : 'Intenta ajustar los filtros de busqueda' }}
+                {{ routes.length === 0 ? 'Comienza creando tu primera ruta desde esta misma seccion' : 'Intenta ajustar los filtros de busqueda' }}
               </p>
             </div>
           </td>

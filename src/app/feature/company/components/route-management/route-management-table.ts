@@ -112,9 +112,7 @@ export class RouteManagementTable implements OnInit {
   }
 
   hasActiveFilters(): boolean {
-    return !!(
-      this.searchTerm.trim() || this.selectedEstado !== 'TODAS'
-    );
+    return this.searchTerm.trim().length > 0 || this.selectedEstado === 'ACTIVA' || this.selectedEstado === 'INACTIVA';
   }
 
   onSearchChange(value: string) {

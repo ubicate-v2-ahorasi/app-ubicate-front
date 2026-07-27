@@ -26,16 +26,44 @@
 
     <div class="w-full sm:w-40">
       <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Categoria</label>
-      <app-animated-select
-        [(ngModel)]="selectedCategoria"
-        (valueChange)="onCategoriaSelect()"
-        [options]="categoriaOptions"
-      ></app-animated-select>
+      <div class="flex items-center gap-2">
+        <div class="min-w-0 flex-1">
+          <app-animated-select
+            [(ngModel)]="selectedCategoria"
+            (valueChange)="onCategoriaSelect()"
+            [options]="categoriaOptions"
+          ></app-animated-select>
+        </div>
+
+        <button *ngIf="hasActiveFilters()" type="button" (click)="clearAllFilters()" title="Limpiar filtros" aria-label="Limpiar filtros"
+          class="h-9 w-9 shrink-0 inline-flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors sm:hidden">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </button>
+        <button type="button" (click)="toggleSortDirection()"
+          [title]="sortDirection === 'desc' ? 'Orden descendente' : 'Orden ascendente'"
+          [attr.aria-label]="sortDirection === 'desc' ? 'Cambiar a orden ascendente' : 'Cambiar a orden descendente'"
+          class="h-9 w-9 shrink-0 inline-flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors sm:hidden">
+          <svg *ngIf="sortDirection === 'desc'; else ascendingIconMobile" class="w-4 h-4" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 7h12M3 12h9M3 17h6m11-3-4 4m0 0-4-4m4 4V4" />
+          </svg>
+          <ng-template #ascendingIconMobile>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 7h6M3 12h9M3 17h12m5-11-4-4m0 0-4 4m4-4v18" />
+            </svg>
+          </ng-template>
+        </button>
+      </div>
     </div>
 
     <div class="w-full sm:w-auto flex items-end gap-2">
       <button *ngIf="hasActiveFilters()" type="button" (click)="clearAllFilters()" title="Limpiar filtros" aria-label="Limpiar filtros"
-        class="h-9 w-9 inline-flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors">
+        class="hidden h-9 w-9 sm:inline-flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -45,7 +73,7 @@
       <button type="button" (click)="toggleSortDirection()"
         [title]="sortDirection === 'desc' ? 'Orden descendente' : 'Orden ascendente'"
         [attr.aria-label]="sortDirection === 'desc' ? 'Cambiar a orden ascendente' : 'Cambiar a orden descendente'"
-        class="h-9 w-9 inline-flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors">
+        class="hidden h-9 w-9 sm:inline-flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors">
         <svg *ngIf="sortDirection === 'desc'; else ascendingIcon" class="w-4 h-4" fill="none" stroke="currentColor"
           viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
