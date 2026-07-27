@@ -6,13 +6,13 @@
         <p class="mt-1 text-xs text-blue-100/90">{{ subtitle }}</p>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="flex w-full items-center gap-2 sm:w-auto">
         <button
           *ngIf="isStopsMode"
           type="button"
           (click)="saveStops()"
           [disabled]="isBusy"
-          class="inline-flex h-9 items-center gap-2 rounded-lg bg-emerald-500 px-4 text-sm font-medium text-white transition-colors hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-60"
+          class="inline-flex h-9 flex-1 items-center justify-center gap-2 rounded-lg bg-emerald-500 px-3 text-sm font-medium text-white transition-colors hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none sm:px-4"
         >
           <lucide-icon name="save" class="h-4 w-4"></lucide-icon>
           Guardar paradas
@@ -21,7 +21,7 @@
         <button
           type="button"
           (click)="onCancel()"
-          class="inline-flex h-9 items-center gap-2 rounded-lg border border-white/15 bg-white/10 px-4 text-sm font-medium text-white transition-colors hover:bg-white/20"
+          class="inline-flex h-9 flex-1 items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/10 px-3 text-sm font-medium text-white transition-colors hover:bg-white/20 sm:flex-none sm:px-4"
         >
           <lucide-icon name="arrow-left" class="h-4 w-4"></lucide-icon>
           Volver
@@ -31,7 +31,7 @@
   </div>
 
   <div [class]="layoutClass">
-    <div class="relative h-[72vh] bg-slate-200 dark:bg-slate-950">
+    <div class="relative bg-slate-200 dark:bg-slate-950" [ngClass]="isStopsMode ? 'h-[52vh] lg:h-[72vh]' : 'h-[72vh]'">
       <google-map
         [center]="center"
         [zoom]="zoom"
@@ -131,7 +131,7 @@
         </button>
       </div>
 
-      <div *ngIf="!isStopsPanelCollapsed" class="flex max-h-[calc(72vh-5rem)] flex-col overflow-hidden">
+      <div *ngIf="!isStopsPanelCollapsed" class="flex max-h-[42vh] flex-col overflow-hidden lg:max-h-[calc(72vh-5rem)]">
       <div
         *ngIf="stopError"
         class="mb-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300"

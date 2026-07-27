@@ -159,8 +159,8 @@ export class RouteManagementMapComponent implements OnInit, OnDestroy {
     }
 
     return this.isStopsPanelCollapsed
-      ? 'grid h-[72vh] grid-cols-1 lg:grid-cols-[minmax(0,1fr)_88px]'
-      : 'grid h-[72vh] grid-cols-1 lg:grid-cols-[minmax(0,1fr)_340px]';
+      ? 'grid min-h-[72vh] grid-cols-1 lg:h-[72vh] lg:grid-cols-[minmax(0,1fr)_88px]'
+      : 'grid min-h-[72vh] grid-cols-1 lg:h-[72vh] lg:grid-cols-[minmax(0,1fr)_340px]';
   }
 
   get stopsAsideClass(): string {
