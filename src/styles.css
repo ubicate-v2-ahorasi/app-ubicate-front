@@ -451,3 +451,13 @@ body {
 .gm-style-iw ::-webkit-scrollbar-track {
   display: none !important;
 }
+
+html,
+body {
+  background-color: #f9fafb;
+}
+
+html.dark,
+html.dark body {
+  background-color: #111827;
+}
